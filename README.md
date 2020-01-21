@@ -7,3 +7,5 @@ Work in the environment: `source env/bin/activate`
 To leave: `deactivate`
 
 Deploy in heroku: `git push stage master` or `git push pro master`
+
+Generate requirements: `pip freeze > requirements.txt`
