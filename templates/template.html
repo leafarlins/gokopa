@@ -13,9 +13,9 @@
 
         <ul class="nav">
           <li id="nav"><a {% if menu=='Home' %}class="active"{% endif %} href="/">Home</a></li>
-          <li id="nav"><a href="/jogos">Jogos</a></li>
-          <li id="nav"><a href="/tabela18">Tabela</a></li>
-          <li id="nav"><a href="/">Ranking</a></li>
+          <li id="nav"><a {% if menu=='Jogos' %}class="active"{% endif %}href="/jogos">Jogos</a></li>
+          <li id="nav"><a {% if menu=='Tabela' %}class="active"{% endif %}href="/tabela18">Tabela</a></li>
+          <li id="nav"><a {% if menu=='Ranking' %}class="active"{% endif %}href="/ranking">Ranking</a></li>
         </ul>
 
                 {% block conteudo %}{% endblock %}

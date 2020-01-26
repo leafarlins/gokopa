@@ -1,0 +1,58 @@
+{% extends "template.html" %}
+{% block conteudo %}
+
+<div id="sectionjc" align="center">
+<h2>Próximos Jogos</h2>
+<table id="jogo" class="allpage">
+  <tr>
+    <th width=10%>Data</th>
+    <th width=4% style="text-align:center; font-size:small">rank</th>
+    <th width=34%></th>
+    <th width=4%></th>
+    <th width=34%></th>
+    <th width=4%style="text-align:center; font-size:small">rank</th>
+    <th width=10%>Fase</th>
+  </tr>
+    {% for partida in lista_partidas_new %}
+    <tr>
+      <td style="text-align:center; font-size:small">{{ partida.data.strftime('%d/%m') }}<br />{{ partida.data.strftime('%H:%M') }}</td>
+      <td style="text-align:right; font-size:small">{{ partida.r1 }}</td>
+      <td style="text-align:right">{{ partida.time1 }} <img class="flag" src={{ partida.img1 }}></td>
+      <td style="text-align:center"> x </td>
+      <td><img class="flag" src={{ partida.img2 }} > {{ partida.time2 }}</td>
+      <td style="text-align:right; font-size:small">{{ partida.r2 }}</td>
+      <td style="text-align:right; font-size:small">{{ partida.comp }} {{ partida.fase }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+
+
+<div id="sectionjc" align="center">
+<h2>Últimos Jogos realizados</h2>
+<table id="jogo" class="allpage">
+  <tr>
+    <th width=10%>Data</th>
+    <th width=4% style="text-align:center; font-size:small">rank</th>
+    <th width=33%></th>
+    <th width=6%></th>
+    <th width=33%></th>
+    <th width=4%style="text-align:center; font-size:small">rank</th>
+    <th width=10%>Fase</th>
+  </tr>
+    {% for partida in lista_partidas_old %}
+    <tr>
+      <td style="text-align:center; font-size:small">{{ partida.data.strftime('%d/%m') }}<br />{{ partida.data.strftime('%H:%M') }}</td>
+      <td style="text-align:right; font-size:small">{{ partida.r1 }}</td>
+      <td style="text-align:right">{{ partida.time1 }} <img class="flag" src={{ partida.img1 }}></td>
+      <td style="text-align:center"> {{ partida.pl1 }}x{{ partida.pl2 }} </td>
+      <td><img class="flag" src={{ partida.img2 }} > {{ partida.time2 }}</td>
+      <td style="text-align:right; font-size:small">{{ partida.r2 }}</td>
+      <td style="text-align:right; font-size:small">{{ partida.comp }} {{ partida.fase }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+
+
+{% endblock %}

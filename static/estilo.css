@@ -33,8 +33,17 @@ li a:hover:not(.active) {
   background-color: #111;
 }
 
+h2 {
+  text-align: center;
+  text-decoration-color: #111;
+}
+
 .active {
   background-color: #4CAF50;
+}
+
+.allpage {
+  max-width: 1000px;
 }
 
 #section {
@@ -45,9 +54,15 @@ li a:hover:not(.active) {
     border: 2px solid #73AD21;
     padding: 20px;
 }
-#sectionj {
+#sectionjl {
     width:500px;
     float:left;
+    padding:10px;
+}
+#sectionjc {
+    float:center;
+    align-content: center;
+    align-self: center;
     padding:10px;
 }
 #section2 {
