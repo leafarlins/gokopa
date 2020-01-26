@@ -85,7 +85,7 @@ def ranking():
   return render_template('ranking.html', menu="Ranking")
 
 def carrega_historico(ano):
-    arquivo = open("files/historico.csv", "r")
+    arquivo = open("./files/historico.csv", "r")
     for linha in arquivo:
         jogol = linha.strip().split(",")
         if (int(jogol[0]) == ano):
@@ -97,7 +97,7 @@ def carrega_historico(ano):
     arquivo.close()
 
 def carrega_ranking():
-    arquivo = open("files/ranking.csv", "r")
+    arquivo = open("./files/ranking.csv", "r")
     for linha in arquivo:
         rl = linha.strip().split(",")
         rank = Ranking(rl[0],rl[2],time_img[rl[2]],rl[3],rl[5],rl[9],[rl[10],rl[11],rl[12]])
@@ -106,7 +106,7 @@ def carrega_ranking():
     arquivo.close()
 
 def carrega_grupo():
-    arquivo = open("files/grupo18.txt", "r")
+    arquivo = open("./files/grupo18.txt", "r")
     dic_grupo = {}
     for linha in arquivo:
         rl = linha.strip().split(",")
