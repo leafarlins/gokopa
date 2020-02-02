@@ -1,0 +1,12 @@
+version: '3'
+services:
+
+    gokopa:
+        #image: gokopa:0.1.0
+        build: .
+        #restart: always
+        #volumes:
+        #- "./volume/data:/var/cells/data"
+        #  - "data:/var/cells/data"
+        #  - "cellsdir:/var/cells"
+        ports: ["80:5000"]

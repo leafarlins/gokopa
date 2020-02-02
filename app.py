@@ -51,7 +51,7 @@ class Ranking:
 
 
 app = Flask(__name__)
-app.config.from_object(os.environ['APP_SETTINGS'])
+#app.config.from_object(os.environ['APP_SETTINGS'])
 lista_time = []
 l_partidas_futuras = []
 l_partidas_passadas = []
@@ -115,7 +115,7 @@ def carrega_grupo():
     return dic_grupo
 
 if __name__ == '__main__':
-    print(os.environ['APP_SETTINGS'])
+    #print(os.environ['APP_SETTINGS'])
     agora = datetime.now()
     # le arquivo de times e gokopa atual
     arquivo = open("files/times.txt", "r")
@@ -124,9 +124,9 @@ if __name__ == '__main__':
         time = TimeG(timel[0],timel[1],timel[2],timel[3])
         time_img.update( {timel[0]:timel[3]} )
         lista_time.append(time)
+        
     arquivo.close()
-
     carrega_ranking()
     carrega_historico(18)
     carrega_historico(19)
-    app.run()
+    app.run(host='0.0.0.0')
