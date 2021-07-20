@@ -49,6 +49,7 @@
 
 <div class="sectionj col-12 col-sd-12 col-md-12 col-lg-10 col-xl-6">
   <h2>Próximos Jogos  </h2>
+  {% if next_jogos %}
   <table class="jogos tab_gokopa">
     <tr>
       <th width=10%>Data</th>
@@ -67,6 +68,8 @@
       </tr>
     {% endfor %}
   </table>
+  {% else %}<p class="center">Não existem próximos jogos cadastrados.</p>
+  {% endif %}
 </div>
 </div>
 {% endblock %}

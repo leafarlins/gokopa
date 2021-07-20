@@ -8,8 +8,7 @@ from .commands.jogosCommands import jogosCommands
 from .commands.timeCommands import timeCommands
 
 def create_app(config_object="app.settings"):
-    # name: variavel especial com nome do script
-    app = Flask(__name__) 
+    app = Flask(__name__)
     app.config.from_object(config_object)
     app.register_blueprint(usuario)
     app.register_blueprint(bolao)
@@ -21,4 +20,3 @@ def create_app(config_object="app.settings"):
     database.init_app(app)
 
     return app
-
