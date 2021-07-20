@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-br">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Gokopa do Mundo</title>
+
+        <!--<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">    
+        -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    </head>
+    <body>
+        <!--<header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+            <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="{{ url_for('gokopa.index') }}">Início</a>
+            <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-nav px-3">
+                <a class="nav-link" href="{{ url_for('usuario.logout') }}">Logout</a>
+            </div>
+        </header>
+         navbar  -->
+        <header class="menu">
+            <nav width="100%">
+              <ul>
+                <li ><a {% if menu=='Home' %}class="active"{% endif %} href="/">Home</a></li>
+                <li ><a {% if menu=='Tabela' %}class="active"{% endif %}href="/tabela20">Tabela</a></li>
+                <li ><a {% if menu=='Ranking' %}class="active"{% endif %}href="/ranking">Ranking</a></li>
+                <li ><a {% if menu=='Bolao' %}class="active"{% endif %}href="/bolao">Bolão</a></li>
+                <li style="float: right">
+                    {% if session['username'] %}<a href="/logout">Logout</a>
+                    {% else %}<a {% if menu=='Login' %}class="active"{% endif %} href="/login">Login</a>
+                {% endif %}</li>
+              </ul>
+            </nav>
+          </header>
+      
+        
+        {% block content %}
+        {% endblock %}
+        
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <div class="footer">
+            Gokopa do Mundo
+        </div>
+    
+    </body>

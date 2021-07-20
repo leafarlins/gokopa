@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+<div>
+  <div class="sectionj">
+    <h2>Bolão</h2>
+    <p>Bolão da Gokopa, ano 20.</p>
+    <h3>Minhas apostas</h3>
+      {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %}
+      <div class="alert alert-success" role="alert">
+          {{ message }}
+      </div>
+      {% endfor %} {% endif %} {% endwith %}
+
+
+  </div>
+
+  {% if userlogado %}
+    {% if lista_jogos %}
+     <table class="tab_gokopa meubolao">
+          <tr>
+            <th width=5%>#</th>
+            <th width=15%>Data</th>
+            <th width=60%>Jogo</th>
+            <th width=20%>Aposta</th>
+          </tr>
+        {% for jogo in lista_jogos %}
+          <tr>
+          <td>{{ jogo['Jogo'] }}</td>
+          <td>{{ jogo['Data'] }}</td>
+          <td>{{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">
+            x <img class="flag" src="static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ jogo['Time2'] }}</td>
+          <td>{% if jogo['bet1'] %}{{ jogo['bet1'] }}x{{ jogo['bet2'] }} <a href="{{ url_for('bolao.edit_aposta',idjogo=jogo['Jogo']) }}">Editar</a>
+            {% else %}<a href="{{ url_for('bolao.edit_aposta',idjogo=jogo['Jogo']) }}">Apostar</a>
+          {% endif %}</td>
+          </tr>
+        {% endfor %}
+      </table>
+      {% else %}<p>Não há jogos para apostar.</p>
+      {% endif %}
+    {% else %}<p>Você não está logado.</p>
+    {% endif %}
+
+    <p>&nbsp;</p>
+    <h3>Resultado geral</h3>
+      {% if resultados %}
+      <p>Resultado Geral</p>
+      <table class="tab_gokopa">
+        <tr>
+          <th>#</th>
+        </tr>
+        {% for p in total %}
+        <tr>
+          <td>{{ p['nome'] }} - {{ p['score'] }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      
+      <p>Resultado Detalhado</p>
+
+     <table class="tab_gokopa smallt">
+          <tr>
+            <th>#</th>
+            <th>Jogo</th>
+            {% for u in users %}
+            <th colspan="3">{{ u }}</th>
+            {% endfor %}
+          </tr>
+        {% for jogo in resultados %}
+          <tr>
+          <td title="{{ jogo['Data'] }}">{{ jogo['Jogo'] }}</td>
+          <td>{{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">
+            {{ jogo['p1'] }}x{{ jogo['p2'] }} <img class="flag" src="static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ jogo['Time2'] }}</td>
+          {% for u in users %}
+            <td>{{ jogo[u][0] }}</td>
+            <td>{{ jogo[u][1] }}</td>
+            <td>{{ jogo[u][2] }}</td>
+          {% endfor %}
+          </tr>
+        {% endfor %}
+      </table>
+      {% else %}<p>Não há resultados para mostrar.</p>
+      {% endif %}
+
+
+
+
+</div>
+{% endblock %}

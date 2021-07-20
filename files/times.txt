@@ -1,8 +1,8 @@
-Alemanha,UEFA,10,https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Flag_of_Germany.svg/125px-Flag_of_Germany.svg.png
-França,UEFA,4,https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Flag_of_France.svg/125px-Flag_of_France.svg.png
-Brasil,CONMEBOL,1,https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/125px-Flag_of_Brazil.svg.png
-Portugal,UEFA,9,https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_Portugal.svg/125px-Flag_of_Portugal.svg.png
-Argentina,CONMEBOL,6,https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Flag_of_Argentina.svg/125px-Flag_of_Argentina.svg.png
+Alemanha,UEFA,10,125px-Flag_of_Germany.svg.png
+França,UEFA,4,125px-Flag_of_France.svg.png
+Brasil,CONMEBOL,1,125px-Flag_of_Brazil.svg.png
+Portugal,UEFA,9,125px-Flag_of_Portugal.svg.png
+Argentina,CONMEBOL,6,125px-Flag_of_Argentina.svg.png
 Italia,UEFA,8,
 Japão,AFC,21,
 Espanha,UEFA,7,

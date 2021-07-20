@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="sectionj">
+    <h2>Ranking atual</h2>
+    <p>Ranking atual, edição 19-3.</p>
+        <table class="tab_gokopa ranking" width="100%">
+          <tr>
+            <th>#</th>
+            <th>País</th>
+            <th>Pontos</th>
+            <th title="Último Ranking">ur</th>
+            <th title="Último Ano">ua</th>
+          </tr>
+          {% for linha in ranking %}
+            <tr>
+              <td>{{ linha['pos'] }}</td>
+              <td><img class="flag" src="static/img/flag/{{ linha['time'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ linha['time'] }}</td>
+              <td>{{ linha['pontos'] }}
+                {% if linha['u_pts'] > 0 %}<img title="+{{ linha['u_pts'] }} pontos" class="flag updown" src="static/img/up.png">
+                {% elif linha['u_pts'] == 0 %}<img class="flag updown" src="static/img/steady.png">
+                {% else %}<img title="{{ linha['u_pts'] }} pontos" class="flag updown" src="static/img/down.png">
+                {% endif %}
+              </td>
+              <td class="updown">{% if linha['u_rank'] > 0 %}<img class="flag updown" src="static/img/up.png">
+                {% elif linha['u_rank'] == 0 %}<img class="flag updown" src="static/img/steady.png">
+                {% else %}<img class="flag updown" src="static/img/down.png">
+                {% endif %}
+                {{ linha['u_rank'] }}</td>
+              <td class="updown">{% if linha['u_ano'] > 0 %}<img class="flag updown" src="static/img/up.png">
+                {% elif linha['u_ano'] == 0 %}<img class="flag updown" src="static/img/steady.png">
+                {% else %}<img class="flag updown" src="static/img/down.png">
+                {% endif %} {{ linha['u_ano'] }}</td>
+            </tr>
+          {% endfor %}
+        </table>
+
+</div>
+{% endblock %}

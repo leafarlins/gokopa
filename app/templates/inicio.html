@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!--<p>Partidas</p>
+{% for partida in lista_partidas_new %}
+<p>{{ partida.ano }} {{ partida.jogo }} {{ partida.time1 }} {{ partida.img1 }}</p>
+{% endfor %}
+
+<p>Times</p>
+{% for time in listat %}
+<p>{{ time.nome }}</p>
+{% endfor %}-->
+
+<div class="row  scoll-pane">
+
+<div class="sectionj col-12 col-sd-12 col-md-12 col-lg-10 col-xl-6">
+  <h2>Últimos Jogos</h2>
+
+  <table class="jogos tab_gokopa">
+    <tr>
+      <th width=10%>Data</th>
+      <th width=30%></th>
+      <th width=8%></th>
+      <th width=30%></th>
+      <th width=22%>Fase</th>
+    </tr>
+      <!--
+      {% for partida in lista_partidas_old %}
+      <tr>
+        <td style="text-align:center; font-size:small">{{ partida.data.strftime('%d/%m') }}<br />{{ partida.data.strftime('%H:%M') }}</td>
+        <td style="text-align:right">{{ partida.time1 }} <img class="flag" src={{ partida.img1 }}> </td>
+        <td style="text-align:center"> {{ partida.pl1 }}x{{ partida.pl2 }}</td>
+        <td><img class="flag" src={{ partida.img2 }} > {{ partida.time2 }}</td>
+        <td style="text-align:right; font-size:small">{{ partida.comp }} {{ partida.fase }}</td>
+      </tr>
+      {% endfor %}-->
+      {% for jogo in past_jogos %}
+        <tr>
+          <td>{{ jogo['Data'] }}</td>
+          <td>{{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'"></td>
+          <td>{{ jogo['p1'] }}x{{ jogo['p2'] }}</td>
+          <td><img class="flag" src="static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ jogo['Time2'] }}</td>
+          <td>{{ jogo['Competição'] }} {{ jogo['Fase'] }}</td>
+        </tr>
+      {% endfor %}
+  </table>
+
+</div>
+
+<div class="sectionj col-12 col-sd-12 col-md-12 col-lg-10 col-xl-6">
+  <h2>Próximos Jogos  </h2>
+  <table class="jogos tab_gokopa">
+    <tr>
+      <th width=10%>Data</th>
+      <th width=32%></th>
+      <th width=4%></th>
+      <th width=32%></th>
+      <th width=22%>Fase</th>
+    </tr>
+    {% for jogo in next_jogos %}
+      <tr>
+        <td>{{ jogo['Data'] }}</td>
+        <td>{{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'"></td>
+        <td>x</td>
+        <td><img class="flag" src="static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ jogo['Time2'] }}</td>
+        <td>{{ jogo['Competição'] }} {{ jogo['Fase'] }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+</div>
+{% endblock %}
