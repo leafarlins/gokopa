@@ -13,6 +13,7 @@ bolao = Blueprint('bolao',__name__)
 def apostas():
     ano20_jogos = [u for u in mongo.db.jogos.find({'Ano': 20}).sort("Jogo",pymongo.ASCENDING)]
     resultados = []
+    output = []
     total=dict()
     allUsers = [u.get("name") for u in mongo.db.users.find()]
     if "username" in session:
@@ -20,7 +21,6 @@ def apostas():
         apostador = validUser["name"]
         apostas = mongo.db.apostas20
         now = datetime.now()
-        output = []
         userLogado=True
     else:
         userLogado=False
@@ -84,6 +84,7 @@ def edit_aposta():
         else:
             p1 = request.values.get("p1")
             p2 = request.values.get("p2")
+            data_jogo = request.values.get("data")
             if not p1.isdigit() or not p2.isdigit():
                 flash("Placar deve ser um número!")
             else:
