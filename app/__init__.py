@@ -6,6 +6,7 @@ from .extentions import database
 from .commands.userCommands import userCommands
 from .commands.jogosCommands import jogosCommands
 from .commands.timeCommands import timeCommands
+from .cache import cache
 
 def create_app(config_object="app.settings"):
     app = Flask(__name__)
@@ -16,7 +17,8 @@ def create_app(config_object="app.settings"):
     app.register_blueprint(userCommands)
     app.register_blueprint(jogosCommands)
     app.register_blueprint(timeCommands)
-
+    
+    cache.init_app(app)
     database.init_app(app)
 
     return app

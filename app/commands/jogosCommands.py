@@ -104,7 +104,7 @@ def teste2():
 def teste():
     LIMITE_JOGOS=20
     past_jogos = [u for u in mongo.db.jogos.find({'Ano': 19})]
-    ano20_jogos = mongo.db.jogos.find({'Ano': 20},).sort([("Jogo",pymongo.ASCENDING),("Ano",pymongo.DESCENDING)])
+    ano20_jogos = mongo.db.jogos.find({'Ano': 20}).sort([("Jogo",pymongo.ASCENDING),("Ano",pymongo.DESCENDING)])
     next_jogos = []
     for n in ano20_jogos:
         if n["Time1"]=="China":
@@ -125,4 +125,14 @@ def init_apostas20():
         for i in range(1,JOGOS+1):
             apostas.insert_one({"Jogo": i})
         print("Finalizado.")
+
+@jogosCommands.cli.command("deleteAno")
+@click.argument("ano")
+def delete_ano(ano):
+    lista = [u for u in mongo.db.jogos.find({'Ano': int(ano)})]
+    for j in lista:
+        jogo = j['Jogo']
+        print("Excluindo jogo ",jogo)
+        mongo.db.jogos.find_one_and_delete({'Ano': int(ano),'Jogo':jogo})
+    print("Finalizado.")
 

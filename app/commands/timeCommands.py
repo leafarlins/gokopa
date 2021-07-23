@@ -2,11 +2,13 @@ import sys
 from bson.objectid import ObjectId
 import click
 import getpass
-
+from bson.objectid import ObjectId
 from flask_pymongo import BSONObjectIdConverter
 import pymongo
+from pymongo.collection import ReturnDocument
 from ..extentions.database import mongo
 from flask import Blueprint
+
 
 
 SEPARADOR_CSV=","
@@ -65,3 +67,28 @@ def get_rank(rank):
     else:
         print("Nada encontrado.")
 
+@timeCommands.cli.command("editTime")
+@click.argument("time")
+@click.argument("desc")
+def edit_time(time,desc):
+    ANO=20
+    timeValid = mongo.db.ranking.find_one({"ed": '19-3','time': time})
+    if timeValid:
+        print(f'Definindo time {time} em {desc}')
+    else:
+        print(f'Time {time} nao valido.')
+        exit()
+
+    ano20_jogos = mongo.db.jogos.find({'Ano': ANO}).sort("Jogo",pymongo.ASCENDING)
+    for j in ano20_jogos:
+        if j['desc1'] == desc:
+            novo_jogo = mongo.db.jogos.find_one_and_update(
+                {"_id": ObjectId(j['_id'])},
+                {'$set': {'Time1': time}},return_document=ReturnDocument.AFTER)
+            print(novo_jogo)
+        elif j['desc2'] == desc:
+            novo_jogo = mongo.db.jogos.find_one_and_update(
+                {"_id": ObjectId(j['_id'])},
+                {'$set': {'Time2': time}},return_document=ReturnDocument.AFTER)
+            print(novo_jogo)
+    print("Finalizado.")

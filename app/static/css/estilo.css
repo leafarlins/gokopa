@@ -134,6 +134,56 @@ h3 {
   font-size: small;
 }
 
+.tabelas table {
+  vertical-align: middle;
+  margin: 0 auto 0 auto;
+}
+
+.tabelas th {
+  padding-top: 0px;
+  padding-bottom: 0;
+  font-size:small;
+  text-align:center;
+  background-color: #d8e9d8;
+  color: rgb(19, 2, 2);
+  min-width: 30px;
+
+}
+
+.tabelaspd {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.tabelas {
+  width: 80%;
+}
+
+.tabelas tr td:nth-child(1) {
+  text-align: left;
+  min-width: 140px;
+  white-space: nowrap;
+}
+
+.tab_jogos table {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.tab_jogos tr:nth-child(odd) td {
+  font-size: small;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.tab_jogos td {
+  padding-left: 20px;
+  padding-right: 20px;
+  white-space: nowrap;
+}
+
 .jogos tr td:nth-child(1) {
   font-size: small;
 }
@@ -190,6 +240,11 @@ h3 {
 .flag {
 	max-width:30px;
 	max-height:20px;
+}
+
+.miniflag {
+	max-width:15px;
+	max-height:10px;
 }
 
 .updown {

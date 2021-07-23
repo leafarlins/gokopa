@@ -29,8 +29,8 @@
           <td>{{ jogo['Data'] }}</td>
           <td>{{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">
             x <img class="flag" src="static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ jogo['Time2'] }}</td>
-          <td>{% if jogo['bet1'] %}{{ jogo['bet1'] }}x{{ jogo['bet2'] }} <a href="{{ url_for('bolao.edit_aposta',idjogo=jogo['Jogo']) }}">Editar</a>
-            {% else %}<a href="{{ url_for('bolao.edit_aposta',idjogo=jogo['Jogo']) }}">Apostar</a>
+          <td>{% if jogo['bet1'] %}{{ jogo['bet1'] }}x{{ jogo['bet2'] }} <a target="_blank" href="{{ url_for('bolao.edit_aposta',idjogo=jogo['Jogo'],list_next_bet=list_next_bet) }}">Editar</a>
+            {% else %}<a target="_blank" href="{{ url_for('bolao.edit_aposta',idjogo=jogo['Jogo']) }}">Apostar</a>
           {% endif %}</td>
           </tr>
         {% endfor %}
@@ -43,19 +43,22 @@
     <p>&nbsp;</p>
     <h3>Resultado geral</h3>
       {% if resultados %}
-      <p>Resultado Geral</p>
       <table class="tab_gokopa">
         <tr>
           <th>#</th>
+          <th style="min-width: 100px;">Nome</th>
+          <th style="min-width: 50px;">Score</th>
         </tr>
-        {% for p in total %}
+        {% for p in total|sort(attribute='score', reverse = True) %}
         <tr>
-          <td>{{ p['nome'] }} - {{ p['score'] }}</td>
+          <td>{{ loop.index }}</td>
+          <td>{{ p['nome'] }}</td>
+          <td>{{ p['score'] }}</td>
         </tr>
         {% endfor %}
       </table>
       
-      <p>Resultado Detalhado</p>
+      <p>&nbsp;</p><p class="center">Resultado Detalhado</p>
 
      <table class="tab_gokopa smallt">
           <tr>
@@ -65,7 +68,7 @@
             <th colspan="3">{{ u }}</th>
             {% endfor %}
           </tr>
-        {% for jogo in resultados %}
+        {% for jogo in resultados|sort(attribute='Jogo', reverse = True) %}
           <tr>
           <td title="{{ jogo['Data'] }}">{{ jogo['Jogo'] }}</td>
           <td>{{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">

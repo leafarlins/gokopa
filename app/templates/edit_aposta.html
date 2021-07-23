@@ -4,28 +4,30 @@
   <div class="sectionj">
     <h2>Bolão</h2>
     <p>Edição de aposta</p>
-      {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %}
-      <div class="alert alert-success" role="alert">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
+      <div class="alert alert-{{ category }}" role="alert">
           {{ message }}
       </div>
       {% endfor %} {% endif %} {% endwith %}
-      <p>Fase do jogo: {{ jogo['Competição'] }} - {{ jogo['Fase'] }}</p>
-      <p>Data: {{ jogo['Data'] }}</p>
-      <form action="{{ url_for('bolao.edit_aposta') }}" method="post">
-        <input type="hidden" name="idjogo" value="{{ jogo['Jogo'] }}" id="idproduto" class="form-control" placeholder="Id do Jogo" required>
-
-        
-        {{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">
-        <input maxlength="2" size="2" width="20" type="number" name="p1" value="{{ a1 }}" id="p1" required autofocus>
-        x
-        <input maxlength="2" size="2" width="20" type="number" name="p2" value="{{ a2 }}" id="p2" required autofocus>
-        <img class="flag" src="static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ jogo['Time2'] }}
-        <p>&nbsp;</p>  
-        <p>Ranking das equipes: {{ r1 }} e {{ r2 }}</p>
+      {% if jogo %}
+        <p>Fase do jogo: {{ jogo['Competição'] }} - {{ jogo['Fase'] }}</p>
+        <p>Data: {{ jogo['Data'] }}</p>
+        <form action="{{ url_for('bolao.edit_aposta') }}" method="post">
+          <input type="hidden" name="idjogo" value="{{ jogo['Jogo'] }}" id="idproduto" class="form-control" placeholder="Id do Jogo" required>
+          <input type="hidden" name="data" value="{{ jogo['Data'] }}" id="data" class="form-control" placeholder="Data" required>
           
-        <button class="w-50 btn btn-lg btn-primary" type="submit">Salvar</button>
-      </form>
-
+          {{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">
+          <input maxlength="2" size="2" width="20" type="number" name="p1" value="{{ a1 }}" id="p1" required autofocus>
+          x
+          <input maxlength="2" size="2" width="20" type="number" name="p2" value="{{ a2 }}" id="p2" required autofocus>
+          <img class="flag" src="static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ jogo['Time2'] }}
+          <p>&nbsp;</p>  
+          <p>Ranking das equipes: {{ r1 }} e {{ r2 }}</p>
+            
+          <button class="w-50 btn btn-lg btn-primary" type="submit">Salvar</button>
+        </form>
+      {% else %}<p>Não há mais novos jogos para apostar.</p>
+      {% endif %} 
   </div>
 
 </div>
