@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file. Based on [K
 
 ## [Unreleased]
 
+## [0.2.0] - 2021-07-27
+
+### Added
+- Calculations for score of bet users
+- Added "Historic" page to search for historic matches
+
+### Changed
+- General modifications in interface
+
 ## [0.1.0] - 2021-07-23
 
 ### Added
@@ -12,5 +21,6 @@ All notable changes to this project will be documented in this file. Based on [K
 - Minimal ranking page
 - Table from games from first season year 20
 
-[unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.1.0...HEAD
+[unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/olivierlacan/keep-a-changelog/releases/tag/v0.1.0

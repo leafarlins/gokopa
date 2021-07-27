@@ -30,6 +30,7 @@
                 <li ><a {% if menu=='Home' %}class="active"{% endif %} href="/">Home</a></li>
                 <li ><a {% if menu=='Tabela' %}class="active"{% endif %}href="/tabela">Tabela</a></li>
                 <li ><a {% if menu=='Ranking' %}class="active"{% endif %}href="/ranking">Ranking</a></li>
+                <li ><a {% if menu=='Historico' %}class="active"{% endif %}href="/historico">Histórico</a></li>
                 <li ><a {% if menu=='Bolao' %}class="active"{% endif %}href="/bolao">Bolão</a></li>
                 <li style="float: right">
                     {% if session['username'] %}<a href="/logout">Logout</a>
@@ -44,10 +45,8 @@
         {% endblock %}
         
         <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
         <div class="footer">
-            Gokopa do Mundo v.0.1
+            Gokopa do Mundo v.0.2
         </div>
     
     </body>

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, session, request, url_for, flash
 from werkzeug.utils import redirect
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from ..extentions.database import mongo
 
 #current_app para carregar app.py
@@ -52,7 +52,7 @@ def reset():
             validActive = userFound["active"]
 
             if (password == password2):
-                mongo.db.users.find_one_and_update({"username": username},{'$set': {"active": True, "password": password}})
+                mongo.db.users.find_one_and_update({"username": username},{'$set': {"active": True, "password": generate_password_hash(password)}})
                 session["username"] = validUser
                 flash(f'Senha definida com sucesso, bem vindo, {validName}!')
                 return redirect(url_for('bolao.apostas'))

@@ -80,11 +80,11 @@ def edit_jogo(ano,jogo,campo,valor1,valor2):
         elif campo == "tr":
             campo1 = "tr1"
             campo2 = "tr2"
-        elif campo == "penalti":
+        elif campo == "pe":
             campo1 = "pe1"
             campo2 = "pe2"
         else:
-            print("Forneca os valores de campo: placar, tr, penalti ou times.")
+            print("Forneca os valores de campo: placar, tr, pe.")
             exit()
         print(f'Editando campo {campo1}: {valor1} e {campo2}: {valor2}')
         mongo.db.jogos.find_one_and_update({'_id': idJogo},{'$set': {campo1: int(valor1), campo2: int(valor2)}})

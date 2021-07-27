@@ -9,9 +9,9 @@ from pymongo.collection import ReturnDocument
 from ..extentions.database import mongo
 from flask import Blueprint
 
-
-
 SEPARADOR_CSV=","
+ANO=20
+RANKING='19-3'
 
 timeCommands = Blueprint('time',__name__)
 
@@ -71,8 +71,7 @@ def get_rank(rank):
 @click.argument("time")
 @click.argument("desc")
 def edit_time(time,desc):
-    ANO=20
-    timeValid = mongo.db.ranking.find_one({"ed": '19-3','time': time})
+    timeValid = mongo.db.ranking.find_one({"ed": RANKING,'time': time})
     if timeValid:
         print(f'Definindo time {time} em {desc}')
     else:
@@ -91,4 +90,23 @@ def edit_time(time,desc):
                 {"_id": ObjectId(j['_id'])},
                 {'$set': {'Time2': time}},return_document=ReturnDocument.AFTER)
             print(novo_jogo)
+    print("Finalizado.")
+
+@timeCommands.cli.command("classificaTime")
+@click.argument("time")
+@click.argument("conf")
+def classifica_time(time,conf):
+    timeValid = mongo.db.ranking.find_one({"ed": RANKING,'time': time})
+    if timeValid:
+        print(f'Classificando time {time} em {conf}')
+    else:
+        print(f'Time {time} nao valido.')
+        exit()
+
+    classificado = dict()
+    classificado['Ano'] = ANO
+    classificado['nome'] = time
+    classificado['conf'] = conf
+
+    mongo.db.pot.insert([classificado])
     print("Finalizado.")

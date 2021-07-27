@@ -23,6 +23,42 @@ MONGO_URI="mongodb+srv://...
 SECRET_KEY="somesecretkey"
 ```
 
+Load the dataset for past games (Gokopas 1 to 19) and load last ranking
+
+```
+flask jogos loadCsv dataset/jogos_ano1a18.csv
+flask jogos loadCsv dataset/jogos_ano19.csv
+flask jogos loadCsv dataset/jogos_ano20_pt1v2_prod.csv
+flask jogos loadCsv dataset/rank_19-3.csv
+```
+
+## Initialize app and create users
+
+
+Init database for betting
+
+```
+flask jogos initApostas20
+```
+
+Create users for the app. For each user:
+
+```
+flask user addUser <username> <name>
+```
+
+Set final score for each game
+
+```
+flask jogos editJogo 20 1 placar 0 1
+flask jogos editJogo 20 2 placar 2 2
+flask jogos editJogo 20 2 tr 1 1
+flask jogos editJogo 20 2 pe 2 3
+flask jogos editJogo 20 3 placar 1 2
+flask jogos editJogo 20 3 tr 1 1
+```
+
+
 ## Deploy in production
 
 `git remote add stage git@heroku.com:YOUR_APP_NAME.git`

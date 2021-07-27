@@ -34,14 +34,24 @@ def get_user_name(username):
 
 @cache.memoize(3600*24)
 def get_score_game(p1,p2,b1,b2):
-    score=1
+    score=0
+    if p1 == b1 and p2 == b2:
+        # Placar cheio
+        score = 5
+    elif (p1 > p2 and b1 > b2) or (p1 == p2 and b1 == b2) or (p1 < p2 and b1 < b2):
+        # Acertou vitoria/empate
+        score = 2
+        # Ponto extra se saldo igual
+        if (p1-p2) == (b1-b2) and (abs(p1-b1) == 1):
+            score += 1 
     print(f'Calculando score para aposta {b1}x{b2} e placar {p1}x{p2}: {score}')
+
     return score
 
 # Insert in jogo bets and results foreach user
-@cache.memoize(3600)
+@cache.memoize(600)
 def get_bet_results(users,aposta,jogo):
-    peso=2
+    peso=int(jogo['peso'])
     for user in users:
         b1 = aposta.get(str(user + "_p1"))
         b2 = aposta.get(str(user + "_p2"))
@@ -62,11 +72,14 @@ def get_score_results(users,resultados):
             udict=dict()
             udict["nome"]=u
             udict["score"]=0
+            udict["pc"]=0
             # sum score*peso foreach result
             for r in resultados:
                 scores_user = r.get(u)
                 if scores_user:
                     udict["score"]+=int(scores_user[2])
+                    if scores_user[1] == 5:
+                        udict["pc"] += 1 
             list_total.append(udict)
         return list_total
 
@@ -112,7 +125,7 @@ def apostas():
 
     list_total=get_score_results(allUsers,resultados)
 
-    print(list_total)
+    #print(list_total)
     #sorted_total = sorted(total.items(), key=itemgetter(1),reverse=True)
 
     return render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=list_total,users=allUsers)
@@ -150,7 +163,8 @@ def edit_aposta():
         else:
             list_next_bet = cache.get(apostador)
             if list_next_bet and len(list_next_bet)>0:
-                list_next_bet.remove(idjogo)
+                if idjogo in list_next_bet:
+                    list_next_bet.remove(idjogo)
                 next_bet = list_next_bet.pop(0)
             else:
                 next_bet = 0
@@ -175,15 +189,5 @@ def edit_aposta():
                         }})
                 flash(f'Placar adicionado com sucesso no jogo {idjogo}!','success')
             return redirect(url_for('bolao.edit_aposta',idjogo=next_bet))
-    else:
-        return redirect(url_for('usuario.login'))
-
-    
-@bolao.route('/apostado')
-def apostado():
-
-    if "username" in session:
-        return render_template('apostado.html',menu='Bolao',idjogo=1,status="success")
-
     else:
         return redirect(url_for('usuario.login'))

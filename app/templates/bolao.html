@@ -48,12 +48,14 @@
           <th>#</th>
           <th style="min-width: 100px;">Nome</th>
           <th style="min-width: 50px;">Score</th>
+          <th title="Placar Cheio" style="min-width: 50px;">P.C.</th>
         </tr>
-        {% for p in total|sort(attribute='score', reverse = True) %}
+        {% for p in total|sort(attribute='score', reverse = True) | sort(attribute='pc', reverse = True) %}
         <tr>
           <td>{{ loop.index }}</td>
           <td>{{ p['nome'] }}</td>
           <td>{{ p['score'] }}</td>
+          <td>{{ p['pc'] }}</td>
         </tr>
         {% endfor %}
       </table>

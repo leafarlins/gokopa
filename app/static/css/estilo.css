@@ -5,9 +5,9 @@
   box-sizing: border-box;
 }
 
-@media screen and (max-width: 320px) {
+@media screen and (max-width: 400px) {
   html {
-    font-size: 10px;
+    font-size: small;
   }
 }
 
@@ -86,13 +86,13 @@ h3 {
 }
 
 .sectionj {
-    width: 500px;
+    width: 400px;
     float: center;
     text-align: center;
     margin: auto;
     margin-top: 0;
     align-self: center;
-    padding-top: 40px;
+    padding-top: 30px;
 }
 
 .center {
@@ -167,15 +167,19 @@ h3 {
   white-space: nowrap;
 }
 
-.tab_jogos table {
+/* .tab_jogos table {
   width: 100%;
   white-space: nowrap;
-}
+} */
 
 .tab_jogos tr:nth-child(odd) td {
   font-size: small;
   padding-top: 0px;
   padding-bottom: 0px;
+}
+
+.tab_jogos tr:nth-child(even) td {
+  min-width: 300px;
 }
 
 .tab_jogos td {
@@ -257,13 +261,37 @@ h3 {
   .sectionj {
     width: auto;
     scrollbar-width: 0;
-    font-size: 10px;
+    font-size: small;
   }
-  .tab_gokopa {
+  /* .tab_gokopa {
     font-size: smaller;
   }
+
+  .jogos {
+    font-size: smaller;
+  } */
+
   .flag {
     max-width:20px;
     max-height:15px;
   }
 }
+
+/* @media screen and (min-width: 1500px) {
+  .tab_jogos tr:nth-child(even) td {
+    min-width: 420px;
+  }
+} */
+
+div.time-destaque {
+  border-radius: 20px;
+  border: 2px solid #1a2b04;
+  background: #eff1eb;
+  padding: 10px;
+  width: 100%;
+  float:left;
+  margin-bottom: 10px;
+  font-size: small;
+}
+
+#more {display: none;}

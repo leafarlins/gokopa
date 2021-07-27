@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row scoll-pane">
+
+    <div class="sectionj col-12 col-sd-12 col-md-6 col-lg-6 col-xl-8">
+        <h2>Histórico</h2>
+        <p>Histórico de duelos</p>
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
+        <div class="alert alert-{{ category }}" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
+        {% if times %}
+          <table class="tab_gokopa">
+              <tr>
+                <td>V. <img class="flag" src="static/img/flag/{{ times[0] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ times[0] }}</td>
+                <td>{{ vev[0] }}</td>
+              </tr>
+              <tr>
+                <td>Empates</td>
+                <td>{{ vev[1] }}</td>
+              </tr>
+              <tr>
+                <td>V. <img class="flag" src="static/img/flag/{{ times[1] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ times[1] }}</td>
+                <td>{{ vev[2] }}</td>
+              </tr>
+              <tr>
+                <td><b>Total</b></td>
+                <td><b>{{ vev[3] }}</b></td>
+              </tr>
+          </table>
+        {% endif %}
+            <p>Escolha dois times para verificar histórico de confrontos.</p>
+            <form action="{{ url_for('gokopa.historico') }}" method="post">
+              <label for="browser">Confronto:</label>
+              <input list="times" name="time1" id="time1"> x <input list="times" name="time2" id="time2">
+              <datalist id="times">
+              {% for i in lista_times %}
+                <option value="{{ i }}">
+              {% endfor %}
+              </datalist>
+              <br>
+                
+              <button class="w-20 btn btn-lg btn-primary" type="submit">Buscar</button>
+            </form>
+    </div>
+
+    <div class="sectionj col-12 col-sd-12 col-md-6 col-lg-6 col-xl-4">
+      <h2>Confrontos</h2>
+    
+      {% if lista_jogos %}
+      <table class="tab_gokopa tab_jogos">
+    
+        {% for jogo in lista_jogos %}
+          <tr>
+            <td>Ano {{ jogo['Ano'] }} Jogo {{ jogo['Jogo'] }}</td>
+            <td>{{ jogo['Competição'] }} {{ jogo['Fase'] }}</td>
+          </tr>
+          <tr>
+            <td colspan="2">
+                {{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">
+                {% if jogo['pe1'] %}
+                  <b title="tr: {{ jogo['tr1'] }}x{{ jogo['tr2'] }} pe: {{ jogo['pe1'] }}x{{ jogo['pe2'] }}">{{ jogo['p1'] }}x{{ jogo['p2'] }}</b>
+                {% elif jogo['tr1'] %}
+                  <b title="tr: {{ jogo['tr1'] }}x{{ jogo['tr2'] }}">{{ jogo['p1'] }}x{{ jogo['p2'] }}</b>
+                {% else %}{{ jogo['p1'] }}x{{ jogo['p2'] }}
+                {% endif %}
+                 <img class="flag" src="static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ jogo['Time2'] }}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+      {% else %}<p>Não há jogos para mostrar.</p>
+      {% endif %}
+    
+    </div>
+
+
+  
+  </div>
+
+{% endblock %}

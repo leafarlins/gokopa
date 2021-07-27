@@ -2,7 +2,7 @@
 {% block content %}
 
 <h2>Tabela do ano 20</h2>
-<p class="center">O ano 20 será composto por <a href="#Regionais">Copas Regionais</a>, Taça Mundial com os campeões e a Copa do Mundo na versão de 32 seleções.</p>
+<p class="center">O ano 20 será composto por <a href="#Regionais">Copas Regionais</a>, <a href="#Taca">Taça Mundial</a> com os campeões e a <a href="#Copa">Copa do Mundo</a> na versão de 32 seleções.</p>
 
 
 <h2 id="Regionais">Copas Regionais</h2>
@@ -13,7 +13,7 @@
 
 <div class="row scoll-pane">
 {% for i in range(8) %}
-    <div class="tabelaspd col-12 col-sd-12 col-md-6 col-lg-6 col-xl-3">
+    <div class="sectionj col-12 col-sd-12 col-md-6 col-lg-6 col-xl-3">
         <table class="tab_gokopa tabelas">
             <tr>
                 <th>Grupo {{ labels[i] }}</th>
@@ -33,11 +33,11 @@
         </table>
     </div>
 
-    <div class="tabelaspd col-12 col-sd-12 col-md-6 col-lg-6 col-xl-3">
+    <div class="sectionj col-12 col-sd-12 col-md-6 col-lg-6 col-xl-3">
         {% for j in jogos_id[i] %}
         <table class="tab_gokopa tab_jogos">
             <tr>
-                <td>{{ lista_jogos[j]['Data'] }}</td>
+                <td title="{{ lista_jogos[j]['Jogo'] }}">{{ lista_jogos[j]['Data'] }}</td>
                 <td>{{ lista_jogos[j]['Estadio'] }} 
                     <img class="miniflag" src="static/img/flag/{{ lista_jogos[j]['Pais'] }}.png" onerror="this.src='static/img/flag/default.png'">
                 </td>
@@ -48,7 +48,7 @@
                         {{ lista_jogos[j]['Time1'] }} <img class="flag" src="static/img/flag/{{ lista_jogos[j]['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">
                     {% else %}{{ lista_jogos[j]['desc1'] }} <img class="flag" src='static/img/flag/default.png'>
                     {% endif %}
-                    x 
+                    {{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}
                     {% if lista_jogos[j]['Time2'] %}
                         <img class="flag" src="static/img/flag/{{ lista_jogos[j]['Time2'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ lista_jogos[j]['Time2'] }}
                     {% else %}<img class="flag" src='static/img/flag/default.png'> {{ lista_jogos[j]['desc2'] }}
@@ -198,7 +198,7 @@
         {% for j in jogos_id[i] %}
         <table class="tab_gokopa tab_jogos">
             <tr>
-                <td>{{ lista_jogos[j]['Data'] }}</td>
+                <td title="{{ lista_jogos[j]['Jogo'] }}">{{ lista_jogos[j]['Data'] }}</td>
                 <td>{{ lista_jogos[j]['Estadio'] }} 
                     <img class="miniflag" src="static/img/flag/{{ lista_jogos[j]['Pais'] }}.png" onerror="this.src='static/img/flag/default.png'">
                 </td>
@@ -331,7 +331,7 @@
         {% for j in jogos_id[i] %}
         <table class="tab_gokopa tab_jogos">
             <tr>
-                <td>{{ lista_jogos[j]['Data'] }}</td>
+                <td title="{{ lista_jogos[j]['Jogo'] }}">{{ lista_jogos[j]['Data'] }}</td>
                 <td>{{ lista_jogos[j]['Estadio'] }} 
                     <img class="miniflag" src="static/img/flag/{{ lista_jogos[j]['Pais'] }}.png" onerror="this.src='static/img/flag/default.png'">
                 </td>
@@ -464,7 +464,7 @@
         {% for j in jogos_id[i] %}
         <table class="tab_gokopa tab_jogos">
             <tr>
-                <td>{{ lista_jogos[j]['Data'] }}</td>
+                <td title="{{ lista_jogos[j]['Jogo'] }}">{{ lista_jogos[j]['Data'] }}</td>
                 <td>{{ lista_jogos[j]['Estadio'] }} 
                     <img class="miniflag" src="static/img/flag/{{ lista_jogos[j]['Pais'] }}.png" onerror="this.src='static/img/flag/default.png'">
                 </td>
@@ -648,7 +648,13 @@
             </tr>
         </table>
     </div>
+</div>
 
+<h3 id="Copa">Copa do Mundo</h3>
+<div class="row scoll-pane center">
+    <div class="tabelaspd col-12 col-sd-10 col-md-6 col-lg-6 col-xl-4">
+    <p>Ainda não há tabela da copa disponível.</p>
+    </div>
 </div>
 
 </div>
