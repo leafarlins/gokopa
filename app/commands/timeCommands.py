@@ -1,3 +1,4 @@
+from re import T
 import sys
 from bson.objectid import ObjectId
 import click
@@ -110,3 +111,33 @@ def classifica_time(time,conf):
 
     mongo.db.pot.insert([classificado])
     print("Finalizado.")
+
+@timeCommands.cli.command("defHist")
+@click.argument("comp")
+@click.argument("ano")
+@click.argument("ouro")
+@click.argument("prata")
+@click.argument("bronze")
+@click.argument("quarto")
+@click.argument("sedes")
+def def_historico(comp,ano,ouro,prata,bronze,quarto,sedes):
+    # for t in comp,ano,ouro,prata,bronze,quarto:
+    #     timeValid = mongo.db.ranking.find_one({"ed": RANKING,'time': t})
+    # if not timeValid:
+    #     print(f'Time {t} nao valido.')
+    #     exit()
+    base = "his_" + comp
+    ano_hist = dict()
+    ano_hist['Ano'] = int(ano)
+    ano_hist['ouro'] = ouro
+    ano_hist['prata'] = prata
+    ano_hist['bronze'] = bronze
+    ano_hist['quarto'] = quarto
+    ano_hist['sedes'] = sedes
+    ano_hist['comp'] = comp
+    print(f'Inserindo histórico para {comp} ano {ano}: {ouro},{prata},{bronze},{quarto} em {sedes}')
+    mongo.db.historico.insert([ano_hist])
+
+
+
+

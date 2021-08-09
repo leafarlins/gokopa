@@ -168,8 +168,8 @@ def edit_aposta():
                 next_bet = list_next_bet.pop(0)
             else:
                 next_bet = 0
-            print("Next bet",next_bet)
-            print("Next bets",list_next_bet)
+            #print("Next bet",next_bet)
+            #print("Next bets",list_next_bet)
             cache.set(apostador,list_next_bet)
 
             p1 = request.values.get("p1")

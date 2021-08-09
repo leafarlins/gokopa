@@ -164,7 +164,7 @@ h3 {
 .tabelas tr td:nth-child(1) {
   text-align: left;
   min-width: 140px;
-  white-space: nowrap;
+  /*white-space: nowrap;*/
 }
 
 /* .tab_jogos table {
@@ -222,6 +222,15 @@ h3 {
 .ranking tr td:nth-child(5) {
   font-size: small;
   min-width: 40px;
+}
+
+.quadro th {
+  padding-top: 0px;
+  padding-bottom: 0;
+  background-color: #556e55;
+}
+.quadro tr td:nth-child(2) {
+  text-align: left;
 }
 
 .smallt {

@@ -29,7 +29,7 @@
           <td>{{ jogo['Data'] }}</td>
           <td>{{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">
             x <img class="flag" src="static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ jogo['Time2'] }}</td>
-          <td>{% if jogo['bet1'] %}{{ jogo['bet1'] }}x{{ jogo['bet2'] }} <a target="_blank" href="{{ url_for('bolao.edit_aposta',idjogo=jogo['Jogo'],list_next_bet=list_next_bet) }}">Editar</a>
+          <td>{% if jogo['bet1'] %}{{ jogo['bet1'] }}x{{ jogo['bet2'] }} <a target="_blank" href="{{ url_for('bolao.edit_aposta',idjogo=jogo['Jogo']) }}">Editar</a>
             {% else %}<a target="_blank" href="{{ url_for('bolao.edit_aposta',idjogo=jogo['Jogo']) }}">Apostar</a>
           {% endif %}</td>
           </tr>
@@ -50,7 +50,7 @@
           <th style="min-width: 50px;">Score</th>
           <th title="Placar Cheio" style="min-width: 50px;">P.C.</th>
         </tr>
-        {% for p in total|sort(attribute='score', reverse = True) | sort(attribute='pc', reverse = True) %}
+        {% for p in total | sort(attribute='pc', reverse = True) | sort(attribute='score', reverse = True) %}
         <tr>
           <td>{{ loop.index }}</td>
           <td>{{ p['nome'] }}</td>

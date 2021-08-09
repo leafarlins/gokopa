@@ -33,7 +33,7 @@ def create_user(username,name):
     }
         userCollection.insert(user)
         print('Usuário cadastrado com sucesso')
-        print("Você foi cadastrado no sistema da Gokopa! Acesse pelo link:")
+        print("Você foi cadastrado no sistema da Gokopa! Acesse pelo link: https://gokopa.herokuapp.com/")
         print(f'Usuário: {username}')
         print(f'Senha temporária: {password}')
         print(f'\nSeu nome no bolão será: {name}\nQualquer dúvida, entre em contato!')

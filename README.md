@@ -32,6 +32,8 @@ flask jogos loadCsv dataset/jogos_ano20_pt1v2_prod.csv
 flask jogos loadCsv dataset/rank_19-3.csv
 ```
 
+Read dataset/history file to run commands and load historic results.
+
 ## Initialize app and create users
 
 

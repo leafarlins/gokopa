@@ -1,0 +1,37 @@
+
+- run to load historic copa results from 1 to 19
+flask time defHist copa 1 Inglaterra Alemanha 'Coréia do Sul' Irã Chile
+flask time defHist copa 2 Italia Gales Alemanha Romênia Gales
+flask time defHist copa 3 Escócia Argentina Brasil Italia Austrália
+flask time defHist copa 4 Italia Escócia Eslováquia França Japão
+flask time defHist copa 5 Ucrânia França Colômbia Austrália Ucrânia
+flask time defHist copa 6 Argentina Áustria Italia Japão Áustria
+flask time defHist copa 7 Brasil Inglaterra Japão Portugal 'Estados Unidos'
+flask time defHist copa 8 Inglaterra Áustria Portugal Brasil Inglaterra
+flask time defHist copa 9 França Áustria Estônia 'África do Sul' Nigéria
+flask time defHist copa 10 Alemanha França Argentina Chile Noruega
+flask time defHist copa 11 Escócia Lituânia França Alemanha Venezuela
+flask time defHist copa 12 Finlândia França Argentina Bulgária Italia
+flask time defHist copa 13 Brasil 'Rep Tcheca' Suécia Espanha México
+flask time defHist copa 14 Argentina França Finlândia Uruguai Portugal,Espanha
+flask time defHist copa 15
+flask time defHist copa 16
+flask time defHist copa 17
+flask time defHist copa 18
+flask time defHist copa 19
+
+- run to load historic taca and others results
+flask time defHist taca 10 'Rep Tcheca' Italia Inglaterra Alemanha -
+flask time defHist taca 13 Nigéria 'Rep Tcheca' Bulgária 'Trinidad e Tobago' -
+
+- run to load betting historic results
+flask time defHist bet 10 baiano ernani gillis - -
+flask time defHist bet 11 ernani baiano kamui gillis cicero
+flask time defHist bet 12 gangra luiz ernani fels lukets
+flask time defHist bet 13 gillis zcaroli fels ernani baiano
+flask time defHist bet 14 gillis zcaroli lukets capote ernani
+flask time defHist bet 15 didi digao gillis zcaroli ernani
+flask time defHist bet 16 zcaroli putz ernani rina capote
+flask time defHist bet 17 didi zcaroli milena putz gillis
+flask time defHist bet 18 putz zcaroli lukets ernani didi
+flask time defHist bet 19 ernani zcaroli gillis putz didi

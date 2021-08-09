@@ -1,3 +1,4 @@
+from app.commands.timeCommands import RANKING
 from array import array
 from datetime import datetime
 from typing import Collection
@@ -14,7 +15,7 @@ from ..cache import cache
 gokopa = Blueprint('gokopa',__name__)
 
 ANO=20
-
+RANKING = "19-3"
 
 def get_classificados():
     lista = [u for u in mongo.db.pot.find({'Ano': ANO})]
@@ -48,7 +49,6 @@ def get_classificados():
     lista_final.append(class_ame)
     print(lista_final)
     return lista_final
-
 
 
 # Rota / associada a função index
@@ -154,19 +154,49 @@ def tabela():
 
     return render_template('tabela20reg.html',menu="Tabela",tabelas=tabelas,labels=tabelas_label,lista_jogos=ano20_jogos,jogos_id=jogos_id)
 
+@cache.memoize(30)
+def get_historic_copa(comp):
+    historia = [u for u in mongo.db.historico.find({"comp": comp}).sort('Ano',pymongo.DESCENDING)]
+    times = set()
+    medal_count = []
+    for h in historia:
+        times.add(h['ouro'])
+        times.add(h['prata'])
+        times.add(h['bronze'])
+    for t in times:
+        time = dict()
+        time['nome'] = t
+        time['ouro'] = 0
+        time['prata'] = 0
+        time['bronze'] = 0
+        for l in historia:
+            if t == l['ouro']:
+                time['ouro'] += 1
+            if t == l['prata']:
+                time['prata'] += 1
+            if t == l['bronze']:
+                time['bronze'] += 1
+        time['total'] = time['ouro'] + time['prata'] + time['bronze']
+        medal_count.append(time)
+
+    print(medal_count)
+    return historia,medal_count
 
 @gokopa.route('/ranking')
 @cache.cached(timeout=3600*24)
 def ranking():
-    ranking = [u for u in mongo.db.ranking.find({"ed": "19-3"}).sort('pos',pymongo.ASCENDING)]
-    return render_template("ranking.html",menu="Ranking",ranking=ranking)
+    ranking = [u for u in mongo.db.ranking.find({"ed": RANKING}).sort('pos',pymongo.ASCENDING)]
+    copas_list,copas_medal = get_historic_copa("copa")
+    taca_list,taca_medal = get_historic_copa("taca")
+    bet_list,bet_medals = get_historic_copa("bet")
+    return render_template("ranking.html",menu="Ranking",ranking=ranking,copa_his=copas_list,copa_med=copas_medal,bet_his=bet_list,bet_med=bet_medals,taca_his=taca_list,taca_med=taca_medal)
 
 @cache.memoize(3600*24)
 def get_team_list():
-    ranking = [u['time'] for u in mongo.db.ranking.find({"ed": "19-3"}).sort('pos',pymongo.ASCENDING)]
+    ranking = [u['time'] for u in mongo.db.ranking.find({"ed": RANKING}).sort('pos',pymongo.ASCENDING)]
     return ranking
 
-@cache.memoize(3600*24)
+@cache.memoize(3600*24*7)
 def return_historic_duels(team1,team2):
     historico_total = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': team1,'Time2': team2 },{'Time1': team2,'Time2': team1 }],"Ano": {'$lt':20} }).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.DESCENDING)])]
     vev = [0,0,0,len(historico_total)]
