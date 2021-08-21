@@ -32,7 +32,7 @@ def get_user_name(username):
     validUser = mongo.db.users.find_one_or_404({"username": username})
     return validUser["name"]
 
-@cache.memoize(3600*24)
+@cache.memoize(3600*24*7)
 def get_score_game(p1,p2,b1,b2):
     score=0
     if p1 == b1 and p2 == b2:
@@ -44,9 +44,22 @@ def get_score_game(p1,p2,b1,b2):
         # Ponto extra se saldo igual
         if (p1-p2) == (b1-b2) and (abs(p1-b1) == 1):
             score += 1 
-    print(f'Calculando score para aposta {b1}x{b2} e placar {p1}x{p2}: {score}')
+    #print(f'Calculando score para aposta {b1}x{b2} e placar {p1}x{p2}: {score}')
 
     return score
+
+@cache.memoize(3600)
+def get_last_pos(user):
+    user_last = [u for u in mongo.db.bolao20his.find({"nome": user}).sort("Dia",pymongo.DESCENDING)]
+    if user_last:
+        last_day = user_last[0].get("posicao")
+        if len(user_last) >= 7:
+            last_week = user_last[6].get("posicao")
+        else:
+            last_week = user_last[-1].get("posicao")
+        return last_day,last_week
+    else:
+        return 0,0
 
 # Insert in jogo bets and results foreach user
 @cache.memoize(600)
@@ -73,6 +86,9 @@ def get_score_results(users,resultados):
             udict["nome"]=u
             udict["score"]=0
             udict["pc"]=0
+            last_position_day,last_position_week = get_last_pos(u)
+            udict["last_day"] = last_position_day
+            udict["last_week"] = last_position_week
             # sum score*peso foreach result
             for r in resultados:
                 scores_user = r.get(u)
@@ -83,6 +99,10 @@ def get_score_results(users,resultados):
             list_total.append(udict)
         return list_total
 
+@cache.memoize(300)
+def get_aposta(id_jogo):
+    apostas = mongo.db.apostas20
+    return apostas.find_one_or_404({"Jogo": id_jogo})
 
 @bolao.route('/bolao')
 def apostas():
@@ -91,7 +111,6 @@ def apostas():
     resultados = []
     output = []
     list_next_bet = []
-    apostas = mongo.db.apostas20
     now = datetime.now()
     if "username" in session:
         apostador = get_user_name(session["username"])
@@ -102,7 +121,8 @@ def apostas():
     for jogo in ano20_jogos:
         id_jogo = jogo["Jogo"]
         data_jogo = datetime.strptime(jogo["Data"],"%d/%m/%Y %H:%M")
-        aposta = apostas.find_one_or_404({"Jogo": id_jogo})
+        #aposta = apostas.find_one_or_404({"Jogo": id_jogo})
+        aposta = get_aposta(id_jogo)
         # If game is old and score not empty
         if data_jogo < now and jogo['p1'] != "":
             jogo_inc = get_bet_results(allUsers,aposta,jogo)
@@ -115,7 +135,6 @@ def apostas():
                 jogo["bet1"]=str(aposta.get(ap1))
                 jogo["bet2"]=str(aposta.get(ap2))
             else:
-
                 list_next_bet.append(jogo['Jogo'])
             output.append(jogo)
     
@@ -125,10 +144,22 @@ def apostas():
 
     list_total=get_score_results(allUsers,resultados)
 
-    #print(list_total)
-    #sorted_total = sorted(total.items(), key=itemgetter(1),reverse=True)
+    ordered_total = sorted(sorted(list_total, key=lambda k: k['pc'],reverse=True), key=lambda k: k['score'],reverse=True)
+    last_score = 0
+    last_pc = 0
+    last_pos = 1
+    for i in range(len(ordered_total)):
+        if ordered_total[i]["score"] == last_score and ordered_total[i]["pc"] == last_pc:
+            ordered_total[i]["posicao"] = last_pos
+        else:
+            ordered_total[i]["posicao"] = i+1
+            last_score = ordered_total[i]["score"]
+            last_pc = ordered_total[i]["pc"]
+            last_pos = i+1
 
-    return render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=list_total,users=allUsers)
+    print(ordered_total)
+
+    return render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers)
     
 
 @bolao.route('/editaposta',methods=["GET","POST"])

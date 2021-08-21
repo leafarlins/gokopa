@@ -14,11 +14,11 @@ flask time defHist copa 11 Escócia Lituânia França Alemanha Venezuela
 flask time defHist copa 12 Finlândia França Argentina Bulgária Italia
 flask time defHist copa 13 Brasil 'Rep Tcheca' Suécia Espanha México
 flask time defHist copa 14 Argentina França Finlândia Uruguai Portugal,Espanha
-flask time defHist copa 15
-flask time defHist copa 16
-flask time defHist copa 17
-flask time defHist copa 18
-flask time defHist copa 19
+flask time defHist copa 15 Inglaterra Portugal Brasil Bélgica Brasil
+flask time defHist copa 16 Italia França Japão Brasil Japão
+flask time defHist copa 17 Alemanha Argentina Espanha Sérvia Rússia
+flask time defHist copa 18 Alemanha Finlândia Escócia Argentina Alemanha
+flask time defHist copa 19 Croácia Japão Alemanha Finlândia 'Panamá,Honduras,Costa Rica,Guatemala'
 
 - run to load historic taca and others results
 flask time defHist taca 10 'Rep Tcheca' Italia Inglaterra Alemanha -

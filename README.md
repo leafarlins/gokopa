@@ -29,6 +29,7 @@ Load the dataset for past games (Gokopas 1 to 19) and load last ranking
 flask jogos loadCsv dataset/jogos_ano1a18.csv
 flask jogos loadCsv dataset/jogos_ano19.csv
 flask jogos loadCsv dataset/jogos_ano20_pt1v2_prod.csv
+flask jogos loadCsv dataset/jogos_ano20_pt2_prod.csv
 flask jogos loadCsv dataset/rank_19-3.csv
 ```
 
@@ -49,6 +50,8 @@ Create users for the app. For each user:
 flask user addUser <username> <name>
 ```
 
+## Update app games
+
 Set final score for each game
 
 ```
@@ -60,9 +63,19 @@ flask jogos editJogo 20 3 placar 1 2
 flask jogos editJogo 20 3 tr 1 1
 ```
 
+Set classified (replace team in each description). Examples:
+
+```
+flask time editTime Islândia p3A-EUR
+flask time editTime Áustria p2B-EUR
+```
+
+Run command to create score history of the day
+
+```
+flask bolaoc setHistory
+```
 
 ## Deploy in production
 
-`git remote add stage git@heroku.com:YOUR_APP_NAME.git`
-
-Deploy in heroku: `git push stage master` or `git push pro master`
+Automated by github/heroku.

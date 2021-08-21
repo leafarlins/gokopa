@@ -53,13 +53,13 @@ def reset_password(username):
 
 @userCommands.cli.command("dropUser")
 @click.argument("username")
-def delete_user(name):
+def delete_user(username):
     userCollection = mongo.db.users
-    userExists = userCollection.find_one({"username": name})
+    userExists = userCollection.find_one({"username": username})
     if userExists:
-        question = input(f'Deseja deletar o usuário {name}? (S/N) ')
+        question = input(f'Deseja deletar o usuário {username}? (S/N) ')
         if question.upper() == "S":
-            userCollection.delete_one({"username": name})
+            userCollection.delete_one({"username": username})
             print("Usuário deletado com sucesso!")
         else:
             exit()

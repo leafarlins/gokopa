@@ -19,7 +19,7 @@ RANKING = "19-3"
 
 def get_classificados():
     lista = [u for u in mongo.db.pot.find({'Ano': ANO})]
-    print("lista",lista)
+    #print("lista",lista)
     class_eur = []
     class_afr = []
     class_aso = []
@@ -47,13 +47,13 @@ def get_classificados():
     lista_final.append(class_afr)
     lista_final.append(class_aso)
     lista_final.append(class_ame)
-    print(lista_final)
+    #print(lista_final)
     return lista_final
 
 
 # Rota / associada a função index
 @gokopa.route('/')
-@cache.cached(timeout=120)
+@cache.cached(timeout=300)
 def index():
     past_jogos = [u for u in mongo.db.jogos.find({'Ano': 19}).sort([('Jogo',pymongo.DESCENDING)])]
     ano20_jogos = mongo.db.jogos.find({'Ano': ANO}).sort([("Jogo",pymongo.ASCENDING)])
@@ -79,11 +79,25 @@ def get_jogos_tab(ano,r1):
 def get_team_table(descx,desc,timex):
     return mongo.db.jogos.find_one({"Ano": 20, descx: desc}).get(timex)
 
+@cache.memoize(300)
+def get_ano20_games():
+    ano20_games = [u for u in mongo.db.jogos.find({'Ano': 20, "Jogo": {'$gt': 20 }}).sort("Jogo",pymongo.ASCENDING)]
+    now = datetime.now()
+
+    # Zera placares caso seja futuro
+    for j in ano20_games:
+        data_jogo = datetime.strptime(j.get("Data"),"%d/%m/%Y %H:%M")
+        if data_jogo > now:
+            j['p1'] = ""
+            j['p2'] = ""
+    
+    return ano20_games
+
 @gokopa.route('/tabela')
-@cache.cached(timeout=120)
+@cache.cached(timeout=180)
 def tabela():
-    ano20_jogos = [u for u in mongo.db.jogos.find({'Ano': 20, "Jogo": {'$gt': 20 }}).sort("Jogo",pymongo.ASCENDING)]
-    tabelas_label = ['A-EUR','B-EUR','C-EUR','D-EUR','E-EUR','F-EUR','G-EUR','H-EUR','A-AFR','B-AFR','C-AFR','D-AFR','A-ASO','B-ASO','C-ASO','D-ASO','A-AME','B-AME','C-AME','D-AME']
+    ano20_jogos = get_ano20_games()
+    tabelas_label = ['A-EUR','B-EUR','C-EUR','D-EUR','E-EUR','F-EUR','G-EUR','H-EUR','A-AFR','B-AFR','C-AFR','D-AFR','A-ASO','B-ASO','C-ASO','D-ASO','A-AME','B-AME','C-AME','D-AME','A','B','C','D','E','F','G','H']
     tabelas = []
     now = datetime.now()
     # id of each game based on groups
@@ -96,10 +110,18 @@ def tabela():
             
         # add ids [i,20+i,40+i]
         jogos_id.append(array_ids)
-    #print(jogos_id)
-    #print(ano20_jogos)
+    # Add games id for copa
+    jogos_id.append([100,101,116,118,132,133])
+    jogos_id.append([102,103,117,119,134,135])
+    jogos_id.append([104,106,120,121,136,137])
+    jogos_id.append([105,107,122,124,138,139])
+    jogos_id.append([108,110,123,125,142,143])
+    jogos_id.append([109,111,127,128,140,141])
+    jogos_id.append([112,113,126,129,146,147])
+    jogos_id.append([114,115,130,131,144,145])
 
-    for i in range(20):
+    # Tabelas para campeonatos regionais
+    for i in range(28):
         desc1 = "p" + str(1) + tabelas_label[i]
         desc2 = "p" + str(2) + tabelas_label[i]
         desc3 = "p" + str(3) + tabelas_label[i]
@@ -108,7 +130,13 @@ def tabela():
         time3 = get_team_table('desc2',desc3,'Time2')
         times = [time1,time2,time3]
         descs = [desc1,desc2,desc3]
-        for j in range(3):
+        # If i>20, tables for copa
+        if i >= 20:
+            desc4 = "p" + str(4) + tabelas_label[i]
+            time4 = get_team_table('desc2',desc4,'Time2')
+            descs.append(desc4)
+            times.append(time4)
+        for j in range(len(times)):
             linha = dict()
             if times[j]:
                 linha['nome'] = times[j]
@@ -122,10 +150,11 @@ def tabela():
                     if data_jogo < now:
                         if p1 != None:
                             p2 = ano20_jogos[jid].get('p2')
-                            print("Calculando para jogo ",ano20_jogos[jid])
+                            #print("Calculando para jogo ",ano20_jogos[jid])
                             if p1 == p2:
-                                linha['P'] += 1
-                                linha['G'] = p1
+                                if linha['nome'] == ano20_jogos[jid].get('Time1') or linha['nome'] == ano20_jogos[jid].get('Time2'):
+                                    linha['P'] += 1
+                                    linha['G'] = p1
                             elif p1 > p2: # Time1 ganha
                                 if linha['nome'] == ano20_jogos[jid].get('Time1'):
                                     linha['P'] += 3
@@ -142,11 +171,6 @@ def tabela():
                                 elif linha['nome'] == ano20_jogos[jid].get('Time1'):
                                     linha['S'] -= p2 - p1
                                     linha['G'] += p1
-                    else:
-                        if ano20_jogos[jid].get('p1'):
-                            # Zera placares por ser placar futuro
-                            ano20_jogos[jid]['p1'] = ""
-                            ano20_jogos[jid]['p2'] = ""
             else:
                 linha['nome'] = descs[j]
                 #tab.update({'nome': desc})
@@ -179,7 +203,7 @@ def get_historic_copa(comp):
         time['total'] = time['ouro'] + time['prata'] + time['bronze']
         medal_count.append(time)
 
-    print(medal_count)
+    #print(medal_count)
     return historia,medal_count
 
 @gokopa.route('/ranking')

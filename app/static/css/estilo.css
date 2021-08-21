@@ -125,10 +125,6 @@ h3 {
     color: white;
 }
 
-.meubolao tr td:nth-child(2) {
-  font-size: small;
-}
-
 .canto {
   text-align: right;
   font-size: small;
@@ -188,6 +184,17 @@ h3 {
   white-space: nowrap;
 }
 
+.meubolao tr:nth-child(even) td {
+  font-size: small;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.meubolao td {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
 .jogos tr td:nth-child(1) {
   font-size: small;
 }
@@ -235,6 +242,7 @@ h3 {
 
 .smallt {
   font-size: small;
+  white-space: nowrap;
 }
 
 

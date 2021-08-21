@@ -6,6 +6,7 @@ from .extentions import database
 from .commands.userCommands import userCommands
 from .commands.jogosCommands import jogosCommands
 from .commands.timeCommands import timeCommands
+from .commands.bolaoCommands import bolaoCommands
 from .cache import cache
 
 def create_app(config_object="app.settings"):
@@ -17,6 +18,7 @@ def create_app(config_object="app.settings"):
     app.register_blueprint(userCommands)
     app.register_blueprint(jogosCommands)
     app.register_blueprint(timeCommands)
+    app.register_blueprint(bolaoCommands)
     
     cache.init_app(app)
     database.init_app(app)
