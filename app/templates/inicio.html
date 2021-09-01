@@ -83,6 +83,47 @@
 
 
 <div class="sectionj col-12 col-sd-12 col-md-6 col-lg-4 col-xl-4">
+
+  <h2>Resultado do Bolão</h2>
+  {% if total %}
+  <table class="tab_gokopa">
+    <tr>
+      <th title="Posição">#</th>
+      <th style="min-width: 100px;">Nome</th>
+      <th style="min-width: 50px;">Score</th>
+      <th title="Placar Cheio" style="min-width: 50px;">P.C.</th>
+      <th title="Último dia" style="min-width: 50px;">1d</th>
+      <th title="Última semana" style="min-width: 50px;">1w</th>
+    </tr>
+    {% for p in total %}
+    <tr>
+      <td>{{ p['posicao'] }}</td>
+      <td>{{ p['nome'] }}</td>
+      <td>{{ p['score'] }}</td>
+      <td>{{ p['pc'] }}</td>
+      <td>{% if p['last_day'] > 0 %}
+            {% if p['last_day'] > p['posicao'] %}<img class="flag updown" src="static/img/up.png">
+            {% elif p['posicao'] == p['last_day'] %}<img class="flag updown" src="static/img/steady.png">
+            {% else %}<img class="flag updown" src="static/img/down.png">
+            {% endif %}{{ p['last_day'] - p['posicao'] }}
+          {% else %}-
+          {% endif %}
+      </td>
+      <td>{% if p['last_week'] > 0 %}
+            {% if p['last_week'] > p['posicao'] %}<img class="flag updown" src="static/img/up.png">
+            {% elif p['posicao'] == p['last_week'] %}<img class="flag updown" src="static/img/steady.png">
+            {% else %}<img class="flag updown" src="static/img/down.png">
+            {% endif %}{{ p['last_week'] - p['posicao'] }}
+          {% else %}-
+          {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}<p class="center">Não há resultados para mostrar.</p>
+  {% endif %}
+  <p>&nbsp;</p><br>
+
   <h2>Classificados</h2>
   <p>Lista dos já classificados para a Gokopa20. Os melhores de cada campeonato regional, e os dois donos da casa, se classificam.</p>
   

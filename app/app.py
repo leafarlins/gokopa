@@ -22,5 +22,5 @@ def create_app(config_object="app.settings"):
     
     cache.init_app(app)
     database.init_app(app)
-
+    
     return app

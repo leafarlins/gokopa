@@ -68,7 +68,8 @@ def index():
             else:
                 next_jogos.append(n)
 
-    return render_template("inicio.html",menu="Home",past_jogos=past_jogos[:20],next_jogos=next_jogos[:20],classificados=classificados)
+    lista_bolao = cache.get('lista_bolao')
+    return render_template("inicio.html",menu="Home",past_jogos=past_jogos[:20],next_jogos=next_jogos[:20],classificados=classificados,total=lista_bolao)
 
 
 @cache.memoize(300)

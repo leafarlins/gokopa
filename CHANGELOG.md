@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. Based on [K
 
 ## [Unreleased]
 
+### Fixed
+- Tables page layout
+
 ## [1.0.0] - 2021-08-21
 
 ### Added
@@ -31,7 +34,7 @@ All notable changes to this project will be documented in this file. Based on [K
 - Minimal ranking page
 - Table from games from first season year 20
 
-[unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.2.0...v1.0.0
-[0.2.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/olivierlacan/keep-a-changelog/releases/tag/v0.1.0
+[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/leafarlins/gokopa/compare/v0.2.0...v1.0.0
+[0.2.0]: https://github.com/leafarlins/gokopa/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/leafarlins/gokopa/releases/tag/v0.1.0

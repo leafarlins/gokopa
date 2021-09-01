@@ -157,7 +157,8 @@ def apostas():
             last_pc = ordered_total[i]["pc"]
             last_pos = i+1
 
-    print(ordered_total)
+    #print(ordered_total)
+    cache.set('lista_bolao',ordered_total)
 
     return render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers)
     
