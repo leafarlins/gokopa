@@ -1,15 +1,12 @@
-import sys
-from bson.objectid import ObjectId
 import click
-import getpass
-
-from flask_pymongo import BSONObjectIdConverter
 import pymongo
 from ..extentions.database import mongo
 from flask import Blueprint
+from ..routes.bolao import get_users
 
 
 SEPARADOR_CSV=","
+ANO=20
 
 jogosCommands = Blueprint('jogos',__name__)
 
@@ -59,6 +56,15 @@ def get_jogos(ano,jogo):
     busca = [u for u in jogosCollection.find({"Ano": int(ano),"Jogo": int(jogo)})]
     if busca:
         print("Jogo encontrado: ",busca)
+    else:
+        print("Nada encontrado.")
+
+@jogosCommands.cli.command("getAposta")
+@click.argument("jogo")
+def get_aposta(jogo):
+    apostas = mongo.db.apostas20.find_one({'Jogo': int(jogo)})
+    if apostas:
+        print(apostas)
     else:
         print("Nada encontrado.")
 
@@ -136,3 +142,52 @@ def delete_ano(ano):
         mongo.db.jogos.find_one_and_delete({'Ano': int(ano),'Jogo':jogo})
     print("Finalizado.")
 
+
+@jogosCommands.cli.command("report")
+@click.argument("jogos")
+@click.argument("proximos")
+def report(jogos,proximos):
+    jogosdb = mongo.db.jogos
+    emojis = mongo.db.emoji
+    apostas = mongo.db.apostas20
+    jogos_list = jogos.split(',')
+    next_list = proximos.split(',')
+    jogos_list[0] = int(jogos_list[0]) - 1
+    jogos_list[1] = int(jogos_list[1]) + 1
+    #next_list[0] = int(next_list[0]) - 1
+    #next_list[1] = int(next_list[1]) + 1
+    recentes = [u for u in jogosdb.find({'Ano': 20, "Jogo": {'$gt': jogos_list[0], '$lt': jogos_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
+    next_games = [u for u in jogosdb.find({'Ano': 20, "Jogo": {'$gt': next_list[0], '$lt': next_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
+    print("⚽ Gokopa 20 - Jogos recentes")
+    for j in recentes:
+        print(j['Competição'],"-",j['Fase'])
+        placar = str(j['p1']) + "x" + str(j['p2'])
+        e1 = emojis.find_one({'País': j['Time1']})
+        e2 = emojis.find_one({'País': j['Time2']})
+        if j['tr1']:
+            tr = "(tr " + str(j['tr1']) + "x" + str(j['tr2'])
+            if j['pe1']:
+                tr = tr + " pe " + str(j['pe1']) + "x" + str(j['pe2']) + ")"
+            else:
+                tr = tr + ")"
+        else:
+            tr = ""
+        print(j['Time1'],e1['flag'],placar,e2['flag'],j['Time2'],tr)
+
+
+    print("\n❗ Lista de apostadores pendentes com os próximos jogos ❗")
+    allUsers = get_users()
+    #print(allUsers)
+    for j in range(int(next_list[0]),int(next_list[1])+1):
+        missing_users = set()
+        bets = apostas.find_one({'Jogo': j})
+        for user in allUsers:
+            betu = user + '_p1'
+            if not bets.get(betu):
+                missing_users.add(user)
+        #print(bets)
+    lista_users = ', '.join(missing_users)
+    print(lista_users)
+
+        
+    print("\n➡️ Visite e acompanhe: http://gokopa.herokuapp.com")

@@ -158,7 +158,9 @@ def apostas():
             last_pos = i+1
 
     #print(ordered_total)
-    cache.set('lista_bolao',ordered_total)
+    lista_date = datetime.strftime(now,"%d/%m %H:%M")
+    cache.set('lista_bolao',ordered_total, timeout=0)
+    cache.set('lista_date',lista_date,timeout=0)
 
     return render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers)
     

@@ -3,6 +3,99 @@
 
 <div class="row scoll-pane">
 
+
+<div class="sectionj col-11 col-sd-11 col-md-5 col-lg-3 col-xl-3 ml-3">
+
+    <h2>Resultado do Bolão</h2>
+    {% if total %}
+    <table class="tab_gokopa">
+      <tr>
+        <th title="Posição">#</th>
+        <th style="min-width: 100px;">Nome</th>
+        <th style="min-width: 50px;">Score</th>
+        <th title="Placar Cheio" style="min-width: 50px;">P.C.</th>
+        <th title="Último dia" style="min-width: 50px;">1d</th>
+        <th title="Última semana" style="min-width: 50px;">1w</th>
+      </tr>
+      {% for p in total %}
+      <tr>
+        <td>{{ p['posicao'] }}</td>
+        <td>{{ p['nome'] }}</td>
+        <td>{{ p['score'] }}</td>
+        <td>{{ p['pc'] }}</td>
+        <td>{% if p['last_day'] > 0 %}
+              {% if p['last_day'] > p['posicao'] %}<img class="flag updown" src="static/img/up.png">
+              {% elif p['posicao'] == p['last_day'] %}<img class="flag updown" src="static/img/steady.png">
+              {% else %}<img class="flag updown" src="static/img/down.png">
+              {% endif %}{{ p['last_day'] - p['posicao'] }}
+            {% else %}-
+            {% endif %}
+        </td>
+        <td>{% if p['last_week'] > 0 %}
+              {% if p['last_week'] > p['posicao'] %}<img class="flag updown" src="static/img/up.png">
+              {% elif p['posicao'] == p['last_week'] %}<img class="flag updown" src="static/img/steady.png">
+              {% else %}<img class="flag updown" src="static/img/down.png">
+              {% endif %}{{ p['last_week'] - p['posicao'] }}
+            {% else %}-
+            {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}<p class="center">Não há resultados para mostrar.</p>
+    {% endif %}
+    <p class="smallt">Atualizado em: {{ lista_date}}</p><br>
+  
+    <h2>Classificados</h2>
+    <p>Lista dos já classificados para a Gokopa20. Os melhores de cada campeonato regional, e os dois donos da casa, se classificam.</p>
+    
+    <div class="row">
+      <div class="col-12"><h5>Europa</h5></div>
+        {% for time in classificados[0] %}
+          {% if time['nome'] == x %}
+          <div class="col-6 time-destaque"><img class="flag" src='static/img/flag/default.png'></div>
+          {% else %}
+          <div class="col-6 time-destaque"><img class="flag" src="static/img/flag/{{ time['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ time['nome'] }}</div>
+          {% endif %}
+        {% endfor %}
+    </div>
+  
+    <div class="row">
+      <div class="col-12"><h5>África</h5></div>
+      {% for time in classificados[1] %}
+        {% if time['nome'] == x %}
+        <div class="col-6 time-destaque"><img class="flag" src='static/img/flag/default.png'></div>
+        {% else %}
+        <div class="col-6 time-destaque"><img class="flag" src="static/img/flag/{{ time['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ time['nome'] }}</div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  
+    <div class="row">
+      <div class="col-12"><h5>Ásia-Oceania</h5></div>
+      {% for time in classificados[2] %}
+        {% if time['nome'] == x %}
+        <div class="col-6 time-destaque"><img class="flag" src='static/img/flag/default.png'></div>
+        {% else %}
+        <div class="col-6 time-destaque"><img class="flag" src="static/img/flag/{{ time['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ time['nome'] }}</div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  
+    <div class="row">
+      <div class="col-12"><h5>América</h5></div>
+      {% for time in classificados[3] %}
+        {% if time['nome'] == x %}
+        <div class="col-6 time-destaque"><img class="flag" src='static/img/flag/default.png'></div>
+        {% else %}
+        <div class="col-6 time-destaque"><img class="flag" src="static/img/flag/{{ time['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ time['nome'] }}</div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <p>&nbsp;</p>
+  
+</div>
+
 <div class="sectionj col-12 col-sd-12 col-md-6 col-lg-6 col-xl-4">
   <h2>Últimos Jogos</h2>
 
@@ -38,24 +131,6 @@
 <div class="sectionj col-12 col-sd-12 col-md-6 col-lg-6 col-xl-4">
   <h2>Próximos Jogos  </h2>
   {% if next_jogos %}
-  <!-- <table class="jogos tab_gokopa">
-    <tr>
-      <th width=10%>Data</th>
-      <th width=32%></th>
-      <th width=4%></th>
-      <th width=32%></th>
-      <th width=22%>Fase</th>
-    </tr>
-    {% for jogo in next_jogos %}
-      <tr>
-        <td>{{ jogo['Data'] }}</td>
-        <td>{{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'"></td>
-        <td>x</td>
-        <td><img class="flag" src="static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ jogo['Time2'] }}</td>
-        <td>{{ jogo['Competição'] }} {{ jogo['Fase'] }}</td>
-      </tr>
-    {% endfor %}
-  </table> -->
   <table class="tab_gokopa tab_jogos">
 
     {% for jogo in next_jogos %}
@@ -82,95 +157,4 @@
 </div>
 
 
-<div class="sectionj col-12 col-sd-12 col-md-6 col-lg-4 col-xl-4">
-
-  <h2>Resultado do Bolão</h2>
-  {% if total %}
-  <table class="tab_gokopa">
-    <tr>
-      <th title="Posição">#</th>
-      <th style="min-width: 100px;">Nome</th>
-      <th style="min-width: 50px;">Score</th>
-      <th title="Placar Cheio" style="min-width: 50px;">P.C.</th>
-      <th title="Último dia" style="min-width: 50px;">1d</th>
-      <th title="Última semana" style="min-width: 50px;">1w</th>
-    </tr>
-    {% for p in total %}
-    <tr>
-      <td>{{ p['posicao'] }}</td>
-      <td>{{ p['nome'] }}</td>
-      <td>{{ p['score'] }}</td>
-      <td>{{ p['pc'] }}</td>
-      <td>{% if p['last_day'] > 0 %}
-            {% if p['last_day'] > p['posicao'] %}<img class="flag updown" src="static/img/up.png">
-            {% elif p['posicao'] == p['last_day'] %}<img class="flag updown" src="static/img/steady.png">
-            {% else %}<img class="flag updown" src="static/img/down.png">
-            {% endif %}{{ p['last_day'] - p['posicao'] }}
-          {% else %}-
-          {% endif %}
-      </td>
-      <td>{% if p['last_week'] > 0 %}
-            {% if p['last_week'] > p['posicao'] %}<img class="flag updown" src="static/img/up.png">
-            {% elif p['posicao'] == p['last_week'] %}<img class="flag updown" src="static/img/steady.png">
-            {% else %}<img class="flag updown" src="static/img/down.png">
-            {% endif %}{{ p['last_week'] - p['posicao'] }}
-          {% else %}-
-          {% endif %}
-      </td>
-    </tr>
-    {% endfor %}
-  </table>
-  {% else %}<p class="center">Não há resultados para mostrar.</p>
-  {% endif %}
-  <p>&nbsp;</p><br>
-
-  <h2>Classificados</h2>
-  <p>Lista dos já classificados para a Gokopa20. Os melhores de cada campeonato regional, e os dois donos da casa, se classificam.</p>
-  
-  <div class="row">
-    <div class="col-12"><h5>Europa</h5></div>
-      {% for time in classificados[0] %}
-        {% if time['nome'] == x %}
-        <div class="col-6 time-destaque"><img class="flag" src='static/img/flag/default.png'></div>
-        {% else %}
-        <div class="col-6 time-destaque"><img class="flag" src="static/img/flag/{{ time['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ time['nome'] }}</div>
-        {% endif %}
-      {% endfor %}
-  </div>
-
-  <div class="row">
-    <div class="col-12"><h5>África</h5></div>
-    {% for time in classificados[1] %}
-      {% if time['nome'] == x %}
-      <div class="col-6 time-destaque"><img class="flag" src='static/img/flag/default.png'></div>
-      {% else %}
-      <div class="col-6 time-destaque"><img class="flag" src="static/img/flag/{{ time['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ time['nome'] }}</div>
-      {% endif %}
-    {% endfor %}
-  </div>
-
-  <div class="row">
-    <div class="col-12"><h5>Ásia-Oceania</h5></div>
-    {% for time in classificados[2] %}
-      {% if time['nome'] == x %}
-      <div class="col-6 time-destaque"><img class="flag" src='static/img/flag/default.png'></div>
-      {% else %}
-      <div class="col-6 time-destaque"><img class="flag" src="static/img/flag/{{ time['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ time['nome'] }}</div>
-      {% endif %}
-    {% endfor %}
-  </div>
-
-  <div class="row">
-    <div class="col-12"><h5>América</h5></div>
-    {% for time in classificados[3] %}
-      {% if time['nome'] == x %}
-      <div class="col-6 time-destaque"><img class="flag" src='static/img/flag/default.png'></div>
-      {% else %}
-      <div class="col-6 time-destaque"><img class="flag" src="static/img/flag/{{ time['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ time['nome'] }}</div>
-      {% endif %}
-    {% endfor %}
-  </div>
-  <p>&nbsp;</p>
-
-</div>
 {% endblock %}

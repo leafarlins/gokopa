@@ -69,7 +69,8 @@ def index():
                 next_jogos.append(n)
 
     lista_bolao = cache.get('lista_bolao')
-    return render_template("inicio.html",menu="Home",past_jogos=past_jogos[:20],next_jogos=next_jogos[:20],classificados=classificados,total=lista_bolao)
+    lista_date = cache.get('lista_date')
+    return render_template("inicio.html",menu="Home",past_jogos=past_jogos[:20],next_jogos=next_jogos[:20],classificados=classificados,total=lista_bolao,lista_date=lista_date)
 
 
 @cache.memoize(300)
@@ -179,7 +180,7 @@ def tabela():
 
     return render_template('tabela20reg.html',menu="Tabela",tabelas=tabelas,labels=tabelas_label,lista_jogos=ano20_jogos,jogos_id=jogos_id)
 
-@cache.memoize(30)
+@cache.memoize(3600*24*7)
 def get_historic_copa(comp):
     historia = [u for u in mongo.db.historico.find({"comp": comp}).sort('Ano',pymongo.DESCENDING)]
     times = set()

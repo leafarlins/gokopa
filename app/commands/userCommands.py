@@ -47,7 +47,9 @@ def reset_password(username):
     userExists = userCollection.find_one({"username": username})
     if userExists:
         userCollection.find_one_and_update({'username': username},{'$set': {"active": False, "password": generate_password_hash(password)}})
-        print("Usuário modificado.")
+        print("Usuário teve senha resetada. Acesse pelo link: https://gokopa.herokuapp.com/")
+        print(f'Usuário: {username}')
+        print(f'Senha temporária: {password}')
     else:
         print("Usuário não encontrado.")
 
@@ -66,4 +68,3 @@ def delete_user(username):
     else:
         print("Usuário não encontrado.")
 
-        
