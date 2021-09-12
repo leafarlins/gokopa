@@ -159,8 +159,9 @@ def apostas():
 
     #print(ordered_total)
     lista_date = datetime.strftime(now,"%d/%m %H:%M")
-    cache.set('lista_bolao',ordered_total, timeout=0)
-    cache.set('lista_date',lista_date,timeout=0)
+    cache_timeout = 3600*24*7
+    cache.set('lista_bolao',ordered_total, timeout=cache_timeout)
+    cache.set('lista_date',lista_date,timeout=cache_timeout)
 
     return render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers)
     
