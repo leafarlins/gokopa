@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file. Based on [K
 
 ## [Unreleased]
 
+## [1.0.2] - 2021-09-14
+
+### Fixed
+- Bet in last game [2](https://github.com/leafarlins/gokopa/issues/2)
+- Games report [3](https://github.com/leafarlins/gokopa/issues/3)
 
 ## [1.0.1] - 2021-09-09
 
@@ -41,7 +46,8 @@ All notable changes to this project will be documented in this file. Based on [K
 - Minimal ranking page
 - Table from games from first season year 20
 
-[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.0.1...HEAD
+[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/leafarlins/gokopa/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/leafarlins/gokopa/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/leafarlins/gokopa/compare/v0.2.0...v1.0.0
 [0.2.0]: https://github.com/leafarlins/gokopa/compare/v0.1.0...v0.2.0

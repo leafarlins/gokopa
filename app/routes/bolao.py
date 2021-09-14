@@ -160,8 +160,8 @@ def apostas():
     #print(ordered_total)
     lista_date = datetime.strftime(now,"%d/%m %H:%M")
     cache_timeout = 3600*24*7
-    cache.set('lista_bolao',ordered_total, timeout=cache_timeout)
-    cache.set('lista_date',lista_date,timeout=cache_timeout)
+    cache.set('lista_bolao',ordered_total,cache_timeout)
+    cache.set('lista_date',lista_date,cache_timeout)
 
     return render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers)
     
@@ -197,12 +197,12 @@ def edit_aposta():
             return render_template('edit_aposta.html',menu='Bolao',jogo=jogo,a1=a1,a2=a2,idjogo=idjogo,r1=r1,r2=r2)
         else:
             list_next_bet = cache.get(apostador)
+            next_bet = 0
             if list_next_bet and len(list_next_bet)>0:
                 if idjogo in list_next_bet:
                     list_next_bet.remove(idjogo)
-                next_bet = list_next_bet.pop(0)
-            else:
-                next_bet = 0
+                if len(list_next_bet)>0:
+                    next_bet = list_next_bet.pop(0)
             #print("Next bet",next_bet)
             #print("Next bets",list_next_bet)
             cache.set(apostador,list_next_bet)

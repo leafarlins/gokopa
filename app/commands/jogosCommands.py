@@ -1,8 +1,10 @@
+from app.commands.bolaoCommands import get_ordered
 import click
 import pymongo
 from ..extentions.database import mongo
 from flask import Blueprint
 from ..routes.bolao import get_users
+from ..cache import cache
 
 
 SEPARADOR_CSV=","
@@ -175,7 +177,6 @@ def report(jogos,proximos):
         print(j['Time1'],e1['flag'],placar,e2['flag'],j['Time2'],tr)
 
 
-    print("\n❗ Lista de apostadores pendentes com os próximos jogos ❗")
     allUsers = get_users()
     #print(allUsers)
     for j in range(int(next_list[0]),int(next_list[1])+1):
@@ -183,11 +184,23 @@ def report(jogos,proximos):
         bets = apostas.find_one({'Jogo': j})
         for user in allUsers:
             betu = user + '_p1'
-            if not bets.get(betu):
+            if (not bets.get(betu)) and bets.get(betu) != 0:
                 missing_users.add(user)
         #print(bets)
+    #print(missing_users)
     lista_users = ', '.join(missing_users)
+    #if len(missing_users) > 0:
+    print("\n❗ Lista de apostadores pendentes com os próximos jogos ❗")
     print(lista_users)
 
+    ordered_total = get_ordered()
+    range_print = 5
+    if len(ordered_total) < 5:
+        range_print = len(ordered_total)
+    print("\n🔝 Bolão Hoje ")
+    string_placar = ""
+    for i in range(range_print):
+        string_placar += " ▪️ " + str(ordered_total[i]['score']) + " - " + str(ordered_total[i]['nome'])
+    print(string_placar)
         
     print("\n➡️ Visite e acompanhe: http://gokopa.herokuapp.com")
