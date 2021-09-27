@@ -1,9 +1,9 @@
-from app.commands.bolaoCommands import get_ordered
+from app.commands.configCommands import get_ordered
 import click
 import pymongo
 from ..extentions.database import mongo
 from flask import Blueprint
-from ..routes.bolao import get_users
+from ..routes.bolao import get_users, make_score_board
 from ..cache import cache
 
 
@@ -159,7 +159,7 @@ def report(jogos,proximos):
     #next_list[0] = int(next_list[0]) - 1
     #next_list[1] = int(next_list[1]) + 1
     recentes = [u for u in jogosdb.find({'Ano': 20, "Jogo": {'$gt': jogos_list[0], '$lt': jogos_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
-    next_games = [u for u in jogosdb.find({'Ano': 20, "Jogo": {'$gt': next_list[0], '$lt': next_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
+    #next_games = [u for u in jogosdb.find({'Ano': 20, "Jogo": {'$gt': next_list[0], '$lt': next_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
     print("⚽ Gokopa 20 - Jogos recentes")
     for j in recentes:
         print(j['Competição'],"-",j['Fase'])
@@ -179,8 +179,8 @@ def report(jogos,proximos):
 
     allUsers = get_users()
     #print(allUsers)
+    missing_users = set()
     for j in range(int(next_list[0]),int(next_list[1])+1):
-        missing_users = set()
         bets = apostas.find_one({'Jogo': j})
         for user in allUsers:
             betu = user + '_p1'
@@ -193,7 +193,8 @@ def report(jogos,proximos):
     print("\n❗ Lista de apostadores pendentes com os próximos jogos ❗")
     print(lista_users)
 
-    ordered_total = get_ordered()
+    #ordered_total = get_ordered()
+    ordered_total = make_score_board()
     range_print = 5
     if len(ordered_total) < 5:
         range_print = len(ordered_total)

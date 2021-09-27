@@ -18,10 +18,15 @@ def get_users():
     allUsers = [u.get("name") for u in mongo.db.users.find()]
     return allUsers
 
+@cache.memoize(3600*2)
+def read_config_ranking():
+    dbitem = mongo.db.settings.find_one({"config": "ranking"})
+    return dbitem.get('edition')
+
 @cache.memoize(3600*24)
 def get_rank(time):
-    edicao_ranking = "19-3"
-    ranking = mongo.db.ranking.find_one({"ed": edicao_ranking,"time": time})
+    rank_ed = read_config_ranking()
+    ranking = mongo.db.ranking.find_one({"ed": rank_ed,"time": time})
     if ranking:
         return ranking['pos']
     else:
@@ -104,20 +109,57 @@ def get_aposta(id_jogo):
     apostas = mongo.db.apostas20
     return apostas.find_one_or_404({"Jogo": id_jogo})
 
-@bolao.route('/bolao')
-def apostas():
+@cache.memoize(600)
+def make_score_board():
+    now = datetime.now()
     ano20_jogos = get_games()
     allUsers = get_users()
     resultados = []
-    output = []
+        
+    for jogo in ano20_jogos:
+        id_jogo = jogo["Jogo"]
+        data_jogo = datetime.strptime(jogo["Data"],"%d/%m/%Y %H:%M")
+        aposta = get_aposta(id_jogo)
+        # If game is old and score not empty
+        if data_jogo < now and jogo['p1'] != "":
+            jogo_inc = get_bet_results(allUsers,aposta,jogo)
+            resultados.append(jogo_inc)
+    
+    list_total=get_score_results(allUsers,resultados)
+
+    ordered_total = sorted(sorted(list_total, key=lambda k: k['pc'],reverse=True), key=lambda k: k['score'],reverse=True)
+    last_score = 0
+    last_pc = 0
+    last_pos = 1
+    for i in range(len(ordered_total)):
+        if ordered_total[i]["score"] == last_score and ordered_total[i]["pc"] == last_pc:
+            ordered_total[i]["posicao"] = last_pos
+        else:
+            ordered_total[i]["posicao"] = i+1
+            last_score = ordered_total[i]["score"]
+            last_pc = ordered_total[i]["pc"]
+            last_pos = i+1
+
+    return ordered_total
+
+@bolao.route('/bolao')
+def apostas():
     list_next_bet = []
+    output = []
     now = datetime.now()
+    ano20_jogos = get_games()
+    allUsers = get_users()
+    resultados = []
+    
     if "username" in session:
         apostador = get_user_name(session["username"])
         userLogado=True
     else:
         userLogado=False
-        
+    
+    if userLogado:
+        cache.set(apostador,list_next_bet)
+
     for jogo in ano20_jogos:
         id_jogo = jogo["Jogo"]
         data_jogo = datetime.strptime(jogo["Data"],"%d/%m/%Y %H:%M")
@@ -137,31 +179,12 @@ def apostas():
             else:
                 list_next_bet.append(jogo['Jogo'])
             output.append(jogo)
-    
-
-    if userLogado:
-        cache.set(apostador,list_next_bet)
-
-    list_total=get_score_results(allUsers,resultados)
-
-    ordered_total = sorted(sorted(list_total, key=lambda k: k['pc'],reverse=True), key=lambda k: k['score'],reverse=True)
-    last_score = 0
-    last_pc = 0
-    last_pos = 1
-    for i in range(len(ordered_total)):
-        if ordered_total[i]["score"] == last_score and ordered_total[i]["pc"] == last_pc:
-            ordered_total[i]["posicao"] = last_pos
-        else:
-            ordered_total[i]["posicao"] = i+1
-            last_score = ordered_total[i]["score"]
-            last_pc = ordered_total[i]["pc"]
-            last_pos = i+1
 
     #print(ordered_total)
-    lista_date = datetime.strftime(now,"%d/%m %H:%M")
-    cache_timeout = 3600*24*7
-    cache.set('lista_bolao',ordered_total,cache_timeout)
-    cache.set('lista_date',lista_date,cache_timeout)
+    #cache_timeout = 3600*24*7
+    #cache.set('lista_bolao',ordered_total,cache_timeout)
+    #cache.set('lista_date',lista_date,cache_timeout)
+    ordered_total = make_score_board()
 
     return render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers)
     

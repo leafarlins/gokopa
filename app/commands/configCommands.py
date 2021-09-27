@@ -4,11 +4,10 @@ import getpass
 
 import pymongo
 from ..extentions.database import mongo
-from werkzeug.security import generate_password_hash
 from flask import Blueprint
 from ..routes.bolao import get_aposta, get_bet_results, get_games, get_score_results, get_users
 
-bolaoCommands = Blueprint('bolaoc',__name__)
+configCommands = Blueprint('config',__name__)
 
 #@bolaoCommands.cli.command("getOrdered")
 #@click.argument("")
@@ -64,10 +63,20 @@ def get_ordered():
     #mongo.db.bolao20his.insert(ordered_total)
     return ordered_total
 
-@bolaoCommands.cli.command("setHistory")
+@configCommands.cli.command("setHistory")
 #@click.argument("")
 def set_history():
     ordered_total = get_ordered()
     print(ordered_total)
     print("Escrevendo placar de hoje na base")
     mongo.db.bolao20his.insert(ordered_total)
+
+@configCommands.cli.command("setRank")
+@click.argument("edition")
+def set_history(edition):
+    mongoconfig = mongo.db.settings.find_one_and_update({"config": "ranking"},{'$set': {'edition': edition }})
+    if mongoconfig:
+        print("Valor atualizado.")
+    else:
+        print("Config não existe na base, definindo...")
+        mongo.db.settings.insert({"config": "ranking", "edition": edition})

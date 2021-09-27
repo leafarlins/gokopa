@@ -1,4 +1,4 @@
-from app.commands.timeCommands import RANKING
+from app.routes.bolao import make_score_board, read_config_ranking
 from array import array
 from datetime import datetime
 from typing import Collection
@@ -15,8 +15,8 @@ from ..cache import cache
 gokopa = Blueprint('gokopa',__name__)
 
 ANO=20
-RANKING = "19-3"
 
+@cache.memoize(600)
 def get_classificados():
     lista = [u for u in mongo.db.pot.find({'Ano': ANO})]
     #print("lista",lista)
@@ -50,12 +50,12 @@ def get_classificados():
     #print(lista_final)
     return lista_final
 
-
 # Rota / associada a função index
 @gokopa.route('/')
-@cache.cached(timeout=300)
+@cache.cached(timeout=60*60)
 def index():
-    past_jogos = [u for u in mongo.db.jogos.find({'Ano': 19}).sort([('Jogo',pymongo.DESCENDING)])]
+    #past_jogos = [u for u in mongo.db.jogos.find({'Ano': 19}).sort([('Jogo',pymongo.DESCENDING)])]
+    past_jogos=[]
     ano20_jogos = mongo.db.jogos.find({'Ano': ANO}).sort([("Jogo",pymongo.ASCENDING)])
     next_jogos = []
     classificados = get_classificados()
@@ -68,9 +68,8 @@ def index():
             else:
                 next_jogos.append(n)
 
-    lista_bolao = cache.get('lista_bolao')
-    lista_date = cache.get('lista_date')
-    return render_template("inicio.html",menu="Home",past_jogos=past_jogos[:20],next_jogos=next_jogos[:20],classificados=classificados,total=lista_bolao,lista_date=lista_date)
+    lista_bolao = make_score_board()
+    return render_template("inicio.html",menu="Home",past_jogos=past_jogos[:20],next_jogos=next_jogos[:20],classificados=classificados,total=lista_bolao)
 
 
 @cache.memoize(300)
@@ -211,20 +210,27 @@ def get_historic_copa(comp):
 @gokopa.route('/ranking')
 @cache.cached(timeout=3600*24)
 def ranking():
-    ranking = [u for u in mongo.db.ranking.find({"ed": RANKING}).sort('pos',pymongo.ASCENDING)]
+    rank_ed = read_config_ranking()
+    ranking = [u for u in mongo.db.ranking.find({"ed": rank_ed}).sort('pos',pymongo.ASCENDING)]
     copas_list,copas_medal = get_historic_copa("copa")
     taca_list,taca_medal = get_historic_copa("taca")
     bet_list,bet_medals = get_historic_copa("bet")
-    return render_template("ranking.html",menu="Ranking",ranking=ranking,copa_his=copas_list,copa_med=copas_medal,bet_his=bet_list,bet_med=bet_medals,taca_his=taca_list,taca_med=taca_medal)
+    return render_template("ranking.html",menu="Ranking",ranking=ranking,rank_ed=rank_ed,copa_his=copas_list,copa_med=copas_medal,bet_his=bet_list,bet_med=bet_medals,taca_his=taca_list,taca_med=taca_medal)
 
 @cache.memoize(3600*24)
 def get_team_list():
-    ranking = [u['time'] for u in mongo.db.ranking.find({"ed": RANKING}).sort('pos',pymongo.ASCENDING)]
+    rank_ed = read_config_ranking()
+    ranking = [u['time'] for u in mongo.db.ranking.find({"ed": rank_ed}).sort('pos',pymongo.ASCENDING)]
     return ranking
 
 @cache.memoize(3600*24*7)
 def return_historic_duels(team1,team2):
     historico_total = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': team1,'Time2': team2 },{'Time1': team2,'Time2': team1 }],"Ano": {'$lt':20} }).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.DESCENDING)])]
+    historico_a20 = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': team1,'Time2': team2 },{'Time1': team2,'Time2': team1 }],"Ano": 20, "Jogo": {'$lt':81} }).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.ASCENDING)])]
+    for obj in historico_a20:
+        historico_total.insert(0,obj)
+
+    print(historico_total)
     vev = [0,0,0,len(historico_total)]
     for j in historico_total:
         if j['p1'] == j['p2']:
