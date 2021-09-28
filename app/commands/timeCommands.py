@@ -167,6 +167,21 @@ def def_historico(comp,ano,ouro,prata,bronze,quarto,sedes):
     print(f'Inserindo histórico para {comp} ano {ano}: {ouro},{prata},{bronze},{quarto} em {sedes}')
     mongo.db.historico.insert([ano_hist])
 
+@timeCommands.cli.command("defPot")
+@click.argument("time")
+@click.argument("pot")
+def classifica_time(time,pot):
+    timeValid = mongo.db.ranking.find_one({"ed": RANKING,'time': time})
+    if timeValid:
+        print(f'Definindo para time {time} pot {pot}')
+    else:
+        print(f'Time {time} nao valido.')
+        exit()
 
+    itemdb = mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": time},{'$set': {"pot": int(pot),"sorteado": False}})
+    if itemdb:
+        print("Atualizado.")
+    else:
+        print("Item",time,"nao encontrado!")
 
 

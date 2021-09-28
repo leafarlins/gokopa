@@ -1,0 +1,47 @@
+        
+https://stackoverflow.com/questions/62027285/auto-refresh-div-with-dataframe-every-n-seconds
+
+<h2>Sorteio das Chaves da Copa</h2>
+<div class="row scoll-pane">
+  {% for i in range(0,8) %}
+  <div class="sectionj col-12 col-sd-12 col-md-6 col-lg-6 col-xl-3">
+      <table class="tab_gokopa tabelas">
+          <tr>
+              <th>Grupo {{ labels[i] }}</th>
+              <th title="Ranking">R</th>
+          </tr>
+          {% for team in tabelas[i*4:i*4+4] %}
+              <tr>
+                  <td>
+                      <img class="flag" src="static/img/flag/{{ team['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ team['nome'] }}</td>
+                  <td>{{ team['rank'] }}</td>
+              </tr>
+          {% endfor %}
+      </table>
+  </div>
+  {% endfor %}
+</div>
+
+
+<div class="row scoll-pane">
+<div class="sectionj col-12">
+  <table class="tab_gokopa quadro">
+    <tr>
+      <th>Pot1</th><th>Pot2</th><th>Pot3</th><th>Pot4</th>
+    </tr>
+    {% for i in range(4) %}
+    <tr>
+      {% for team in tabela_pot[i] %}
+      <td>
+        {{ team['rank'] }} <img class="flag" src="static/img/flag/{{ team['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ team['nome'] }}
+      </td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+</div>
+
+
+
+

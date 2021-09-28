@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-br">
+    <script language="javascript">
+
+        function toggle() {
+    
+            var ele = document.getElementById("toggleText");
+            var text = document.getElementById("displayText");
+    
+            if (ele.style.display == "block") {
+    
+                ele.style.display = "none";
+                text.innerHTML = "mostrar mais";
+            }
+            else {
+    
+                ele.style.display = "block";
+                text.innerHTML = "esconder";
+            }
+        }
+    </script>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Gokopa do Mundo</title>
+
+        <!--<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">    
+        -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    </head>
+    <body>
+
+        <header class="menu">
+            <nav width="100%">
+              <ul>
+                <li ><a {% if menu=='Home' %}class="active"{% endif %} href="/">Home</a></li>
+                <li ><a {% if menu=='Tabela' %}class="active"{% endif %}href="/tabela">Tabela</a></li>
+                <li ><a {% if menu=='Ranking' %}class="active"{% endif %}href="/ranking">Ranking</a></li>
+                <li ><a {% if menu=='Historico' %}class="active"{% endif %}href="/historico">Histórico</a></li>
+                <li ><a {% if menu=='Bolao' %}class="active"{% endif %}href="/bolao">Bolão</a></li>
+                <li style="float: right">
+                    {% if session['username'] %}<a href="/logout">Logout</a>
+                    {% else %}<a {% if menu=='Login' %}class="active"{% endif %} href="/login">Login</a>
+                {% endif %}</li>
+              </ul>
+            </nav>
+          </header>
+      
+          {% include "loadsorteio.html" %}
+          {% block content %}{% endblock %}
+        
+        <p>&nbsp;</p>
+        <div class="footer">
+            Gokopa do Mundo v1.0.3
+        </div>
+    
+    </body>
+
+
