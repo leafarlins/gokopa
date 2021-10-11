@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="pt-br">
     <script language="javascript">
+        function AutoRefresh( t ) {
+            setTimeout("location.reload(true);", t);
+        }
 
         function toggle() {
     
@@ -31,7 +34,7 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/estilo.css') }}">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     </head>
-    <body>
+    <body onload = "JavaScript:AutoRefresh(8000);">
 
         <header class="menu">
             <nav width="100%">
@@ -54,7 +57,7 @@
         
         <p>&nbsp;</p>
         <div class="footer">
-            Gokopa do Mundo v1.0.3
+            Gokopa do Mundo v1.1.0
         </div>
     
     </body>

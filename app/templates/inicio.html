@@ -2,6 +2,30 @@
 {% block content %}
 
 <div class="row scoll-pane">
+  <div class="sectionj col-12">
+    <h2>Sorteio das Chaves da Copa</h2>
+    <p>Ao vivo em <a href="{{ url_for('gokopa.sorteio_page') }}">/sorteio</a> em 12/10</p>
+    <table class="tab_gokopa quadro">
+      <tr>
+        <th>Pot1</th><th>Pot2</th><th>Pot3</th><th>Pot4</th>
+      </tr>
+      {% for i in range(10) %}
+      <tr>
+        {% for team in tabela_pot[i] %}
+        <td>
+          {% if team['sorteado'] %} <s>{{ team['nome'] }}</s>
+          {% else %}
+          {{ team['rank'] }} <img class="flag" src="static/img/flag/{{ team['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ team['nome'] }}
+          {% endif %}
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  </div>
+
+<div class="row scoll-pane">
 
 
 <div class="sectionj col-11 col-sd-11 col-md-5 col-lg-3 col-xl-3 ml-3">
@@ -45,10 +69,11 @@
     {% else %}<p class="center">Não há resultados para mostrar.</p>
     {% endif %}
     <p class="smallt"></p><br>
+    
+    <!--
   
     <h2>Classificados</h2>
     <p>Lista dos já classificados para a Gokopa20. Os melhores de cada campeonato regional, e os dois donos da casa, se classificam.</p>
-    
     <div class="row">
       <div class="col-12"><h5>Europa</h5></div>
         {% for time in classificados[0] %}
@@ -93,6 +118,7 @@
       {% endfor %}
     </div>
     <p>&nbsp;</p>
+    -->
   
 </div>
 
@@ -156,5 +182,5 @@
   {% endif %}
 </div>
 
-
+</div>
 {% endblock %}

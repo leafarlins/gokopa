@@ -80,3 +80,15 @@ def set_history(edition):
     else:
         print("Config não existe na base, definindo...")
         mongo.db.settings.insert({"config": "ranking", "edition": edition})
+
+
+
+@configCommands.cli.command("setHl")
+@click.argument("team")
+def set_hl(team):
+    mongoconfig = mongo.db.settings.find_one_and_update({"config": "highlight"},{'$set': {'time': team }})
+    if mongoconfig:
+        print("Valor atualizado.")
+    else:
+        print("Config não existe na base, definindo...")
+        mongo.db.settings.insert({"config": "highlight", "time": team})

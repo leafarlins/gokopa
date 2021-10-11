@@ -184,4 +184,12 @@ def classifica_time(time,pot):
     else:
         print("Item",time,"nao encontrado!")
 
+@timeCommands.cli.command("sorteia")
+@click.argument("time")
+def sorteia(time):
+    itemdb = mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": time},{'$set': {"sorteado": True}})
+    if itemdb:
+        print("Atualizado.")
+    else:
+        print("Item",time,"nao encontrado!")
 

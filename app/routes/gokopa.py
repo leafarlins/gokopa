@@ -69,14 +69,16 @@ def index():
                 next_jogos.append(n)
 
     lista_bolao = make_score_board()
-    return render_template("inicio.html",menu="Home",past_jogos=past_jogos[:20],next_jogos=next_jogos[:20],classificados=classificados,total=lista_bolao)
+    pot_table = get_tabela_pot()
+    return render_template("inicio.html",menu="Home",past_jogos=past_jogos[:20],next_jogos=next_jogos[:20],classificados=classificados,total=lista_bolao,tabela_pot=pot_table)
 
 
 @cache.memoize(300)
 def get_jogos_tab(ano,r1):
     return mongo.db.jogos.find({'Ano': ano, "Jogo": {'$gt': r1 }}).sort([("Jogo",pymongo.ASCENDING)])
 
-@cache.memoize(300)
+# Alterar para 4 durante sorteio
+@cache.memoize(5)
 def get_team_table(descx,desc,timex):
     return mongo.db.jogos.find_one({"Ano": 20, descx: desc}).get(timex)
 
@@ -261,12 +263,32 @@ def historico():
         times=[]
     return render_template('historico.html',menu='Historico',lista_jogos=lista_jogos,vev=vev,times=times,lista_times=get_team_list())
 
+def get_tabela_pot():
+    tabela_pot = []
+    for i in range(4):
+        times = []
+        times_pot = [u for u in mongo.db.pot.find({"Ano": ANO,"pot": int(i+1)}).sort('nome',pymongo.ASCENDING)]
+        tabela_pot.append(times_pot)
+    #print(tabela_pot)
+
+    pot_trans = []
+    for i in range(10):
+        pot_trans.append([dict(),dict(),dict(),dict()])
+    #print(pot_trans)
+    for i in range(10):
+        for j in range(4):
+            #print("pegando",tabela_pot[i][j])
+            if len(tabela_pot[j]) > i:
+                #print("pegando",tabela_pot[j][i])
+                time = tabela_pot[j][i]
+                time['rank'] = get_rank(time['nome'])
+                pot_trans[i][j] = time
+    return pot_trans
 
 @gokopa.route('/sorteio')
 def sorteio_page():
     tabelas_label = ['A','B','C','D','E','F','G','H']
     tabelas = []
-    tabela_pot = []
     # Tabelas para campeonatos regionais
     for i in range(8):
         desc1 = "p" + str(1) + tabelas_label[i]
@@ -290,11 +312,13 @@ def sorteio_page():
             tabelas.append(linha)
     
     # Tabela de pots
-    for i in range(4):
-        times = []
-        times_pot = [u for u in mongo.db.pot.find({"Ano": ANO,"pot": int(i+1)}).sort('nome',pymongo.ASCENDING)]
-        tabela_pot.append(times_pot)
-    print(tabela_pot)
+    pot_table = get_tabela_pot()
+    #print(pot_trans)
 
+    highlightdb = mongo.db.settings.find_one({"config":"highlight"})
+    if highlightdb:
+        highlight = highlightdb['time']
+    else:
+        highlight = "nenhum"
 
-    return render_template('sorteio.html',menu='Home',labels=tabelas_label,tabelas=tabelas,tabela_pot=tabela_pot)
+    return render_template('sorteio.html',menu='Home',labels=tabelas_label,tabelas=tabelas,tabela_pot=pot_table,hlt=highlight)

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
+## [1.1.0] - 2021-10-11
+
+### Added
+- /sorteio page
+
 ## [1.0.3] - 2021-09-27
 
 ### Fixed
@@ -50,8 +55,9 @@ All notable changes to this project will be documented in this file. Based on [K
 - Minimal ranking page
 - Table from games from first season year 20
 
-[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.0.3...HEAD
-[1.0.2]: https://github.com/leafarlins/gokopa/compare/v1.0.2...v1.0.3
+[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/leafarlins/gokopa/compare/v1.0.3...v1.1.0
+[1.0.3]: https://github.com/leafarlins/gokopa/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/leafarlins/gokopa/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/leafarlins/gokopa/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/leafarlins/gokopa/compare/v0.2.0...v1.0.0

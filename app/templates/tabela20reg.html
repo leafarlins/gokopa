@@ -4,11 +4,14 @@
 <h2>Tabela do ano 20</h2>
 <p class="center">O ano 20 será composto por <a href="#Regionais">Copas Regionais</a>, <a href="#Taca">Taça Mundial</a> com os campeões e a <a href="#Copa">Copa do Mundo</a> na versão de 32 seleções.</p>
 
+<div class=".container-fluid">
 
 <h2 id="Regionais">Copas Regionais</h2>
-<p class="center">As copas regionais estão divididas em 4 Taças: <a href="#Europa">Europa</a>, <a href="#Africa">África</a>, <a href="#Asia">Ásia-Oceania</a> e <a href="#America">América</a>. Os melhores colocados são classificados para a copa e os campeões disputam a <a href="#Taca">Taça Mundial</a>.</p>
+<p class="center">As copas regionais estão divididas em 4 Taças: <a id="displayText" href="javascript:toggle();">mostrar mais</a></p>
 
-<div class=".container-fluid">
+<div id="toggleText" style="display: none" class=".container-fluid">
+<p class="center"><a href="#Europa">Europa</a>, <a href="#Africa">África</a>, <a href="#Asia">Ásia-Oceania</a> e <a href="#America">América</a>. Os melhores colocados são classificados para a copa e os campeões disputam a <a href="#Taca">Taça Mundial</a>.</p>
+
 <h3 id="Europa">Taça Europa</h3>
 
 <div class="row scoll-pane">
@@ -635,6 +638,8 @@
 
 </div>
 
+</div>
+
 <h3 id="Taca">Taça Mundial</h3>
 <div class="row scoll-pane center">
     <div class="tabelaspd col-12 col-sd-10 col-md-6 col-lg-6 col-xl-4">
@@ -734,9 +739,10 @@
 
 
 <h3 id="Copa">Copa do Mundo</h3>
-<p class="center">Copa do Mundo será disputada com 32 times, sedes e demais classificados das taças... <a id="displayText" href="javascript:toggle();">mostrar mais</a></p>
+<p class="center">Copa do Mundo será disputada com 32 times, sedes e demais classificados das taças... </p>
+    <!-- <a id="displayText" href="javascript:toggle();">mostrar mais</a></p> -->
 
-<div id="toggleText" style="display: none" class=".container-fluid">
+<!-- <div id="toggleText" style="display: none" class=".container-fluid"> -->
     <div class="row scoll-pane">
         {% for i in range(20,28) %}
             <div class="sectionj col-12 col-sd-12 col-md-6 col-lg-6 col-xl-3">
@@ -945,6 +951,6 @@
     </div>
         
 
-</div>
+<!-- </div> -->
 
 {% endblock %}
