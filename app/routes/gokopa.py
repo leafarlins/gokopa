@@ -69,8 +69,11 @@ def index():
                 next_jogos.append(n)
 
     lista_bolao = make_score_board()
-    pot_table = get_tabela_pot()
-    return render_template("inicio.html",menu="Home",past_jogos=past_jogos[:20],next_jogos=next_jogos[:20],classificados=classificados,total=lista_bolao,tabela_pot=pot_table)
+    #pot_table = get_tabela_pot()
+
+    tabelas_label = ['A','B','C','D','E','F','G','H']
+    tabelas = get_tabelas_copa()
+    return render_template("inicio.html",menu="Home",past_jogos=past_jogos[:20],next_jogos=next_jogos[:20],classificados=classificados,total=lista_bolao,tabelas=tabelas,labels=tabelas_label)
 
 
 @cache.memoize(300)
@@ -78,7 +81,7 @@ def get_jogos_tab(ano,r1):
     return mongo.db.jogos.find({'Ano': ano, "Jogo": {'$gt': r1 }}).sort([("Jogo",pymongo.ASCENDING)])
 
 # Alterar para 4 durante sorteio
-@cache.memoize(5)
+@cache.memoize(3600*24*30)
 def get_team_table(descx,desc,timex):
     return mongo.db.jogos.find_one({"Ano": 20, descx: desc}).get(timex)
 
@@ -285,8 +288,7 @@ def get_tabela_pot():
                 pot_trans[i][j] = time
     return pot_trans
 
-@gokopa.route('/sorteio')
-def sorteio_page():
+def get_tabelas_copa():
     tabelas_label = ['A','B','C','D','E','F','G','H']
     tabelas = []
     # Tabelas para campeonatos regionais
@@ -310,6 +312,15 @@ def sorteio_page():
                 linha['nome'] = descs[j]
                 #tab.update({'nome': desc})
             tabelas.append(linha)
+
+    return tabelas
+
+
+@gokopa.route('/sorteio')
+@cache.cached(timeout=3600*24*30)
+def sorteio_page():
+    tabelas_label = ['A','B','C','D','E','F','G','H']
+    tabelas = get_tabelas_copa()
     
     # Tabela de pots
     pot_table = get_tabela_pot()
