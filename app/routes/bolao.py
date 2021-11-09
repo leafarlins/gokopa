@@ -13,9 +13,9 @@ def get_games():
     ano20_jogos = [u for u in mongo.db.jogos.find({'Ano': 20}).sort("Jogo",pymongo.ASCENDING)]
     return ano20_jogos
 
-@cache.memoize(300)
+@cache.memoize(3600)
 def get_users():
-    allUsers = [u.get("name") for u in mongo.db.users.find()]
+    allUsers = [u.get("name") for u in mongo.db.users.find().sort("name",pymongo.ASCENDING)]
     return allUsers
 
 @cache.memoize(3600*2)
@@ -142,6 +142,27 @@ def make_score_board():
 
     return ordered_total
 
+@cache.memoize(3600*3)
+def get_history_data(results):
+    gr_users = get_users()
+    gr_data = []
+    dias = [u['Dia'] for u in mongo.db.bolao20his.find({"nome": gr_users[0]}).sort("Dia",pymongo.ASCENDING)]
+    #print("Dias l",len(dias))
+    dias.append('H')
+    for usr in gr_users:
+        historia = [u['score'] for u in mongo.db.bolao20his.find({"nome": usr}).sort("Dia",pymongo.ASCENDING)]
+        print(f'Historia para {usr} l{len(historia)}: {historia}')
+        for item in results:
+            if item["nome"] == usr:
+                historia.append(item["score"])
+        gr_data.append(historia)
+
+
+    return dias,gr_data
+
+
+
+
 @bolao.route('/bolao')
 def apostas():
     list_next_bet = []
@@ -157,9 +178,6 @@ def apostas():
     else:
         userLogado=False
     
-    if userLogado:
-        cache.set(apostador,list_next_bet)
-
     for jogo in ano20_jogos:
         id_jogo = jogo["Jogo"]
         data_jogo = datetime.strptime(jogo["Data"],"%d/%m/%Y %H:%M")
@@ -180,13 +198,17 @@ def apostas():
                 list_next_bet.append(jogo['Jogo'])
             output.append(jogo)
 
-    #print(ordered_total)
+    #print(list_next_bet)
+    if userLogado:
+        cache.set(apostador,list_next_bet,3600)
     #cache_timeout = 3600*24*7
     #cache.set('lista_bolao',ordered_total,cache_timeout)
     #cache.set('lista_date',lista_date,cache_timeout)
     ordered_total = make_score_board()
+    gr_labels,gr_data = get_history_data(ordered_total)
+    print(gr_labels,gr_data)
 
-    return render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers)
+    return render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers,gr_labels=gr_labels,gr_data=gr_data)
     
 
 @bolao.route('/editaposta',methods=["GET","POST"])
@@ -196,7 +218,7 @@ def edit_aposta():
         validUser = mongo.db.users.find_one({"username": session["username"]})
         apostador = validUser["name"]
         idjogo = int(request.values.get("idjogo"))
-        print("idjogo:",idjogo)
+        #print("idjogo:",idjogo)
         if idjogo != 0:
             jogo = mongo.db.jogos.find_one_or_404({"Ano": ANO,"Jogo": idjogo})
             aposta = mongo.db.apostas20.find_one_or_404({"Jogo": idjogo})

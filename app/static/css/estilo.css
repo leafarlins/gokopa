@@ -274,16 +274,35 @@ h3 {
   font-size: small;
 }
 
+.graficopts {
+  width: 1200px;
+  float: center;
+  text-align: center;
+  margin: auto;
+  margin-top: 0;
+  align-self: center;
+  padding-top: 30px;
+}
+@media screen and (max-width: 1200px) {
+
+  .graficopts {
+    width: auto;
+    scrollbar-width: 0;
+    font-size: small;
+  }
+}
+
 @media screen and (max-width: 500px) {
   .sectionj {
     width: auto;
     scrollbar-width: 0;
     font-size: small;
   }
+
   /* .tab_gokopa {
     font-size: smaller;
   }
-
+    background: #3e95cd ,#289964,#c8d457,#464099,#9c661f,#a01111,#eca335,#4eebc9,#24063b,#ca5fc5;
   .jogos {
     font-size: smaller;
   } */

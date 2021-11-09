@@ -186,7 +186,10 @@ def tabela():
 
 @cache.memoize(3600*24*7)
 def get_historic_copa(comp):
-    historia = [u for u in mongo.db.historico.find({"comp": comp}).sort('Ano',pymongo.DESCENDING)]
+    if comp == 'tacas':
+        historia = [u for u in mongo.db.historico.find({"comp": { '$in': [ "tacaame", "tacaeur", "tacaaso", "tacaafr" ] }}).sort('Ano',pymongo.DESCENDING)]
+    else:
+        historia = [u for u in mongo.db.historico.find({"comp": comp}).sort('Ano',pymongo.DESCENDING)]
     times = set()
     medal_count = []
     for h in historia:
@@ -220,7 +223,8 @@ def ranking():
     copas_list,copas_medal = get_historic_copa("copa")
     taca_list,taca_medal = get_historic_copa("taca")
     bet_list,bet_medals = get_historic_copa("bet")
-    return render_template("ranking.html",menu="Ranking",ranking=ranking,rank_ed=rank_ed,copa_his=copas_list,copa_med=copas_medal,bet_his=bet_list,bet_med=bet_medals,taca_his=taca_list,taca_med=taca_medal)
+    tacas_list,tacas_medals = get_historic_copa("tacas")
+    return render_template("ranking.html",menu="Ranking",ranking=ranking,rank_ed=rank_ed,copa_his=copas_list,copa_med=copas_medal,bet_his=bet_list,bet_med=bet_medals,taca_his=taca_list,taca_med=taca_medal,tacas_his=tacas_list,tacas_med=tacas_medals)
 
 @cache.memoize(3600*24)
 def get_team_list():
@@ -230,8 +234,9 @@ def get_team_list():
 
 @cache.memoize(3600*24*7)
 def return_historic_duels(team1,team2):
+    ano_max_game = 134
     historico_total = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': team1,'Time2': team2 },{'Time1': team2,'Time2': team1 }],"Ano": {'$lt':20} }).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.DESCENDING)])]
-    historico_a20 = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': team1,'Time2': team2 },{'Time1': team2,'Time2': team1 }],"Ano": 20, "Jogo": {'$lt':81} }).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.ASCENDING)])]
+    historico_a20 = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': team1,'Time2': team2 },{'Time1': team2,'Time2': team1 }],"Ano": 20, "Jogo": {'$lt':ano_max_game} }).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.ASCENDING)])]
     for obj in historico_a20:
         historico_total.insert(0,obj)
 

@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
+
+
 <div class="sectionj">
   <h2>Bolão</h2>
   <p>Bolão da Gokopa, ano 20.</p>
@@ -85,8 +87,85 @@
    
 </div>
 
+<div class="graficopts">
+  <h4>Resultado detalhado de pontos</h4>
+  <canvas id="grafico" height="600"></canvas>
+  <script>
+    var labelsgr = {{ gr_labels | safe }};
+    let nomes = {{ users | safe }};
+    const colors = ['#3e95cd','#289964','#c8d457','#464099','#9c661f','#a01111','#eca335','#4eebc9','#24063b','#ca5fc5'];
+    let datagr = {{ gr_data | safe }};
+
+myLineChart= new Chart(document.getElementById("grafico"), {
+  type: 'line',
+  data: {
+    labels: labelsgr,
+    datasets: [
+      // {
+      //   data: datagr[0],
+      //   label: nomes[0],
+      //   borderColor: colors[0],
+      //   fill: false
+      // }, {
+      //   data: datagr[1],
+      //   label: nomes[1],
+      //   borderColor: colors[1],
+      //   fill: false
+      // }, {
+      //   data: datagr[2],
+      //   label: nomes[2],
+      //   borderColor: colors[2],
+      //   fill: false
+      // }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    title: {
+      display: true,
+      text: 'Gráfico de pontos'
+    },
+    hover: {
+     mode: 'index',
+     intersect: true
+    },
+    labels: {
+      boxWidth: 20
+    }
+  }
+});
+
+function getDataset(index, data) { 
+  return { 
+    data: datagr[0],
+        label: nomes[0],
+        borderColor: colors[0],
+        fill: false
+  }; 
+}
+
+for(let i=0;i<nomes.length;i++){
+     myLineChart.data.datasets.push({
+      data: datagr[i],
+      label: nomes[i],
+      borderColor: colors[i],
+      fill: false
+        });
+ }
+
+// array.forEach(function (a, i) { 
+// lineChartData.datasets.push(getDataset(i,JSON.parse(a))); 
+// });
+
+// console.log(lineChartData);
+
+  </script>
+
+</div>
+
 <div>
-      <p>&nbsp;</p><p class="center">Resultado Detalhado</p>
+      <p>&nbsp;</p><p class="center">Tabela de pontuação</p>
 
      <table class="tab_gokopa smallt">
           <tr>

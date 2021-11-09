@@ -97,7 +97,7 @@
       {% endfor %}
     </table>
 
-    <br><h3>Campeões da Taça</h3>
+    <br><h3>Campeões da Taça Mundial</h3>
     <p>Quadro geral de medalhas</p>
     <table class="tab_gokopa quadro">
       <tr>
@@ -148,6 +148,39 @@
         <td><img class="flag" src="static/img/flag/{{ ano['bronze'] }}.png" onerror="this.src='static/img/flag/default.png'" title="{{ ano['bronze'] }}"></td>
         <td><img class="flag" src="static/img/flag/{{ ano['quarto'] }}.png" onerror="this.src='static/img/flag/default.png'" title="{{ ano['quarto'] }}"></td>
         <td><img class="flag" src="static/img/flag/{{ ano['sedes'] }}.png" onerror="this.src='static/img/flag/default.png'" title="{{ ano['sedes'] }}"></td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <br><h3>Campeões das Taças Regionais</h3>
+    <p>Quadro geral de medalhas</p>
+    <table class="tab_gokopa quadro">
+      <tr>
+        <th title="Posição">#</th>
+        <th>Time</th>
+        <th title="Ouro"><img class="flag" src="static/img/ouro.png"></th>
+        <th title="Prata"><img class="flag" src="static/img/prata.png"></th>
+        <th title="Bronze"><img class="flag" src="static/img/bronze.png"></th>
+        <th title="Total"><img class="flag" src="static/img/total.png"></th>
+      </tr>
+      {% set ns = namespace(last_p=1,last_ouro=1,last_prata=1,last_bronze=1) %}
+      {% for time in tacas_med | sort(attribute='bronze', reverse = True) | sort(attribute='prata', reverse = True) | sort(attribute='ouro', reverse = True) %}
+      <tr>
+        <td>
+          {% if loop.index == 1 %}{{ loop.index }}
+          {% elif ns.last_ouro == time['ouro'] and ns.last_prata == time['prata'] and ns.last_bronze == time['bronze'] %}{{ ns.last_p }}
+          {% else %}{{ loop.index }}
+            {% set ns.last_p = loop.index %}
+            {% set ns.last_ouro = time['ouro'] %}
+            {% set ns.last_prata = time['prata'] %}
+            {% set ns.last_bronze = time['bronze'] %}
+          {% endif %}
+        </td>
+        <td><img class="flag" src="static/img/flag/{{ time['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ time['nome'] }}</td>
+        <td>{{ time['ouro'] }}</td>
+        <td>{{ time['prata'] }}</td>
+        <td>{{ time['bronze'] }}</td>
+        <td>{{ time['total'] }}</td>
       </tr>
       {% endfor %}
     </table>
