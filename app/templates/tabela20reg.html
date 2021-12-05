@@ -811,9 +811,9 @@
                         {{ lista_jogos[j]['Time1'] }} <img class="flag" src="static/img/flag/{{ lista_jogos[j]['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">
                     {% else %}{{ lista_jogos[j]['desc1'] }} <img class="flag" src='static/img/flag/default.png'>
                     {% endif %}
-                    {% if lista_jogos[j]['pe1'] %}
+                    {% if lista_jogos[j]['pe1'] or lista_jogos[j]['pe1'] == 0 %}
                         <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }} pe: {{ lista_jogos[j]['pe1'] }}x{{ lista_jogos[j]['pe2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
-                    {% elif lista_jogos[j]['tr1'] %}
+                    {% elif lista_jogos[j]['tr1'] or lista_jogos[j]['tr1'] == 0 %}
                         <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
                     {% else %}{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}
                     {% endif %}
@@ -842,9 +842,9 @@
                         {{ lista_jogos[j]['Time1'] }} <img class="flag" src="static/img/flag/{{ lista_jogos[j]['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">
                     {% else %}{{ lista_jogos[j]['desc1'] }} <img class="flag" src='static/img/flag/default.png'>
                     {% endif %}
-                    {% if lista_jogos[j]['pe1'] %}
+                    {% if lista_jogos[j]['pe1'] or lista_jogos[j]['pe1'] == 0 %}
                         <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }} pe: {{ lista_jogos[j]['pe1'] }}x{{ lista_jogos[j]['pe2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
-                    {% elif lista_jogos[j]['tr1'] %}
+                    {% elif lista_jogos[j]['tr1'] or lista_jogos[j]['tr1'] == 0 %}
                         <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
                     {% else %}{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}
                     {% endif %}
@@ -874,9 +874,9 @@
                         {{ lista_jogos[j]['Time1'] }} <img class="flag" src="static/img/flag/{{ lista_jogos[j]['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">
                     {% else %}{{ lista_jogos[j]['desc1'] }} <img class="flag" src='static/img/flag/default.png'>
                     {% endif %}
-                    {% if lista_jogos[j]['pe1'] %}
+                    {% if lista_jogos[j]['pe1'] or lista_jogos[j]['pe1'] == 0 %}
                         <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }} pe: {{ lista_jogos[j]['pe1'] }}x{{ lista_jogos[j]['pe2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
-                    {% elif lista_jogos[j]['tr1'] %}
+                    {% elif lista_jogos[j]['tr1'] or lista_jogos[j]['tr1'] == 0 %}
                         <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
                     {% else %}{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}
                     {% endif %}
@@ -904,9 +904,9 @@
                         {{ lista_jogos[j]['Time1'] }} <img class="flag" src="static/img/flag/{{ lista_jogos[j]['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">
                     {% else %}{{ lista_jogos[j]['desc1'] }} <img class="flag" src='static/img/flag/default.png'>
                     {% endif %}
-                    {% if lista_jogos[j]['pe1'] %}
+                    {% if lista_jogos[j]['pe1'] or lista_jogos[j]['pe1'] == 0 %}
                         <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }} pe: {{ lista_jogos[j]['pe1'] }}x{{ lista_jogos[j]['pe2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
-                    {% elif lista_jogos[j]['tr1'] %}
+                    {% elif lista_jogos[j]['tr1'] or lista_jogos[j]['tr1'] == 0 %}
                         <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
                     {% else %}{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}
                     {% endif %}

@@ -183,8 +183,8 @@ def apostas():
         data_jogo = datetime.strptime(jogo["Data"],"%d/%m/%Y %H:%M")
         #aposta = apostas.find_one_or_404({"Jogo": id_jogo})
         aposta = get_aposta(id_jogo)
-        # If game is old and score not empty
-        if data_jogo < now and jogo['p1'] != "":
+        # If game is old and score not empty -> and jogo['p1'] != ""
+        if data_jogo < now:
             jogo_inc = get_bet_results(allUsers,aposta,jogo)
             resultados.append(jogo_inc)
         # If game will happen, is definned and user is logged in

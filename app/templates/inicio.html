@@ -141,9 +141,9 @@
           <td>{{ jogo['Competição'] }} {{ jogo['Fase'] }}</td> -->
         <td colspan="2">
             {{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">
-            {% if jogo['pe1'] %}
+            {% if jogo['pe1'] or jogo['pe1'] == 0  %}
               <b title="tr: {{ jogo['tr1'] }}x{{ jogo['tr2'] }} pe: {{ jogo['pe1'] }}x{{ jogo['pe2'] }}">{{ jogo['p1'] }}x{{ jogo['p2'] }}</b>
-            {% elif jogo['tr1'] %}
+            {% elif jogo['tr1'] or jogo['tr1'] == 0 %}
               <b title="tr: {{ jogo['tr1'] }}x{{ jogo['tr2'] }}">{{ jogo['p1'] }}x{{ jogo['p2'] }}</b>
             {% else %}{{ jogo['p1'] }}x{{ jogo['p2'] }}
             {% endif %}

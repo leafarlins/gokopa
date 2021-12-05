@@ -166,9 +166,9 @@ def report(jogos,proximos):
         placar = str(j['p1']) + "x" + str(j['p2'])
         e1 = emojis.find_one({'País': j['Time1']})
         e2 = emojis.find_one({'País': j['Time2']})
-        if j['tr1']:
+        if j['tr1'] or j['tr1'] == 0 :
             tr = "(tr " + str(j['tr1']) + "x" + str(j['tr2'])
-            if j['pe1']:
+            if j['pe1'] or j['pe1'] == 0:
                 tr = tr + " pe " + str(j['pe1']) + "x" + str(j['pe2']) + ")"
             else:
                 tr = tr + ")"
