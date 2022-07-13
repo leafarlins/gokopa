@@ -52,7 +52,7 @@ def get_classificados():
 
 # Rota / associada a função index
 @gokopa.route('/')
-@cache.cached(timeout=60*60)
+@cache.cached(timeout=5*60)
 def index():
     #past_jogos = [u for u in mongo.db.jogos.find({'Ano': 19}).sort([('Jogo',pymongo.DESCENDING)])]
     past_jogos=[]
@@ -86,23 +86,23 @@ def get_team_table(descx,desc,timex):
     return mongo.db.jogos.find_one({"Ano": 20, descx: desc}).get(timex)
 
 @cache.memoize(300)
-def get_ano20_games():
-    ano20_games = [u for u in mongo.db.jogos.find({'Ano': 20, "Jogo": {'$gt': 20 }}).sort("Jogo",pymongo.ASCENDING)]
+def get_anoX_games(ano,indx):
+    anoX_games = [u for u in mongo.db.jogos.find({'Ano': ano, "Jogo": {'$gt': indx }}).sort("Jogo",pymongo.ASCENDING)]
     now = datetime.now()
 
     # Zera placares caso seja futuro
-    for j in ano20_games:
+    for j in anoX_games:
         data_jogo = datetime.strptime(j.get("Data"),"%d/%m/%Y %H:%M")
         if data_jogo > now:
             j['p1'] = ""
             j['p2'] = ""
     
-    return ano20_games
+    return anoX_games
 
-@gokopa.route('/tabela')
+@gokopa.route('/tabela20')
 @cache.cached(timeout=180)
 def tabela():
-    ano20_jogos = get_ano20_games()
+    ano20_jogos = get_anoX_games(20,20)
     tabelas_label = ['A-EUR','B-EUR','C-EUR','D-EUR','E-EUR','F-EUR','G-EUR','H-EUR','A-AFR','B-AFR','C-AFR','D-AFR','A-ASO','B-ASO','C-ASO','D-ASO','A-AME','B-AME','C-AME','D-AME','A','B','C','D','E','F','G','H']
     tabelas = []
     now = datetime.now()
