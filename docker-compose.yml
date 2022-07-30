@@ -9,9 +9,13 @@ services:
         #- "./volume/data:/var/cells/data"
         #  - "data:/var/cells/data"
         #  - "cellsdir:/var/cells"
-        ports: ["8080:5000"]
+        ports: ["8081:5000"]
+        command:
+            - run
+            - --host=0.0.0.0
         environment:
-          FLASK_APP: app/app.py
+          FLASK_APP: app.py
+          FLASK_ENV: development
           MONGO_URI: ${MONGO_URI}
           SECRET_KEY: ${SECRET_KEY}
 
