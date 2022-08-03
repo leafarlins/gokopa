@@ -64,7 +64,7 @@ def get_jogos(ano,jogo):
 @jogosCommands.cli.command("getAposta")
 @click.argument("jogo")
 def get_aposta(jogo):
-    apostas = mongo.db.apostas20.find_one({'Jogo': int(jogo)})
+    apostas = mongo.db.apostas21.find_one({'Jogo': int(jogo)})
     if apostas:
         print(apostas)
     else:
@@ -134,6 +134,18 @@ def init_apostas20():
             apostas.insert_one({"Jogo": i})
         print("Finalizado.")
 
+@jogosCommands.cli.command("initApostas21")
+def init_apostas21():
+    JOGOS=64
+    BASE='apostas21'
+    apostas = mongo.db.apostas21
+    if apostas.count_documents({}) > 0:
+        print("Base já existente.")
+    else:
+        for i in range(1,JOGOS+1):
+            apostas.insert_one({"Jogo": i})
+        print("Finalizado.")
+
 @jogosCommands.cli.command("deleteAno")
 @click.argument("ano")
 def delete_ano(ano):
@@ -151,16 +163,16 @@ def delete_ano(ano):
 def report(jogos,proximos):
     jogosdb = mongo.db.jogos
     emojis = mongo.db.emoji
-    apostas = mongo.db.apostas20
+    apostas = mongo.db.apostas21
     jogos_list = jogos.split(',')
     next_list = proximos.split(',')
     jogos_list[0] = int(jogos_list[0]) - 1
     jogos_list[1] = int(jogos_list[1]) + 1
     #next_list[0] = int(next_list[0]) - 1
     #next_list[1] = int(next_list[1]) + 1
-    recentes = [u for u in jogosdb.find({'Ano': 20, "Jogo": {'$gt': jogos_list[0], '$lt': jogos_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
+    recentes = [u for u in jogosdb.find({'Ano': 21, "Jogo": {'$gt': jogos_list[0], '$lt': jogos_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
     #next_games = [u for u in jogosdb.find({'Ano': 20, "Jogo": {'$gt': next_list[0], '$lt': next_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
-    print("⚽ Gokopa 20 - Jogos recentes")
+    print("⚽ Gokopa 21 - Jogos recentes")
     for j in recentes:
         print(j['Competição'],"-",j['Fase'])
         placar = str(j['p1']) + "x" + str(j['p2'])

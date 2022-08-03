@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
+## [unreleased]
+
+### Changed
+- All pages pointing to 21st season
+- Templates changes for 21st season
+
 ## [1.2.1] - 2021-12-05
 
 ### Fixed

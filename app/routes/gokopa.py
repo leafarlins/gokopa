@@ -14,7 +14,7 @@ from ..cache import cache
 
 gokopa = Blueprint('gokopa',__name__)
 
-ANO=20
+ANO=21
 
 @cache.memoize(600)
 def get_classificados():
@@ -54,8 +54,8 @@ def get_classificados():
 @gokopa.route('/')
 @cache.cached(timeout=5*60)
 def index():
-    #past_jogos = [u for u in mongo.db.jogos.find({'Ano': 19}).sort([('Jogo',pymongo.DESCENDING)])]
-    past_jogos=[]
+    past_jogos = [u for u in mongo.db.jogos.find({'Ano': 20}).sort([('Jogo',pymongo.DESCENDING)])]
+    #past_jogos=[]
     ano20_jogos = mongo.db.jogos.find({'Ano': ANO}).sort([("Jogo",pymongo.ASCENDING)])
     next_jogos = []
     classificados = get_classificados()
@@ -83,7 +83,7 @@ def get_jogos_tab(ano,r1):
 # Alterar para 4 durante sorteio
 @cache.memoize(3600*24*30)
 def get_team_table(descx,desc,timex):
-    return mongo.db.jogos.find_one({"Ano": 20, descx: desc}).get(timex)
+    return mongo.db.jogos.find_one({"Ano": ANO, descx: desc}).get(timex)
 
 @cache.memoize(300)
 def get_anoX_games(ano,indx):
@@ -99,35 +99,43 @@ def get_anoX_games(ano,indx):
     
     return anoX_games
 
-@gokopa.route('/tabela20')
+@gokopa.route('/tabela<id>')
+@cache.cached(timeout=3600*200)
+def old_tabela(id):
+    if id == '20':
+        return render_template('static/tabela20.html',menu="Tabela")
+    else:
+        return redirect(url_for('gokopa.tabela'))
+
+
+@gokopa.route('/tabela')
 @cache.cached(timeout=180)
 def tabela():
-    ano20_jogos = get_anoX_games(20,20)
-    tabelas_label = ['A-EUR','B-EUR','C-EUR','D-EUR','E-EUR','F-EUR','G-EUR','H-EUR','A-AFR','B-AFR','C-AFR','D-AFR','A-ASO','B-ASO','C-ASO','D-ASO','A-AME','B-AME','C-AME','D-AME','A','B','C','D','E','F','G','H']
+    ano_jogos = get_anoX_games(ANO,0)
+    tabelas_label = ['A','B','C','D','E','F','G','H']
     tabelas = []
     now = datetime.now()
     # id of each game based on groups
     jogos_id = []
-    for i in range(20):
-        array_ids = []
-        for j in range(3):
-            j_id = i+j*20
-            array_ids.append(j_id)
+    # for i in range(20):
+    #     array_ids = []
+    #     for j in range(3):
+    #         j_id = i+j*20
+    #         array_ids.append(j_id)
             
-        # add ids [i,20+i,40+i]
-        jogos_id.append(array_ids)
+    #     # add ids [i,20+i,40+i]
+    #     jogos_id.append(array_ids)
     # Add games id for copa
-    jogos_id.append([100,101,116,118,132,133])
-    jogos_id.append([102,103,117,119,134,135])
-    jogos_id.append([104,106,120,121,136,137])
-    jogos_id.append([105,107,122,124,138,139])
-    jogos_id.append([108,110,123,125,142,143])
-    jogos_id.append([109,111,127,128,140,141])
-    jogos_id.append([112,113,126,129,146,147])
-    jogos_id.append([114,115,130,131,144,145])
+    jogos_id.append([1,3,18,19,33,34])
+    jogos_id.append([2,4,17,20,35,36])
+    jogos_id.append([5,7,22,24,39,40])
+    jogos_id.append([6,8,21,23,37,38])
+    jogos_id.append([10,11,25,28,43,44])
+    jogos_id.append([9,12,26,27,41,42])
+    jogos_id.append([13,16,29,31,47,48])
+    jogos_id.append([14,15,30,32,45,46])
 
-    # Tabelas para campeonatos regionais
-    for i in range(28):
+    for i in range(8):
         desc1 = "p" + str(1) + tabelas_label[i]
         desc2 = "p" + str(2) + tabelas_label[i]
         desc3 = "p" + str(3) + tabelas_label[i]
@@ -137,7 +145,7 @@ def tabela():
         times = [time1,time2,time3]
         descs = [desc1,desc2,desc3]
         # If i>20, tables for copa
-        if i >= 20:
+        if i >= 0:
             desc4 = "p" + str(4) + tabelas_label[i]
             time4 = get_team_table('desc2',desc4,'Time2')
             descs.append(desc4)
@@ -151,38 +159,39 @@ def tabela():
                 linha['G'] = 0
                 # Calculo de pontos para cada linha do grupo
                 for jid in jogos_id[i]:
-                    p1 = ano20_jogos[jid].get('p1')
-                    data_jogo = datetime.strptime(ano20_jogos[jid].get("Data"),"%d/%m/%Y %H:%M")
+                    p1 = ano_jogos[jid].get('p1')
+                    data_jogo = datetime.strptime(ano_jogos[jid].get("Data"),"%d/%m/%Y %H:%M")
                     if data_jogo < now:
                         if p1 != None:
-                            p2 = ano20_jogos[jid].get('p2')
+                            p2 = ano_jogos[jid].get('p2')
                             #print("Calculando para jogo ",ano20_jogos[jid])
                             if p1 == p2:
-                                if linha['nome'] == ano20_jogos[jid].get('Time1') or linha['nome'] == ano20_jogos[jid].get('Time2'):
+                                if linha['nome'] == ano_jogos[jid].get('Time1') or linha['nome'] == ano_jogos[jid].get('Time2'):
                                     linha['P'] += 1
                                     linha['G'] = p1
                             elif p1 > p2: # Time1 ganha
-                                if linha['nome'] == ano20_jogos[jid].get('Time1'):
+                                if linha['nome'] == ano_jogos[jid].get('Time1'):
                                     linha['P'] += 3
                                     linha['S'] += p1 - p2
                                     linha['G'] += p1
-                                elif linha['nome'] == ano20_jogos[jid].get('Time2'):
+                                elif linha['nome'] == ano_jogos[jid].get('Time2'):
                                     linha['S'] -= p1 - p2
                                     linha['G'] += p2
                             else: # Time2 ganha
-                                if linha['nome'] == ano20_jogos[jid].get('Time2'):
+                                if linha['nome'] == ano_jogos[jid].get('Time2'):
                                     linha['P'] += 3
                                     linha['S'] += p2 - p1
                                     linha['G'] += p2
-                                elif linha['nome'] == ano20_jogos[jid].get('Time1'):
+                                elif linha['nome'] == ano_jogos[jid].get('Time1'):
                                     linha['S'] -= p2 - p1
                                     linha['G'] += p1
             else:
                 linha['nome'] = descs[j]
                 #tab.update({'nome': desc})
             tabelas.append(linha)
-
-    return render_template('tabela20reg.html',menu="Tabela",tabelas=tabelas,labels=tabelas_label,lista_jogos=ano20_jogos,jogos_id=jogos_id)
+    #rendered = render_template('tabela.html',menu="Tabela",tabelas=tabelas,labels=tabelas_label,lista_jogos=ano20_jogos,jogos_id=jogos_id)
+    #print(rendered)
+    return render_template('tabela.html',menu="Tabela",tabelas=tabelas,labels=tabelas_label,lista_jogos=ano_jogos,jogos_id=jogos_id)
 
 @cache.memoize(3600*24*7)
 def get_historic_copa(comp):
@@ -235,10 +244,10 @@ def get_team_list():
 @cache.memoize(3600*24*7)
 def return_historic_duels(team1,team2):
     ano_max_game = 134
-    historico_total = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': team1,'Time2': team2 },{'Time1': team2,'Time2': team1 }],"Ano": {'$lt':20} }).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.DESCENDING)])]
-    historico_a20 = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': team1,'Time2': team2 },{'Time1': team2,'Time2': team1 }],"Ano": 20, "Jogo": {'$lt':ano_max_game} }).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.ASCENDING)])]
-    for obj in historico_a20:
-        historico_total.insert(0,obj)
+    historico_total = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': team1,'Time2': team2 },{'Time1': team2,'Time2': team1 }],"Ano": {'$lt':21} }).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.DESCENDING)])]
+    #historico_a20 = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': team1,'Time2': team2 },{'Time1': team2,'Time2': team1 }],"Ano": 20, "Jogo": {'$lt':ano_max_game} }).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.ASCENDING)])]
+    #for obj in historico_a20:
+    #    historico_total.insert(0,obj)
 
     print(historico_total)
     vev = [0,0,0,len(historico_total)]
@@ -296,7 +305,6 @@ def get_tabela_pot():
 def get_tabelas_copa():
     tabelas_label = ['A','B','C','D','E','F','G','H']
     tabelas = []
-    # Tabelas para campeonatos regionais
     for i in range(8):
         desc1 = "p" + str(1) + tabelas_label[i]
         desc2 = "p" + str(2) + tabelas_label[i]

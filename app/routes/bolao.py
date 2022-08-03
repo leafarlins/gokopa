@@ -10,8 +10,8 @@ bolao = Blueprint('bolao',__name__)
 
 @cache.memoize(300)
 def get_games():
-    ano20_jogos = [u for u in mongo.db.jogos.find({'Ano': 20}).sort("Jogo",pymongo.ASCENDING)]
-    return ano20_jogos
+    ano_jogos = [u for u in mongo.db.jogos.find({'Ano': 21}).sort("Jogo",pymongo.ASCENDING)]
+    return ano_jogos
 
 @cache.memoize(3600)
 def get_users():
@@ -55,7 +55,7 @@ def get_score_game(p1,p2,b1,b2):
 
 @cache.memoize(3600)
 def get_last_pos(user):
-    user_last = [u for u in mongo.db.bolao20his.find({"nome": user}).sort("Dia",pymongo.DESCENDING)]
+    user_last = [u for u in mongo.db.bolao21his.find({"nome": user}).sort("Dia",pymongo.DESCENDING)]
     if user_last:
         last_day = user_last[0].get("posicao")
         if len(user_last) >= 7:
@@ -106,17 +106,17 @@ def get_score_results(users,resultados):
 
 @cache.memoize(300)
 def get_aposta(id_jogo):
-    apostas = mongo.db.apostas20
+    apostas = mongo.db.apostas21
     return apostas.find_one_or_404({"Jogo": id_jogo})
 
 @cache.memoize(600)
 def make_score_board():
     now = datetime.now()
-    ano20_jogos = get_games()
+    ano_jogos = get_games()
     allUsers = get_users()
     resultados = []
         
-    for jogo in ano20_jogos:
+    for jogo in ano_jogos:
         id_jogo = jogo["Jogo"]
         data_jogo = datetime.strptime(jogo["Data"],"%d/%m/%Y %H:%M")
         aposta = get_aposta(id_jogo)
@@ -146,12 +146,12 @@ def make_score_board():
 def get_history_data(results):
     gr_users = get_users()
     gr_data = []
-    dias = [u['Dia'] for u in mongo.db.bolao20his.find({"nome": gr_users[0]}).sort("Dia",pymongo.ASCENDING)]
+    dias = [u['Dia'] for u in mongo.db.bolao21his.find({"nome": gr_users[0]}).sort("Dia",pymongo.ASCENDING)]
     #print("Dias l",len(dias))
     dias.append('H')
     for usr in gr_users:
-        historia = [u['score'] for u in mongo.db.bolao20his.find({"nome": usr}).sort("Dia",pymongo.ASCENDING)]
-        print(f'Historia para {usr} l{len(historia)}: {historia}')
+        historia = [u['score'] for u in mongo.db.bolao21his.find({"nome": usr}).sort("Dia",pymongo.ASCENDING)]
+        #print(f'Historia para {usr} l{len(historia)}: {historia}')
         for item in results:
             if item["nome"] == usr:
                 historia.append(item["score"])
@@ -162,13 +162,20 @@ def get_history_data(results):
 
 
 
+@bolao.route('/bolao<id>')
+def old_bolao(id):
+    if id == '20':
+        return render_template('static/bolao20.html',menu='Bolao')
+    else:
+        return redirect(url_for('bolao.apostas'))
+
 
 @bolao.route('/bolao')
 def apostas():
     list_next_bet = []
     output = []
     now = datetime.now()
-    ano20_jogos = get_games()
+    ano_jogos = get_games()
     allUsers = get_users()
     resultados = []
     
@@ -178,7 +185,7 @@ def apostas():
     else:
         userLogado=False
     
-    for jogo in ano20_jogos:
+    for jogo in ano_jogos:
         id_jogo = jogo["Jogo"]
         data_jogo = datetime.strptime(jogo["Data"],"%d/%m/%Y %H:%M")
         #aposta = apostas.find_one_or_404({"Jogo": id_jogo})
@@ -206,14 +213,15 @@ def apostas():
     #cache.set('lista_date',lista_date,cache_timeout)
     ordered_total = make_score_board()
     gr_labels,gr_data = get_history_data(ordered_total)
-    print(gr_labels,gr_data)
-
+    #print(gr_labels,gr_data)
+    #rendered=render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers,gr_labels=gr_labels,gr_data=gr_data)
+    #print(rendered)
     return render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers,gr_labels=gr_labels,gr_data=gr_data)
     
 
 @bolao.route('/editaposta',methods=["GET","POST"])
 def edit_aposta():
-    ANO=20
+    ANO=21
     if "username" in session:
         validUser = mongo.db.users.find_one({"username": session["username"]})
         apostador = validUser["name"]
@@ -221,7 +229,7 @@ def edit_aposta():
         #print("idjogo:",idjogo)
         if idjogo != 0:
             jogo = mongo.db.jogos.find_one_or_404({"Ano": ANO,"Jogo": idjogo})
-            aposta = mongo.db.apostas20.find_one_or_404({"Jogo": idjogo})
+            aposta = mongo.db.apostas21.find_one_or_404({"Jogo": idjogo})
             a1 = aposta.get(str(apostador + "_p1"))
             a2 = aposta.get(str(apostador + "_p2"))
             if a1 == None:
@@ -261,7 +269,7 @@ def edit_aposta():
             elif now > data_jogo:
                 flash("Data do jogo já passou!",'danger')
             else:
-                mongo.db.apostas20.find_one_and_update(
+                mongo.db.apostas21.find_one_and_update(
                     {"Jogo": idjogo},
                     {'$set': {
                         str(apostador + "_p1"): int(p1),
