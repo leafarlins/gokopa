@@ -126,14 +126,14 @@ def tabela():
     #     # add ids [i,20+i,40+i]
     #     jogos_id.append(array_ids)
     # Add games id for copa
-    jogos_id.append([1,3,18,19,33,34])
-    jogos_id.append([2,4,17,20,35,36])
-    jogos_id.append([5,7,22,24,39,40])
-    jogos_id.append([6,8,21,23,37,38])
-    jogos_id.append([10,11,25,28,43,44])
-    jogos_id.append([9,12,26,27,41,42])
-    jogos_id.append([13,16,29,31,47,48])
-    jogos_id.append([14,15,30,32,45,46])
+    jogos_id.append([0,2,17,18,32,33])
+    jogos_id.append([1,3,16,19,34,35])
+    jogos_id.append([4,6,21,23,38,39])
+    jogos_id.append([5,7,20,22,36,37])
+    jogos_id.append([9,10,24,27,42,43])
+    jogos_id.append([8,11,25,26,40,41])
+    jogos_id.append([12,15,28,30,46,47])
+    jogos_id.append([13,14,29,31,44,45])
 
     for i in range(8):
         desc1 = "p" + str(1) + tabelas_label[i]

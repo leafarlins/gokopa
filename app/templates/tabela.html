@@ -22,7 +22,7 @@
                         <th title="Saldo">S</th>
                         <th title="Gols">G</th>
                     </tr>
-                    {% for team in tabelas[(i-20)*4:4+(i-20)*4] %}
+                    {% for team in tabelas[(i)*4:4+(i)*4] %}
                         <tr>
                             <td>
                                 <img class="flag" src="static/img/flag/{{ team['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ team['nome'] }}</td>
@@ -98,7 +98,7 @@
         <div class="tabelaspd col-12 col-sd-10 col-md-6 col-lg-4 col-xl-4">
         <b><p class="center">Quartas-de-final</p></b>
         <table class="tab_gokopa tab_jogos">
-            {% for j in range(56,59) %}
+            {% for j in range(56,60) %}
             <tr>
                 <td title="{{ lista_jogos[j]['Jogo'] }}">{{ lista_jogos[j]['Data'] }}</td>
                 <td>{{ lista_jogos[j]['Estadio'] }} 
