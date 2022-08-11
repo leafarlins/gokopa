@@ -22,7 +22,7 @@
                         <th title="Saldo">S</th>
                         <th title="Gols">G</th>
                     </tr>
-                    {% for team in tabelas[(i-20)*4:4+(i-20)*4] %}
+                    {% for team in tabelas[(i)*4:4+(i)*4] %}
                         <tr>
                             <td>
                                 <img class="flag" src="static/img/flag/{{ team['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ team['nome'] }}</td>

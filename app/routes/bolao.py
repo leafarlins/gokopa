@@ -8,9 +8,11 @@ from ..cache import cache
 
 bolao = Blueprint('bolao',__name__)
 
+ANO=21
+
 @cache.memoize(300)
 def get_games():
-    ano_jogos = [u for u in mongo.db.jogos.find({'Ano': 21}).sort("Jogo",pymongo.ASCENDING)]
+    ano_jogos = [u for u in mongo.db.jogos.find({'Ano': ANO}).sort("Jogo",pymongo.ASCENDING)]
     return ano_jogos
 
 @cache.memoize(3600)
@@ -221,7 +223,6 @@ def apostas():
 
 @bolao.route('/editaposta',methods=["GET","POST"])
 def edit_aposta():
-    ANO=21
     if "username" in session:
         validUser = mongo.db.users.find_one({"username": session["username"]})
         apostador = validUser["name"]
