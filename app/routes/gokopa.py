@@ -127,7 +127,7 @@ def tabela():
     #     jogos_id.append(array_ids)
     # Add games id for copa
     jogos_id.append([0,2,17,18,32,33])
-    jogos_id.append([1,3,18,19,34,35])
+    jogos_id.append([1,3,16,19,34,35])
     jogos_id.append([4,6,21,23,38,39])
     jogos_id.append([5,7,20,22,36,37])
     jogos_id.append([9,10,24,27,42,43])
