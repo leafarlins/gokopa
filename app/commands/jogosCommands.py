@@ -116,7 +116,18 @@ def gera_random_score():
         rp = 4
     else:
         rp = 5
-    return rp
+    return int(rp)
+
+def gera_random_penalti():
+    aleatorio = randrange(3)
+    pe1 = 1 + aleatorio
+    pe2 = 1 + aleatorio
+    aleatorio = randrange(4)
+    if aleatorio < 2:
+        pe1 += aleatorio + 1
+    else:
+        pe2 += aleatorio - 1
+    return (pe1,pe2)
 
 @jogosCommands.cli.command("betRandom")
 @click.argument("user")
@@ -136,12 +147,30 @@ def teste2(user,jogo):
 
 # Print random commando to edit game
 @jogosCommands.cli.command("printRandom")
-@click.argument("jogo")
+@click.argument("jogoi")
+@click.argument("jogof")
 @click.argument("tr")
-def print_random_editgame(jogo,tr):
-    p1 = gera_random_score()
-    p2 = gera_random_score()
-    print(f'flask jogos editJogo {ANO} {jogo} placar {p1} {p2}')
+def print_random_editgame(jogoi,jogof,tr):
+    for jogo in range(int(jogoi),int(jogof)+1):
+        p1 = gera_random_score()
+        p2 = gera_random_score()
+        if p1 == p2 and int(tr) == 1:
+            print(f'flask jogos editJogo {ANO} {jogo} tr {p1} {p2}')
+            aleatorio = randrange(10)
+            if aleatorio < 1:
+                print(f'flask jogos editJogo {ANO} {jogo} placar {p1+2} {p2}')
+            elif aleatorio < 3:
+                print(f'flask jogos editJogo {ANO} {jogo} placar {p1+1} {p2}')
+            elif aleatorio < 7:
+                print(f'flask jogos editJogo {ANO} {jogo} placar {p1} {p2}')
+                pe1,pe2 = gera_random_penalti()
+                print(f'flask jogos editJogo {ANO} {jogo} pe {pe1} {pe2}')
+            elif aleatorio < 9:
+                print(f'flask jogos editJogo {ANO} {jogo} placar {p1} {p2+1}')
+            elif aleatorio < 10:
+                print(f'flask jogos editJogo {ANO} {jogo} placar {p1} {p2+2}')
+        else:
+            print(f'flask jogos editJogo {ANO} {jogo} placar {p1} {p2}')
 
 @jogosCommands.cli.command("initApostas20")
 def init_apostas20():
