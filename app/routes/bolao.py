@@ -106,7 +106,7 @@ def get_score_results(users,resultados):
             list_total.append(udict)
         return list_total
 
-@cache.memoize(300)
+@cache.memoize(10)
 def get_aposta(id_jogo):
     apostas = mongo.db.apostas21
     return apostas.find_one_or_404({"Jogo": id_jogo})

@@ -162,7 +162,7 @@ def tabela():
                     p1 = ano_jogos[jid].get('p1')
                     data_jogo = datetime.strptime(ano_jogos[jid].get("Data"),"%d/%m/%Y %H:%M")
                     if data_jogo < now:
-                        if p1 != None:
+                        if p1 != None and p1 != "":
                             p2 = ano_jogos[jid].get('p2')
                             #print("Calculando para jogo ",ano20_jogos[jid])
                             if p1 == p2:
@@ -192,6 +192,18 @@ def tabela():
     #rendered = render_template('tabela.html',menu="Tabela",tabelas=tabelas,labels=tabelas_label,lista_jogos=ano20_jogos,jogos_id=jogos_id)
     #print(rendered)
     return render_template('tabela.html',menu="Tabela",tabelas=tabelas,labels=tabelas_label,lista_jogos=ano_jogos,jogos_id=jogos_id)
+
+@gokopa.route('/tabelahis')
+@cache.memoize(3600*720)
+def tabela_his():
+    fase_final = []
+    for i in range(20):
+        jogos = [u for u in mongo.db.jogos.find({"Ano": i+1, "Competição": "Copa", '$or': [{"Fase": "8vas-de-final"},{"Fase": "4as-de-final"},{"Fase": "Semi-final"},{"Fase": "D. 3º Lugar"},{"Fase": "Final"}]}).sort('Jogo',pymongo.ASCENDING)]
+        if i == 0:
+            jogos = [0,0,0,0,0,0,0,0] + jogos
+        fase_final.append(jogos)
+        #print(f'Add ano {i+1}: {jogos}')
+    return render_template('tabelahis.html',menu="Tabela",lista_jogos=fase_final)
 
 @cache.memoize(3600*24*7)
 def get_historic_copa(comp):

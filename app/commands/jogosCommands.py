@@ -5,10 +5,10 @@ from ..extentions.database import mongo
 from flask import Blueprint
 from ..routes.bolao import get_users, make_score_board
 from ..cache import cache
-
+from random import randrange
 
 SEPARADOR_CSV=","
-ANO=20
+ANO=21
 
 jogosCommands = Blueprint('jogos',__name__)
 
@@ -101,26 +101,47 @@ def edit_jogo(ano,jogo,campo,valor1,valor2):
     else:
         print("Nada encontrado.")
 
+def gera_random_score():
+    # 0:0-4 1:5-10 2:11-16 3:17-20 4:21-22 r(2):23-24 5:25
+    aleatorio = randrange(25)
+    if aleatorio < 5:
+        rp = 0
+    elif aleatorio < 11:
+        rp = 1
+    elif aleatorio < 18:
+        rp = 2
+    elif aleatorio < 23:
+        rp = 3
+    elif aleatorio < 25:
+        rp = 4
+    else:
+        rp = 5
+    return rp
 
-@jogosCommands.cli.command("teste2")
-def teste2():
-    idjogo=1
-    aposta = mongo.db.apostas20.find_one_or_404({"Jogo": idjogo})
-    print(aposta)
+@jogosCommands.cli.command("betRandom")
+@click.argument("user")
+@click.argument("jogo")
+def teste2(user,jogo):
+    p1 = gera_random_score()
+    p2 = gera_random_score()
 
-@jogosCommands.cli.command("teste")
-def teste():
-    LIMITE_JOGOS=20
-    past_jogos = [u for u in mongo.db.jogos.find({'Ano': 19})]
-    ano20_jogos = mongo.db.jogos.find({'Ano': 20}).sort([("Jogo",pymongo.ASCENDING),("Ano",pymongo.DESCENDING)])
-    next_jogos = []
-    for n in ano20_jogos:
-        if n["Time1"]=="China":
-            past_jogos.insert(0,n)
-        else:
-            next_jogos.append(n)
-        #print("Past jogos:",past_jogos)
-        print("Next:",next_jogos)
+    outp = mongo.db.apostas21.find_one_and_update(
+        {"Jogo": int(jogo)},
+        {'$set': {
+            str(user + "_p1"): int(p1),
+            str(user + "_p2"): int(p2)
+            }})
+    print(f'jid {jogo} Aposta de {user}: {p1}x{p2}')
+    print(outp)
+
+# Print random commando to edit game
+@jogosCommands.cli.command("printRandom")
+@click.argument("jogo")
+@click.argument("tr")
+def print_random_editgame(jogo,tr):
+    p1 = gera_random_score()
+    p2 = gera_random_score()
+    print(f'flask jogos editJogo {ANO} {jogo} placar {p1} {p2}')
 
 @jogosCommands.cli.command("initApostas20")
 def init_apostas20():
