@@ -266,4 +266,4 @@ def report(jogos,proximos):
         string_placar += " ▪️ " + str(ordered_total[i]['score']) + " - " + str(ordered_total[i]['nome'])
     print(string_placar)
         
-    print("\n➡️ Visite e acompanhe: http://gokopa.herokuapp.com")
+    print("\n➡️ Visite e acompanhe: http://gokopa.leafarlins.com")

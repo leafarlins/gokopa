@@ -19,7 +19,7 @@ def login():
             validUser = userFound["username"]
             validPassword = userFound["password"]
             validName = userFound["name"]
-            validActive = userFound["active"]
+            validActive = userFound["passwordActive"]
             if check_password_hash(validPassword,password):
                 if validActive:
                     session["username"] = validUser
@@ -47,12 +47,10 @@ def reset():
         userFound = mongo.db.users.find_one({"username": username})
         if userFound:
             validUser = userFound["username"]
-            validPassword = userFound["password"]
             validName = userFound["name"]
-            validActive = userFound["active"]
 
             if (password == password2):
-                mongo.db.users.find_one_and_update({"username": username},{'$set': {"active": True, "password": generate_password_hash(password)}})
+                mongo.db.users.find_one_and_update({"username": username},{'$set': {"passwordActive": True, "password": generate_password_hash(password)}})
                 session["username"] = validUser
                 flash(f'Senha definida com sucesso, bem vindo, {validName}!')
                 return redirect(url_for('bolao.apostas'))

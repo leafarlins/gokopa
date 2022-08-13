@@ -17,7 +17,7 @@ def get_games():
 
 @cache.memoize(3600)
 def get_users():
-    allUsers = [u.get("name") for u in mongo.db.users.find().sort("name",pymongo.ASCENDING)]
+    allUsers = [u.get("name") for u in mongo.db.users.find({"active": True}).sort("name",pymongo.ASCENDING)]
     return allUsers
 
 @cache.memoize(3600*2)
