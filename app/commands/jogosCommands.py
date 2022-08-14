@@ -175,7 +175,6 @@ def print_random_editgame(jogoi,jogof,tr):
 @jogosCommands.cli.command("initApostas20")
 def init_apostas20():
     JOGOS=184
-    BASE='apostas20'
     apostas = mongo.db.apostas20
     if apostas.count_documents({}) > 0:
         print("Base já existente.")
@@ -187,7 +186,6 @@ def init_apostas20():
 @jogosCommands.cli.command("initApostas21")
 def init_apostas21():
     JOGOS=64
-    BASE='apostas21'
     apostas = mongo.db.apostas21
     if apostas.count_documents({}) > 0:
         print("Base já existente.")
