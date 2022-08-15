@@ -62,13 +62,17 @@ def index(tipo):
     now = datetime.now()
     for n in ano20_jogos:
         if n["Time1"] and n["Time2"]:
+            # Temporario para o Catar
+            if n["Time1"] == 'Bahrein':
+                n["Time1"] = 'Qatar'
+
             data_jogo = datetime.strptime(n["Data"],"%d/%m/%Y %H:%M")
             if data_jogo < now and n["p1"] != "" :
                 past_jogos.insert(0,n)
             else:
                 next_jogos.append(n)
 
-    lista_bolao = make_score_board()
+    lista_bolao = make_score_board(tipo)
     #pot_table = get_tabela_pot()
 
     tabelas_label = ['A','B','C','D','E','F','G','H']
@@ -99,12 +103,11 @@ def get_anoX_games(ano,indx):
     
     return anoX_games
 
-@gokopa.route('/tabela<id>')
+@gokopa.route('/<tipo>/tabela<id>')
 @cache.cached(timeout=3600*200)
-def old_tabela(id):
-    tipo="gk"
+def old_tabela(id,tipo):
     if id == '20':
-        return render_template('static/tabela20.html',menu="Tabela")
+        return render_template('static/tabela20.html',menu="Tabela",tipo=tipo)
     else:
         return redirect(url_for('gokopa.tabela',tipo=tipo))
 
@@ -136,6 +139,12 @@ def tabela(tipo):
     jogos_id.append([12,15,28,30,46,47])
     jogos_id.append([13,14,29,31,44,45])
 
+    # Temporario copa do Qatar
+    if tipo == 'cp':
+        ano_jogos[0]['Time1'] = 'Qatar'
+        ano_jogos[17]['Time1'] = 'Qatar'
+        ano_jogos[32]['Time1'] = 'Qatar'
+
     for i in range(8):
         desc1 = "p" + str(1) + tabelas_label[i]
         desc2 = "p" + str(2) + tabelas_label[i]
@@ -151,8 +160,14 @@ def tabela(tipo):
             time4 = get_team_table('desc2',desc4,'Time2')
             descs.append(desc4)
             times.append(time4)
+
         for j in range(len(times)):
             linha = dict()
+
+            # Temporario para copa do catar
+            if tipo == 'cp' and times[j] == 'Bahrein':
+                times[j] = "Qatar"
+            
             if times[j]:
                 linha['nome'] = times[j]
                 linha['P'] = 0
@@ -194,7 +209,7 @@ def tabela(tipo):
     #print(rendered)
     return render_template('tabela.html',menu="Tabela",tipo=tipo,tabelas=tabelas,labels=tabelas_label,lista_jogos=ano_jogos,jogos_id=jogos_id)
 
-@gokopa.route('/tabelahis')
+@gokopa.route('/gk/tabelahis')
 @cache.memoize(3600*720)
 def tabela_his():
     tipo="gk"
@@ -238,7 +253,7 @@ def get_historic_copa(comp):
     #print(medal_count)
     return historia,medal_count
 
-@gokopa.route('/ranking')
+@gokopa.route('/gk/ranking')
 @cache.cached(timeout=3600*24)
 def ranking():
     tipo="gk"
@@ -264,7 +279,7 @@ def return_historic_duels(team1,team2):
     #for obj in historico_a20:
     #    historico_total.insert(0,obj)
 
-    print(historico_total)
+    #print(historico_total)
     vev = [0,0,0,len(historico_total)]
     for j in historico_total:
         if j['p1'] == j['p2']:
@@ -282,9 +297,8 @@ def return_historic_duels(team1,team2):
 
     return historico_total,vev
 
-@gokopa.route('/historico',methods=["GET","POST"])
+@gokopa.route('/gk/historico',methods=["GET","POST"])
 def historico():
-    tipo="gk"
     if request.method == "POST":
         time1 = request.values.get("time1")
         time2 = request.values.get("time2")
@@ -294,7 +308,7 @@ def historico():
         lista_jogos = []
         vev=[]
         times=[]
-    return render_template('historico.html',menu='Historico',tipo=tipo,lista_jogos=lista_jogos,vev=vev,times=times,lista_times=get_team_list())
+    return render_template('historico.html',menu='Historico',tipo='gk',lista_jogos=lista_jogos,vev=vev,times=times,lista_times=get_team_list())
 
 def get_tabela_pot():
     tabela_pot = []
@@ -345,7 +359,7 @@ def get_tabelas_copa():
     return tabelas
 
 
-@gokopa.route('/sorteio')
+@gokopa.route('/gk/sorteio')
 @cache.cached(timeout=3600*24*30)
 def sorteio_page():
     tabelas_label = ['A','B','C','D','E','F','G','H']
@@ -361,4 +375,4 @@ def sorteio_page():
     else:
         highlight = "nenhum"
 
-    return render_template('sorteio.html',menu='Home',labels=tabelas_label,tabelas=tabelas,tabela_pot=pot_table,hlt=highlight)
+    return render_template('sorteio.html',menu='Home',tipo='gk',labels=tabelas_label,tabelas=tabelas,tabela_pot=pot_table,hlt=highlight)

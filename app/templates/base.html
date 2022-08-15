@@ -53,12 +53,12 @@
             <nav width="100%">
               <ul>
                 <li ><a {% if menu=='Home' %}class="active"{% endif %} href="/{{ tipo }}/home">Home</a></li>
-                <li ><a {% if menu=='Tabela' %}class="active"{% endif %}href="/tabela">Tabela</a></li>
+                <li ><a {% if menu=='Tabela' %}class="active"{% endif %}href="/{{ tipo }}/tabela">Tabela</a></li>
                 {% if tipo == 'gk' %}
-                <li ><a {% if menu=='Ranking' %}class="active"{% endif %}href="/ranking">Ranking</a></li>
-                <li ><a {% if menu=='Historico' %}class="active"{% endif %}href="/historico">Histórico</a></li>
+                <li ><a {% if menu=='Ranking' %}class="active"{% endif %}href="/gk/ranking">Ranking</a></li>
+                <li ><a {% if menu=='Historico' %}class="active"{% endif %}href="/gk/historico">Histórico</a></li>
                 {% else %}
-                <li ><a {% if menu=='Regras' %}class="active"{% endif %}href="/regras">Regras</a></li>
+                <li ><a {% if menu=='Regras' %}class="active"{% endif %}href="/cp/regras">Regras</a></li>
                 {% endif %}
                 <li ><a {% if menu=='Bolao' %}class="active"{% endif %}href="/{{ tipo }}/bolao">Bolão</a></li>
                 <li style="float: right">

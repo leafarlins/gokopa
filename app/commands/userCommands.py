@@ -85,7 +85,7 @@ def list_users(user,tipo,status):
     userExists = userCollection.find_one({"name": user})
     if userExists:
         userCollection.find_one_and_update({'name': user},{'$set': {tipo: atividade}})
-        print("Usuário setado para status active = ",atividade)
+        print("Usuário setado para status ",tipo," = ",atividade)
     else:
         print("Usuário não encontrado.")
 

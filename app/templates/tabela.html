@@ -218,11 +218,12 @@
         </div>
     
     </div>
-        
-<h2>Tabelas antigas</h2>
-<p class="center">Veja as tabelas de gokopas antigas: <a href="../tabela20">Gokopa20</a></p>
-<p class="center">Veja o resumo das fases finais de <a href="../tabelahis">todas as Gokopas</a></p>
 
+{% if tipo == 'gk' %}
+<h2>Tabelas antigas</h2>
+<p class="center">Veja as tabelas de gokopas antigas: <a href="tabela20">Gokopa20</a></p>
+<p class="center">Veja o resumo das fases finais de <a href="tabelahis">todas as Gokopas</a></p>
+{% endif %}
 </div>
 
 {% endblock %}

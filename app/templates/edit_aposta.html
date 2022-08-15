@@ -16,11 +16,11 @@
           <input type="hidden" name="idjogo" value="{{ jogo['Jogo'] }}" id="idproduto" class="form-control" placeholder="Id do Jogo" required>
           <input type="hidden" name="data" value="{{ jogo['Data'] }}" id="data" class="form-control" placeholder="Data" required>
           
-          {{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">
+          {{ jogo['Time1'] }} <img class="flag" src="../static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
           <input maxlength="2" size="2" width="20" type="number" name="p1" value="{{ a1 }}" id="p1" required autofocus>
           x
           <input maxlength="2" size="2" width="20" type="number" name="p2" value="{{ a2 }}" id="p2" required autofocus>
-          <img class="flag" src="static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ jogo['Time2'] }}
+          <img class="flag" src="../static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ jogo['Time2'] }}
           <p>&nbsp;</p>  
           <p>Ranking das equipes: {{ r1 }} e {{ r2 }}</p>
             

@@ -15,21 +15,21 @@
           {% for linha in ranking %}
             <tr>
               <td>{{ linha['pos'] }}</td>
-              <td><img class="flag" src="static/img/flag/{{ linha['time'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ linha['time'] }}</td>
+              <td><img class="flag" src="../static/img/flag/{{ linha['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ linha['time'] }}</td>
               <td>{{ linha['pontos'] }}
-                {% if linha['u_pts'] > 0 %}<img title="+{{ linha['u_pts'] }} pontos" class="flag updown" src="static/img/up.png">
-                {% elif linha['u_pts'] == 0 %}<img class="flag updown" src="static/img/steady.png">
-                {% else %}<img title="{{ linha['u_pts'] }} pontos" class="flag updown" src="static/img/down.png">
+                {% if linha['u_pts'] > 0 %}<img title="+{{ linha['u_pts'] }} pontos" class="flag updown" src="../static/img/up.png">
+                {% elif linha['u_pts'] == 0 %}<img class="flag updown" src="../static/img/steady.png">
+                {% else %}<img title="{{ linha['u_pts'] }} pontos" class="flag updown" src="../static/img/down.png">
                 {% endif %}
               </td>
-              <td class="updown">{% if linha['u_rank'] > 0 %}<img class="flag updown" src="static/img/up.png">
-                {% elif linha['u_rank'] == 0 %}<img class="flag updown" src="static/img/steady.png">
-                {% else %}<img class="flag updown" src="static/img/down.png">
+              <td class="updown">{% if linha['u_rank'] > 0 %}<img class="flag updown" src="../static/img/up.png">
+                {% elif linha['u_rank'] == 0 %}<img class="flag updown" src="../static/img/steady.png">
+                {% else %}<img class="flag updown" src="../static/img/down.png">
                 {% endif %}
                 {{ linha['u_rank'] }}</td>
-              <td class="updown">{% if linha['u_ano'] > 0 %}<img class="flag updown" src="static/img/up.png">
-                {% elif linha['u_ano'] == 0 %}<img class="flag updown" src="static/img/steady.png">
-                {% else %}<img class="flag updown" src="static/img/down.png">
+              <td class="updown">{% if linha['u_ano'] > 0 %}<img class="flag updown" src="../static/img/up.png">
+                {% elif linha['u_ano'] == 0 %}<img class="flag updown" src="../static/img/steady.png">
+                {% else %}<img class="flag updown" src="../static/img/down.png">
                 {% endif %} {{ linha['u_ano'] }}</td>
             </tr>
           {% endfor %}
@@ -43,10 +43,10 @@
       <tr>
         <th title="Posição">#</th>
         <th>Time</th>
-        <th title="Ouro"><img class="flag" src="static/img/ouro.png"></th>
-        <th title="Prata"><img class="flag" src="static/img/prata.png"></th>
-        <th title="Bronze"><img class="flag" src="static/img/bronze.png"></th>
-        <th title="Total"><img class="flag" src="static/img/total.png"></th>
+        <th title="Ouro"><img class="flag" src="../static/img/ouro.png"></th>
+        <th title="Prata"><img class="flag" src="../static/img/prata.png"></th>
+        <th title="Bronze"><img class="flag" src="../static/img/bronze.png"></th>
+        <th title="Total"><img class="flag" src="../static/img/total.png"></th>
       </tr>
       {% set ns = namespace(last_p=1,last_ouro=1,last_prata=1,last_bronze=1) %}
       {% for time in copa_med | sort(attribute='bronze', reverse = True) | sort(attribute='prata', reverse = True) | sort(attribute='ouro', reverse = True) %}
@@ -61,7 +61,7 @@
             {% set ns.last_bronze = time['bronze'] %}
           {% endif %}
         </td>
-        <td><img class="flag" src="static/img/flag/{{ time['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ time['nome'] }}</td>
+        <td><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</td>
         <td>{{ time['ouro'] }}</td>
         <td>{{ time['prata'] }}</td>
         <td>{{ time['bronze'] }}</td>
@@ -74,23 +74,23 @@
     <table class="tab_gokopa quadro">
       <tr>
         <th title="Ano">A</th>
-        <th><img class="flag" src="static/img/ouro.png"> Campeão</th>
-        <th title="segundo"><img class="flag" src="static/img/prata.png"></th>
-        <th title="terceiro"><img class="flag" src="static/img/bronze.png"></th>
+        <th><img class="flag" src="../static/img/ouro.png"> Campeão</th>
+        <th title="segundo"><img class="flag" src="../static/img/prata.png"></th>
+        <th title="terceiro"><img class="flag" src="../static/img/bronze.png"></th>
         <th title="quarto">4º</th>
         <th>sede</th>
       </tr>
       {% for ano in copa_his %}
       <tr>
         <td>{{ ano['Ano'] }}</td>
-        <td><img class="flag" src="static/img/flag/{{ ano['ouro'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ ano['ouro'] }}</td>
-        <td><img class="flag" src="static/img/flag/{{ ano['prata'] }}.png" onerror="this.src='static/img/flag/default.png'" title="{{ ano['prata'] }}"></td>
-        <td><img class="flag" src="static/img/flag/{{ ano['bronze'] }}.png" onerror="this.src='static/img/flag/default.png'" title="{{ ano['bronze'] }}"></td>
-        <td><img class="flag" src="static/img/flag/{{ ano['quarto'] }}.png" onerror="this.src='static/img/flag/default.png'" title="{{ ano['quarto'] }}"></td>
+        <td><img class="flag" src="../static/img/flag/{{ ano['ouro'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ ano['ouro'] }}</td>
+        <td><img class="flag" src="../static/img/flag/{{ ano['prata'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['prata'] }}"></td>
+        <td><img class="flag" src="../static/img/flag/{{ ano['bronze'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['bronze'] }}"></td>
+        <td><img class="flag" src="../static/img/flag/{{ ano['quarto'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['quarto'] }}"></td>
         <td>
           {% set list = ano['sedes'].split(',') %}
           {% for sede in list %}
-            <img class="flag" src="static/img/flag/{{ sede }}.png" onerror="this.src='static/img/flag/default.png'" title="{{ sede }}"> 
+            <img class="flag" src="../static/img/flag/{{ sede }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ sede }}"> 
           {% endfor %}
         </td>
       </tr>
@@ -103,10 +103,10 @@
       <tr>
         <th title="Posição">#</th>
         <th>Time</th>
-        <th title="Ouro"><img class="flag" src="static/img/ouro.png"></th>
-        <th title="Prata"><img class="flag" src="static/img/prata.png"></th>
-        <th title="Bronze"><img class="flag" src="static/img/bronze.png"></th>
-        <th title="Total"><img class="flag" src="static/img/total.png"></th>
+        <th title="Ouro"><img class="flag" src="../static/img/ouro.png"></th>
+        <th title="Prata"><img class="flag" src="../static/img/prata.png"></th>
+        <th title="Bronze"><img class="flag" src="../static/img/bronze.png"></th>
+        <th title="Total"><img class="flag" src="../static/img/total.png"></th>
       </tr>
       {% set ns = namespace(last_p=1,last_ouro=1,last_prata=1,last_bronze=1) %}
       {% for time in taca_med | sort(attribute='bronze', reverse = True) | sort(attribute='prata', reverse = True) | sort(attribute='ouro', reverse = True) %}
@@ -121,7 +121,7 @@
             {% set ns.last_bronze = time['bronze'] %}
           {% endif %}
         </td>
-        <td><img class="flag" src="static/img/flag/{{ time['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ time['nome'] }}</td>
+        <td><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</td>
         <td>{{ time['ouro'] }}</td>
         <td>{{ time['prata'] }}</td>
         <td>{{ time['bronze'] }}</td>
@@ -134,20 +134,20 @@
     <table class="tab_gokopa quadro">
       <tr>
         <th title="Ano">A</th>
-        <th><img class="flag" src="static/img/ouro.png"> Campeão</th>
-        <th title="segundo"><img class="flag" src="static/img/prata.png"></th>
-        <th title="terceiro"><img class="flag" src="static/img/bronze.png"></th>
+        <th><img class="flag" src="../static/img/ouro.png"> Campeão</th>
+        <th title="segundo"><img class="flag" src="../static/img/prata.png"></th>
+        <th title="terceiro"><img class="flag" src="../static/img/bronze.png"></th>
         <th title="quarto">4º</th>
         <th>sede</th>
       </tr>
       {% for ano in taca_his %}
       <tr>
         <td>{{ ano['Ano'] }}</td>
-        <td><img class="flag" src="static/img/flag/{{ ano['ouro'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ ano['ouro'] }}</td>
-        <td><img class="flag" src="static/img/flag/{{ ano['prata'] }}.png" onerror="this.src='static/img/flag/default.png'" title="{{ ano['prata'] }}"></td>
-        <td><img class="flag" src="static/img/flag/{{ ano['bronze'] }}.png" onerror="this.src='static/img/flag/default.png'" title="{{ ano['bronze'] }}"></td>
-        <td><img class="flag" src="static/img/flag/{{ ano['quarto'] }}.png" onerror="this.src='static/img/flag/default.png'" title="{{ ano['quarto'] }}"></td>
-        <td><img class="flag" src="static/img/flag/{{ ano['sedes'] }}.png" onerror="this.src='static/img/flag/default.png'" title="{{ ano['sedes'] }}"></td>
+        <td><img class="flag" src="../static/img/flag/{{ ano['ouro'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ ano['ouro'] }}</td>
+        <td><img class="flag" src="../static/img/flag/{{ ano['prata'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['prata'] }}"></td>
+        <td><img class="flag" src="../static/img/flag/{{ ano['bronze'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['bronze'] }}"></td>
+        <td><img class="flag" src="../static/img/flag/{{ ano['quarto'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['quarto'] }}"></td>
+        <td><img class="flag" src="../static/img/flag/{{ ano['sedes'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['sedes'] }}"></td>
       </tr>
       {% endfor %}
     </table>
@@ -158,10 +158,10 @@
       <tr>
         <th title="Posição">#</th>
         <th>Time</th>
-        <th title="Ouro"><img class="flag" src="static/img/ouro.png"></th>
-        <th title="Prata"><img class="flag" src="static/img/prata.png"></th>
-        <th title="Bronze"><img class="flag" src="static/img/bronze.png"></th>
-        <th title="Total"><img class="flag" src="static/img/total.png"></th>
+        <th title="Ouro"><img class="flag" src="../static/img/ouro.png"></th>
+        <th title="Prata"><img class="flag" src="../static/img/prata.png"></th>
+        <th title="Bronze"><img class="flag" src="../static/img/bronze.png"></th>
+        <th title="Total"><img class="flag" src="../static/img/total.png"></th>
       </tr>
       {% set ns = namespace(last_p=1,last_ouro=1,last_prata=1,last_bronze=1) %}
       {% for time in tacas_med | sort(attribute='bronze', reverse = True) | sort(attribute='prata', reverse = True) | sort(attribute='ouro', reverse = True) %}
@@ -176,7 +176,7 @@
             {% set ns.last_bronze = time['bronze'] %}
           {% endif %}
         </td>
-        <td><img class="flag" src="static/img/flag/{{ time['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ time['nome'] }}</td>
+        <td><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</td>
         <td>{{ time['ouro'] }}</td>
         <td>{{ time['prata'] }}</td>
         <td>{{ time['bronze'] }}</td>
@@ -193,10 +193,10 @@
       <tr>
         <th title="Posição">#</th>
         <th>Apostador</th>
-        <th title="Ouro"><img class="flag" src="static/img/ouro.png"></th>
-        <th title="Prata"><img class="flag" src="static/img/prata.png"></th>
-        <th title="Bronze"><img class="flag" src="static/img/bronze.png"></th>
-        <th title="Total"><img class="flag" src="static/img/total.png"></th>
+        <th title="Ouro"><img class="flag" src="../static/img/ouro.png"></th>
+        <th title="Prata"><img class="flag" src="../static/img/prata.png"></th>
+        <th title="Bronze"><img class="flag" src="../static/img/bronze.png"></th>
+        <th title="Total"><img class="flag" src="../static/img/total.png"></th>
       </tr>
       {% set ns = namespace(last_p=1,last_ouro=1,last_prata=1,last_bronze=1) %}
       {% for apostador in bet_med | sort(attribute='bronze', reverse = True) | sort(attribute='prata', reverse = True) | sort(attribute='ouro', reverse = True) %}
@@ -223,9 +223,9 @@
     <table class="tab_gokopa quadro">
       <tr>
         <th title="Ano">A</th>
-        <th><img class="flag" src="static/img/ouro.png"> Campeão</th>
-        <th title="segundo"><img class="flag" src="static/img/prata.png"></th>
-        <th title="terceiro"><img class="flag" src="static/img/bronze.png"></th>
+        <th><img class="flag" src="../static/img/ouro.png"> Campeão</th>
+        <th title="segundo"><img class="flag" src="../static/img/prata.png"></th>
+        <th title="terceiro"><img class="flag" src="../static/img/bronze.png"></th>
         <th title="quarto">4º</th>
       </tr>
       {% for ano in bet_his %}

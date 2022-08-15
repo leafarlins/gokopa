@@ -16,8 +16,11 @@ def get_games():
     return ano_jogos
 
 @cache.memoize(600)
-def get_users():
-    allUsers = [u.get("name") for u in mongo.db.users.find({"active": True}).sort("name",pymongo.ASCENDING)]
+def get_users(tipo):
+    if tipo == 'gk':
+        allUsers = [u.get("name") for u in mongo.db.users.find({"active": True,"gokopa": True}).sort("name",pymongo.ASCENDING)]
+    else:
+        allUsers = [u.get("name") for u in mongo.db.users.find({"active": True}).sort("name",pymongo.ASCENDING)]
     return allUsers
 
 @cache.memoize(3600*2)
@@ -112,10 +115,10 @@ def get_aposta(id_jogo):
     return apostas.find_one_or_404({"Jogo": id_jogo})
 
 @cache.memoize(600)
-def make_score_board():
+def make_score_board(tipo):
     now = datetime.now()
     ano_jogos = get_games()
-    allUsers = get_users()
+    allUsers = get_users(tipo)
     resultados = []
         
     for jogo in ano_jogos:
@@ -145,8 +148,8 @@ def make_score_board():
     return ordered_total
 
 @cache.memoize(3600*3)
-def get_history_data(results):
-    gr_users = get_users()
+def get_history_data(results,tipo):
+    gr_users = get_users(tipo)
     gr_data = []
     dias = [u['Dia'] for u in mongo.db.bolao21his.find({"nome": gr_users[0]}).sort("Dia",pymongo.ASCENDING)]
     #print("Dias l",len(dias))
@@ -164,9 +167,8 @@ def get_history_data(results):
 
 
 
-@bolao.route('/bolao<id>')
-def old_bolao(id):
-    tipo="gk"
+@bolao.route('/<tipo>/bolao<id>')
+def old_bolao(id,tipo):
     if id == '20':
         return render_template('static/bolao20.html',menu='Bolao',tipo=tipo)
     else:
@@ -179,7 +181,7 @@ def apostas(tipo):
     output = []
     now = datetime.now()
     ano_jogos = get_games()
-    allUsers = get_users()
+    allUsers = get_users(tipo)
     resultados = []
     
     if "username" in session:
@@ -214,8 +216,8 @@ def apostas(tipo):
     #cache_timeout = 3600*24*7
     #cache.set('lista_bolao',ordered_total,cache_timeout)
     #cache.set('lista_date',lista_date,cache_timeout)
-    ordered_total = make_score_board()
-    gr_labels,gr_data = get_history_data(ordered_total)
+    ordered_total = make_score_board(tipo)
+    gr_labels,gr_data = get_history_data(ordered_total,tipo)
     #print(gr_labels,gr_data)
     #rendered=render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers,gr_labels=gr_labels,gr_data=gr_data)
     #print(rendered)

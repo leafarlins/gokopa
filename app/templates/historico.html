@@ -14,7 +14,7 @@
         {% if times %}
           <table class="tab_gokopa">
               <tr>
-                <td>V. <img class="flag" src="static/img/flag/{{ times[0] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ times[0] }}</td>
+                <td>V. <img class="flag" src="../static/img/flag/{{ times[0] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ times[0] }}</td>
                 <td>{{ vev[0] }}</td>
               </tr>
               <tr>
@@ -22,7 +22,7 @@
                 <td>{{ vev[1] }}</td>
               </tr>
               <tr>
-                <td>V. <img class="flag" src="static/img/flag/{{ times[1] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ times[1] }}</td>
+                <td>V. <img class="flag" src="../static/img/flag/{{ times[1] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ times[1] }}</td>
                 <td>{{ vev[2] }}</td>
               </tr>
               <tr>
@@ -59,14 +59,14 @@
           </tr>
           <tr>
             <td colspan="2">
-                {{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">
+                {{ jogo['Time1'] }} <img class="flag" src="../static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
                 {% if jogo['pe1'] %}
                   <b title="tr: {{ jogo['tr1'] }}x{{ jogo['tr2'] }} pe: {{ jogo['pe1'] }}x{{ jogo['pe2'] }}">{{ jogo['p1'] }}x{{ jogo['p2'] }}</b>
                 {% elif jogo['tr1'] %}
                   <b title="tr: {{ jogo['tr1'] }}x{{ jogo['tr2'] }}">{{ jogo['p1'] }}x{{ jogo['p2'] }}</b>
                 {% else %}{{ jogo['p1'] }}x{{ jogo['p2'] }}
                 {% endif %}
-                 <img class="flag" src="static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ jogo['Time2'] }}
+                 <img class="flag" src="../static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ jogo['Time2'] }}
             </td>
           </tr>
         {% endfor %}

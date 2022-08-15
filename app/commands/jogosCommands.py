@@ -254,7 +254,7 @@ def report(jogos,proximos):
     print(lista_users)
 
     #ordered_total = get_ordered()
-    ordered_total = make_score_board()
+    ordered_total = make_score_board('gk')
     range_print = 5
     if len(ordered_total) < 5:
         range_print = len(ordered_total)
