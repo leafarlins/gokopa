@@ -71,8 +71,9 @@ def list_users():
 
 @userCommands.cli.command("activeUser")
 @click.argument("user")
+@click.argument("tipo")
 @click.argument("status")
-def list_users(user,status):
+def list_users(user,tipo,status):
     if status == "true":
         atividade = True
     elif status == "false":
@@ -83,7 +84,7 @@ def list_users(user,status):
     userCollection = mongo.db.users
     userExists = userCollection.find_one({"name": user})
     if userExists:
-        userCollection.find_one_and_update({'name': user},{'$set': {"active": atividade}})
+        userCollection.find_one_and_update({'name': user},{'$set': {tipo: atividade}})
         print("Usuário setado para status active = ",atividade)
     else:
         print("Usuário não encontrado.")

@@ -51,9 +51,9 @@ def get_classificados():
     return lista_final
 
 # Rota / associada a função index
-@gokopa.route('/')
+@gokopa.route('/<tipo>/home')
 @cache.cached(timeout=5*60)
-def index():
+def index(tipo):
     past_jogos = [u for u in mongo.db.jogos.find({'Ano': 20}).sort([('Jogo',pymongo.DESCENDING)])]
     #past_jogos=[]
     ano20_jogos = mongo.db.jogos.find({'Ano': ANO}).sort([("Jogo",pymongo.ASCENDING)])
@@ -73,7 +73,7 @@ def index():
 
     tabelas_label = ['A','B','C','D','E','F','G','H']
     tabelas = get_tabelas_copa()
-    return render_template("inicio.html",menu="Home",past_jogos=past_jogos[:20],next_jogos=next_jogos[:20],classificados=classificados,total=lista_bolao,tabelas=tabelas,labels=tabelas_label)
+    return render_template("inicio.html",menu="Home",tipo=tipo,past_jogos=past_jogos[:20],next_jogos=next_jogos[:20],classificados=classificados,total=lista_bolao,tabelas=tabelas,labels=tabelas_label)
 
 
 @cache.memoize(300)
@@ -102,15 +102,16 @@ def get_anoX_games(ano,indx):
 @gokopa.route('/tabela<id>')
 @cache.cached(timeout=3600*200)
 def old_tabela(id):
+    tipo="gk"
     if id == '20':
         return render_template('static/tabela20.html',menu="Tabela")
     else:
-        return redirect(url_for('gokopa.tabela'))
+        return redirect(url_for('gokopa.tabela',tipo=tipo))
 
 
-@gokopa.route('/tabela')
+@gokopa.route('/<tipo>/tabela')
 @cache.cached(timeout=180)
-def tabela():
+def tabela(tipo):
     ano_jogos = get_anoX_games(ANO,0)
     tabelas_label = ['A','B','C','D','E','F','G','H']
     tabelas = []
@@ -191,11 +192,12 @@ def tabela():
             tabelas.append(linha)
     #rendered = render_template('tabela.html',menu="Tabela",tabelas=tabelas,labels=tabelas_label,lista_jogos=ano20_jogos,jogos_id=jogos_id)
     #print(rendered)
-    return render_template('tabela.html',menu="Tabela",tabelas=tabelas,labels=tabelas_label,lista_jogos=ano_jogos,jogos_id=jogos_id)
+    return render_template('tabela.html',menu="Tabela",tipo=tipo,tabelas=tabelas,labels=tabelas_label,lista_jogos=ano_jogos,jogos_id=jogos_id)
 
 @gokopa.route('/tabelahis')
 @cache.memoize(3600*720)
 def tabela_his():
+    tipo="gk"
     fase_final = []
     for i in range(20):
         jogos = [u for u in mongo.db.jogos.find({"Ano": i+1, "Competição": "Copa", '$or': [{"Fase": "8vas-de-final"},{"Fase": "4as-de-final"},{"Fase": "Semi-final"},{"Fase": "D. 3º Lugar"},{"Fase": "Final"}]}).sort('Jogo',pymongo.ASCENDING)]
@@ -203,7 +205,7 @@ def tabela_his():
             jogos = [0,0,0,0,0,0,0,0] + jogos
         fase_final.append(jogos)
         #print(f'Add ano {i+1}: {jogos}')
-    return render_template('tabelahis.html',menu="Tabela",lista_jogos=fase_final)
+    return render_template('tabelahis.html',menu="Tabela",tipo=tipo,lista_jogos=fase_final)
 
 @cache.memoize(3600*24*7)
 def get_historic_copa(comp):
@@ -239,13 +241,14 @@ def get_historic_copa(comp):
 @gokopa.route('/ranking')
 @cache.cached(timeout=3600*24)
 def ranking():
+    tipo="gk"
     rank_ed = read_config_ranking()
     ranking = [u for u in mongo.db.ranking.find({"ed": rank_ed}).sort('pos',pymongo.ASCENDING)]
     copas_list,copas_medal = get_historic_copa("copa")
     taca_list,taca_medal = get_historic_copa("taca")
     bet_list,bet_medals = get_historic_copa("bet")
     tacas_list,tacas_medals = get_historic_copa("tacas")
-    return render_template("ranking.html",menu="Ranking",ranking=ranking,rank_ed=rank_ed,copa_his=copas_list,copa_med=copas_medal,bet_his=bet_list,bet_med=bet_medals,taca_his=taca_list,taca_med=taca_medal,tacas_his=tacas_list,tacas_med=tacas_medals)
+    return render_template("ranking.html",menu="Ranking",tipo=tipo,ranking=ranking,rank_ed=rank_ed,copa_his=copas_list,copa_med=copas_medal,bet_his=bet_list,bet_med=bet_medals,taca_his=taca_list,taca_med=taca_medal,tacas_his=tacas_list,tacas_med=tacas_medals)
 
 @cache.memoize(3600*24)
 def get_team_list():
@@ -281,6 +284,7 @@ def return_historic_duels(team1,team2):
 
 @gokopa.route('/historico',methods=["GET","POST"])
 def historico():
+    tipo="gk"
     if request.method == "POST":
         time1 = request.values.get("time1")
         time2 = request.values.get("time2")
@@ -290,7 +294,7 @@ def historico():
         lista_jogos = []
         vev=[]
         times=[]
-    return render_template('historico.html',menu='Historico',lista_jogos=lista_jogos,vev=vev,times=times,lista_times=get_team_list())
+    return render_template('historico.html',menu='Historico',tipo=tipo,lista_jogos=lista_jogos,vev=vev,times=times,lista_times=get_team_list())
 
 def get_tabela_pot():
     tabela_pot = []

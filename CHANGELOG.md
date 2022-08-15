@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. Based on [K
 
 ## [unreleased]
 
+### Added
+- Type page for cp (copa) or gk (gokopa), cp for betting in world cup
+
 ### Changed
 - All pages pointing to 21st season
 - Templates changes for 21st season

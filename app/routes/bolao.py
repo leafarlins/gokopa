@@ -166,14 +166,15 @@ def get_history_data(results):
 
 @bolao.route('/bolao<id>')
 def old_bolao(id):
+    tipo="gk"
     if id == '20':
-        return render_template('static/bolao20.html',menu='Bolao')
+        return render_template('static/bolao20.html',menu='Bolao',tipo=tipo)
     else:
-        return redirect(url_for('bolao.apostas'))
+        return redirect(url_for('bolao.apostas',tipo=tipo))
 
 
-@bolao.route('/bolao')
-def apostas():
+@bolao.route('/<tipo>/bolao')
+def apostas(tipo):
     list_next_bet = []
     output = []
     now = datetime.now()
@@ -218,11 +219,11 @@ def apostas():
     #print(gr_labels,gr_data)
     #rendered=render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers,gr_labels=gr_labels,gr_data=gr_data)
     #print(rendered)
-    return render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers,gr_labels=gr_labels,gr_data=gr_data)
+    return render_template("bolao.html",menu="Bolao",tipo=tipo,userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers,gr_labels=gr_labels,gr_data=gr_data)
     
 
-@bolao.route('/editaposta',methods=["GET","POST"])
-def edit_aposta():
+@bolao.route('/<tipo>/editaposta',methods=["GET","POST"])
+def edit_aposta(tipo):
     if "username" in session:
         validUser = mongo.db.users.find_one({"username": session["username"]})
         apostador = validUser["name"]
@@ -248,7 +249,7 @@ def edit_aposta():
 
         if request.method == "GET":
             #list_next_bet=request.values.get("list_next_bet")
-            return render_template('edit_aposta.html',menu='Bolao',jogo=jogo,a1=a1,a2=a2,idjogo=idjogo,r1=r1,r2=r2)
+            return render_template('edit_aposta.html',menu='Bolao',tipo=tipo,jogo=jogo,a1=a1,a2=a2,idjogo=idjogo,r1=r1,r2=r2)
         else:
             list_next_bet = cache.get(apostador)
             next_bet = 0
@@ -277,6 +278,6 @@ def edit_aposta():
                         str(apostador + "_p2"): int(p2)
                         }})
                 flash(f'Placar adicionado com sucesso no jogo {idjogo}!','success')
-            return redirect(url_for('bolao.edit_aposta',idjogo=next_bet))
+            return redirect(url_for('bolao.edit_aposta',tipo=tipo,idjogo=next_bet))
     else:
-        return redirect(url_for('usuario.login'))
+        return redirect(url_for('usuario.login',tipo=tipo))
