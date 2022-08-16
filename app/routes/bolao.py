@@ -192,6 +192,11 @@ def apostas(tipo):
     
     for jogo in ano_jogos:
         id_jogo = jogo["Jogo"]
+
+        # Temporario para Catar
+        if id_jogo == 1 or id_jogo == 18 or id_jogo == 33:
+            jogo["Time1"] = "Qatar"
+
         data_jogo = datetime.strptime(jogo["Data"],"%d/%m/%Y %H:%M")
         #aposta = apostas.find_one_or_404({"Jogo": id_jogo})
         aposta = get_aposta(id_jogo)
@@ -242,6 +247,9 @@ def edit_aposta(tipo):
                 a2 = ""
             r1 = get_rank(jogo['Time1'])
             r2 = get_rank(jogo['Time2'])
+            # Temporario para Catar
+            if idjogo == 1 or idjogo == 18 or idjogo == 33:
+                jogo["Time1"] = "Qatar"
         else:
             jogo = ""
             a1=""
