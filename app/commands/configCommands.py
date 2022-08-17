@@ -11,7 +11,7 @@ configCommands = Blueprint('config',__name__)
 
 #@bolaoCommands.cli.command("getOrdered")
 #@click.argument("")
-def get_ordered():
+def get_ordered(tipo):
     collection = mongo.db.bolao21his
     bolao_his = [u for u in collection.find().sort("Dia",pymongo.DESCENDING)]
     last_day = ""
@@ -28,7 +28,7 @@ def get_ordered():
         last_date = bolao_his[0].get("Data")
         #print(f'Ultima dia: {last_day} - {last_date}')
     ano_jogos = get_games()
-    allUsers = get_users()
+    allUsers = get_users(tipo)
 
     for jogo in ano_jogos:
         id_jogo = jogo["Jogo"]
@@ -59,17 +59,23 @@ def get_ordered():
             last_score = ordered_total[i]["score"]
             last_pc = ordered_total[i]["pc"]
             last_pos = i+1
+        # Define tipo gk ou cp
+        ordered_total[i]["tipo"] = tipo
 
     #mongo.db.bolao21his.insert(ordered_total)
+    
     return ordered_total
 
 @configCommands.cli.command("setHistory")
-#@click.argument("")
 def set_history():
-    ordered_total = get_ordered()
-    print(ordered_total)
+    # Em caso de duplo ranking, setar tipo 2x
+    ordered_total_gk = get_ordered('gk')
+    print(ordered_total_gk)
+    ordered_total_cp = get_ordered('cp')
+    print(ordered_total_cp)
     print("Escrevendo placar de hoje na base")
-    mongo.db.bolao21his.insert(ordered_total)
+    mongo.db.bolao21his.insert(ordered_total_gk)
+    mongo.db.bolao21his.insert(ordered_total_cp)
 
 @configCommands.cli.command("setRank")
 @click.argument("edition")

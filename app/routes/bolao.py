@@ -151,11 +151,11 @@ def make_score_board(tipo):
 def get_history_data(results,tipo):
     gr_users = get_users(tipo)
     gr_data = []
-    dias = [u['Dia'] for u in mongo.db.bolao21his.find({"nome": gr_users[0]}).sort("Dia",pymongo.ASCENDING)]
-    #print("Dias l",len(dias))
+    dias = [u['Dia'] for u in mongo.db.bolao21his.find({"nome": gr_users[0],"tipo":tipo}).sort("Dia",pymongo.ASCENDING)]
+    print("Dias l",len(dias))
     dias.append('H')
     for usr in gr_users:
-        historia = [u['score'] for u in mongo.db.bolao21his.find({"nome": usr}).sort("Dia",pymongo.ASCENDING)]
+        historia = [u['score'] for u in mongo.db.bolao21his.find({"nome": usr, "tipo": tipo}).sort("Dia",pymongo.ASCENDING)]
         #print(f'Historia para {usr} l{len(historia)}: {historia}')
         for item in results:
             if item["nome"] == usr:
@@ -201,7 +201,7 @@ def apostas(tipo):
         #aposta = apostas.find_one_or_404({"Jogo": id_jogo})
         aposta = get_aposta(id_jogo)
         # If game is old and score not empty -> and jogo['p1'] != ""
-        if data_jogo < now:
+        if data_jogo < now and jogo.get('p1') != None and jogo.get('p1') != "":
             jogo_inc = get_bet_results(allUsers,aposta,jogo)
             resultados.append(jogo_inc)
         # If game will happen, is definned and user is logged in
