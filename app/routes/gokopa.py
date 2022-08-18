@@ -180,11 +180,11 @@ def tabela(tipo):
                     if data_jogo < now:
                         if p1 != None and p1 != "":
                             p2 = ano_jogos[jid].get('p2')
-                            #print("Calculando para jogo ",ano20_jogos[jid])
+                            #print("Calculando para jogo ",ano_jogos[jid])
                             if p1 == p2:
                                 if linha['nome'] == ano_jogos[jid].get('Time1') or linha['nome'] == ano_jogos[jid].get('Time2'):
                                     linha['P'] += 1
-                                    linha['G'] = p1
+                                    linha['G'] += p1
                             elif p1 > p2: # Time1 ganha
                                 if linha['nome'] == ano_jogos[jid].get('Time1'):
                                     linha['P'] += 3
@@ -193,6 +193,7 @@ def tabela(tipo):
                                 elif linha['nome'] == ano_jogos[jid].get('Time2'):
                                     linha['S'] -= p1 - p2
                                     linha['G'] += p2
+                                    #print(f"Time2 {linha['nome']} perdeu, G+={p2}={linha['G']}")
                             else: # Time2 ganha
                                 if linha['nome'] == ano_jogos[jid].get('Time2'):
                                     linha['P'] += 3
@@ -205,6 +206,7 @@ def tabela(tipo):
                 linha['nome'] = descs[j]
                 #tab.update({'nome': desc})
             tabelas.append(linha)
+            #print(f"Escrevendo linha {linha}")
     #rendered = render_template('tabela.html',menu="Tabela",tabelas=tabelas,labels=tabelas_label,lista_jogos=ano20_jogos,jogos_id=jogos_id)
     #print(rendered)
     return render_template('tabela.html',menu="Tabela",tipo=tipo,tabelas=tabelas,labels=tabelas_label,lista_jogos=ano_jogos,jogos_id=jogos_id)

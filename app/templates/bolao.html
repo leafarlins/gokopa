@@ -83,10 +83,12 @@
           </tr>
           {% endfor %}
         </table>
+        {% else %}<p class="center">Não há resultados para mostrar.</p>
+        {% endif %}
   </div>
    
 </div>
-
+{% if resultados %}
 <div class="graficopts">
   <h4>Resultado detalhado de pontos</h4>
   <canvas id="grafico" height="600"></canvas>
@@ -188,9 +190,8 @@ for(let i=0;i<nomes.length;i++){
           </tr>
         {% endfor %}
       </table>
-      {% else %}<p class="center">Não há resultados para mostrar.</p>
-      {% endif %}
 </div>
+{% endif %}
 
 {% if tipo == 'gk' %}
 <div class="sectionj">

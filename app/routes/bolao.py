@@ -194,8 +194,9 @@ def apostas(tipo):
         id_jogo = jogo["Jogo"]
 
         # Temporario para Catar
-        if id_jogo == 1 or id_jogo == 18 or id_jogo == 33:
-            jogo["Time1"] = "Qatar"
+        if tipo == 'cp':
+            if id_jogo == 1 or id_jogo == 18 or id_jogo == 33:
+                jogo["Time1"] = "Qatar"
 
         data_jogo = datetime.strptime(jogo["Data"],"%d/%m/%Y %H:%M")
         #aposta = apostas.find_one_or_404({"Jogo": id_jogo})
@@ -229,6 +230,15 @@ def apostas(tipo):
     return render_template("bolao.html",menu="Bolao",tipo=tipo,userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers,gr_labels=gr_labels,gr_data=gr_data)
     
 
+@bolao.route('/cp/regras')
+def regras():
+    allUsers = get_users('cp')
+    qtd = len(allUsers)
+    inscricao = 50
+    bolao = qtd*inscricao
+    premio = [qtd,"{:.2f}".format(bolao*0.6),"{:.2f}".format(bolao*0.3),"{:.2f}".format(bolao*0.1),"{:.2f}".format(bolao)]
+    return render_template("regras.html",menu="Regras",tipo='cp',premio=premio)
+
 @bolao.route('/<tipo>/editaposta',methods=["GET","POST"])
 def edit_aposta(tipo):
     if "username" in session:
@@ -248,8 +258,9 @@ def edit_aposta(tipo):
             r1 = get_rank(jogo['Time1'])
             r2 = get_rank(jogo['Time2'])
             # Temporario para Catar
-            if idjogo == 1 or idjogo == 18 or idjogo == 33:
-                jogo["Time1"] = "Qatar"
+            if tipo == 'cp':
+                if idjogo == 1 or idjogo == 18 or idjogo == 33:
+                    jogo["Time1"] = "Qatar"
         else:
             jogo = ""
             a1=""
