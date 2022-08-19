@@ -11,8 +11,8 @@ configCommands = Blueprint('config',__name__)
 
 #@bolaoCommands.cli.command("getOrdered")
 #@click.argument("")
-def get_ordered():
-    collection = mongo.db.bolao20his
+def get_ordered(tipo):
+    collection = mongo.db.bolao21his
     bolao_his = [u for u in collection.find().sort("Dia",pymongo.DESCENDING)]
     last_day = ""
     now = datetime.now()
@@ -27,10 +27,10 @@ def get_ordered():
         last_day = bolao_his[0].get("Dia")
         last_date = bolao_his[0].get("Data")
         #print(f'Ultima dia: {last_day} - {last_date}')
-    ano20_jogos = get_games()
-    allUsers = get_users()
+    ano_jogos = get_games()
+    allUsers = get_users(tipo)
 
-    for jogo in ano20_jogos:
+    for jogo in ano_jogos:
         id_jogo = jogo["Jogo"]
         data_jogo = datetime.strptime(jogo["Data"],"%d/%m/%Y %H:%M")
         aposta = get_aposta(id_jogo)
@@ -59,17 +59,23 @@ def get_ordered():
             last_score = ordered_total[i]["score"]
             last_pc = ordered_total[i]["pc"]
             last_pos = i+1
+        # Define tipo gk ou cp
+        ordered_total[i]["tipo"] = tipo
 
-    #mongo.db.bolao20his.insert(ordered_total)
+    #mongo.db.bolao21his.insert(ordered_total)
+    
     return ordered_total
 
 @configCommands.cli.command("setHistory")
-#@click.argument("")
 def set_history():
-    ordered_total = get_ordered()
-    print(ordered_total)
+    # Em caso de duplo ranking, setar tipo 2x
+    ordered_total_gk = get_ordered('gk')
+    print(ordered_total_gk)
+    ordered_total_cp = get_ordered('cp')
+    print(ordered_total_cp)
     print("Escrevendo placar de hoje na base")
-    mongo.db.bolao20his.insert(ordered_total)
+    mongo.db.bolao21his.insert(ordered_total_gk)
+    mongo.db.bolao21his.insert(ordered_total_cp)
 
 @configCommands.cli.command("setRank")
 @click.argument("edition")
@@ -80,8 +86,6 @@ def set_history(edition):
     else:
         print("Config não existe na base, definindo...")
         mongo.db.settings.insert({"config": "ranking", "edition": edition})
-
-
 
 @configCommands.cli.command("setHl")
 @click.argument("team")

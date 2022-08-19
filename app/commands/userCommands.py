@@ -1,5 +1,6 @@
 import click
 import getpass
+from pwgen import pwgen
 from ..extentions.database import mongo
 from werkzeug.security import generate_password_hash
 from flask import Blueprint
@@ -24,16 +25,17 @@ def create_user(username,name):
     if userExists:
         print(f'Usuario {name} já existe')
     else:
-        password = getpass.getpass()
+        password = pwgen(10, symbols=False)
         user = {
         "username": username,
         "name": name,
         "password": generate_password_hash(password),
-        "active": False
+        "active": True,
+        "passwordActive": False
     }
         userCollection.insert(user)
         print('Usuário cadastrado com sucesso')
-        print("Você foi cadastrado no sistema da Gokopa! Acesse pelo link: https://gokopa.herokuapp.com/")
+        print("Você foi cadastrado no sistema da Gokopa! Acesse pelo link: https://gokopa.leafarlins.com/")
         print(f'Usuário: {username}')
         print(f'Senha temporária: {password}')
         print(f'\nSeu nome no bolão será: {name}\nQualquer dúvida, entre em contato!')
@@ -42,16 +44,51 @@ def create_user(username,name):
 @click.argument("username")
 def reset_password(username):
     userCollection = mongo.db.users
-    password = getpass.getpass()
+    password = pwgen(10, symbols=False)
+    #password = getpass.getpass()
 
     userExists = userCollection.find_one({"username": username})
     if userExists:
-        userCollection.find_one_and_update({'username': username},{'$set': {"active": False, "password": generate_password_hash(password)}})
-        print("Usuário teve senha resetada. Acesse pelo link: https://gokopa.herokuapp.com/")
+        userCollection.find_one_and_update({'username': username},{'$set': {"passwordActive": False, "password": generate_password_hash(password)}})
+        print("Usuário teve senha resetada. Acesse pelo link: https://gokopa.leafarlins.com/")
         print(f'Usuário: {username}')
         print(f'Senha temporária: {password}')
     else:
         print("Usuário não encontrado.")
+
+@userCommands.cli.command("listUsers")
+def list_users():
+    lista_users = [u for u in mongo.db.users.find()]
+    ativos = ""
+    inativos = ""
+    for u in lista_users:
+        if u["active"]:
+            ativos += " " + u["name"]
+        else:
+            inativos += " " + u["name"]
+    print(f'Lista de users ativos:{ativos}')
+    print(f'Lista de users inativos:{inativos}')
+
+@userCommands.cli.command("activeUser")
+@click.argument("user")
+@click.argument("tipo")
+@click.argument("status")
+def list_users(user,tipo,status):
+    if status == "true":
+        atividade = True
+    elif status == "false":
+        atividade = False
+    else:
+        print("Informe true ou false para status.")
+        return
+    userCollection = mongo.db.users
+    userExists = userCollection.find_one({"name": user})
+    if userExists:
+        userCollection.find_one_and_update({'name': user},{'$set': {tipo: atividade}})
+        print("Usuário setado para status ",tipo," = ",atividade)
+    else:
+        print("Usuário não encontrado.")
+
 
 @userCommands.cli.command("dropUser")
 @click.argument("username")

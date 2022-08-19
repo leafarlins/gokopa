@@ -27,7 +27,7 @@
               <tr style="background-color:#f3ea6a ;">
               {% else %}<tr>{% endif %}
                   <td>
-                      <img class="flag" src="static/img/flag/{{ team['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ team['nome'] }}</td>
+                      <img class="flag" src="../static/img/flag/{{ team['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ team['nome'] }}</td>
                   <td>{{ team['rank'] }}</td>
               </tr>
           {% endfor %}
@@ -49,7 +49,7 @@
       <td>
         {% if team['sorteado'] %} <s>{{ team['nome'] }}</s>
         {% else %}
-        {{ team['rank'] }} <img class="flag" src="static/img/flag/{{ team['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ team['nome'] }}
+        {{ team['rank'] }} <img class="flag" src="../static/img/flag/{{ team['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ team['nome'] }}
         {% endif %}
       </td>
       {% endfor %}

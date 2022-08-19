@@ -11,7 +11,7 @@ from ..extentions.database import mongo
 from flask import Blueprint
 
 SEPARADOR_CSV=","
-ANO=20
+ANO=21
 RANKING='19-3'
 
 timeCommands = Blueprint('time',__name__)
@@ -122,6 +122,7 @@ def edit_time(time,desc):
             print(novo_jogo)
     print("Finalizado.")
 
+# Para classificação da copa de acordo com confederação
 @timeCommands.cli.command("classificaTime")
 @click.argument("time")
 @click.argument("conf")

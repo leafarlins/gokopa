@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row scoll-pane">
+
+    <div class="texto">
+        <h2 class="center">Regras</h2>
+        <h4>Inscrição no bolão e uso do site</h4>
+        <p>1. A inscrição deverá ser feita com o administrador do bolao, e o usuário receberá uma mensagem com informações de login</p>
+        <p>2. Será gerada uma senha temporária que deverá ser trocada.</p>
+        <p>3. Esquecimento de senha ou quaisquer problemas técnicos devem ser informados ao administrador</p>
+        <p>4. Haverá um evento de testes em outubro, no qual todos estarão previamente inscritos. O evento é opcional e não tem relação com o bolão, pagamento e prêmios.</p>
+        <p>5. Após o evento de testes, a participação do usuário estará condicionada ao pagamento da taxa de R$ 50,00 que serão convertidos integralmente aos prêmios.</p>
+        <p>6. Após início da copa, não haverá devolução da taxa em caso de desistência de participação.</p>
+        <p>7. Ao se cadastrar no site e participar do bolão, o usuário confirma estar de acordo com essas regras.</p>
+        <h4>Apostas e Pontuação</h4>
+        <p>1. Cada jogo terá pontuação de acordo com os itens:</p>
+        <ul>
+          <li>Placar cheio: 5 pontos</li>
+          <li>Acertar vencedor/empate: 2 pontos</li>
+          <li>Placar próximo, 1 saldo de diferença e acerto no vencedor/empate: 3 pontos</li>
+          <li>Demais casos: 0 pontos</li>
+        </ul>
+        <p>2. A pontuação de cada jogo será multiplicada por seu peso de acordo com a tabela abaixo, e somada à pontuação geral da copa.</p>
+        <table class="tab_gokopa tabelas">
+          <tr>
+            <th>Fase</th>
+            <th>Peso</th>
+          </tr>
+          <tr>
+            <td>1ª e 2ª rodada</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td>3ª rodada</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td>Oitavas-de-final</td>
+            <td>6</td>
+          </tr>
+          <tr>
+            <td>Quartas-de-final</td>
+            <td>7</td>
+          </tr>
+          <tr>
+            <td>Semi-final</td>
+            <td>8</td>
+          </tr>
+          <tr>
+            <td>D. 3º lugar</td>
+            <td>8</td>
+          </tr>
+          <tr>
+            <td>Final</td>
+            <td>12</td>
+          </tr>
+        </table>
+        <p>3. A vitória do bolão será de acordo com a pontuação total, obtida ao final da copa</p>
+        <p>4. Como critério de desempate, temos: placar cheio; pontuação na final; pontuação na d. 3º lugar; pontuação na semi-final; e assim por diante.</p>
+        <p>5. A aposta só é valida até o início do jogo. Não serão aceitas apostas após disso, mesmo em caso de lentidão ou indisponibilidade temporária do site, portanto, é recomendado adiantar as apostas.</p>
+        <p>6. Após início do jogo, as apostas de todos os jogadores estarão disponíveis para conferência. Elas não poderão mais ser alteradas.</p>
+        <p>7. O administrador do bolão também irá particiar, e se compromete a não olhar resultados de apostas dos demais antes do permitido, salvo em caso de extrema necessidade de algum bug pontual no site.</p>
+        <h4>Premiação</h4>
+        <p>1. A premiação do bolão seguirá as porcentagens definidas na tabela, relativas ao total de inscrições realizadas.<br>
+        <b>Total de inscrições:</b> {{ premio[0] }} => R$ {{ premio[4] }}</p>
+        <p>2. Será realizado o depósito aos vencedores ao final da competição de acordo com a tabela abaixo. Os valores podem mudar caso hajam novas inscrições até o início da copa.</p>
+        <table class="tab_gokopa tabelas">
+          <tr>
+            <td>1º lugar</td>
+            <td>60%</td>
+            <td>R$ {{ premio[1] }}</td>
+          </tr>
+          <tr>
+            <td>2º lugar</td>
+            <td>30%</td>
+            <td>R$ {{ premio[2] }}</td>
+          </tr>
+          <tr>
+            <td>3º lugar</td>
+            <td>10%</td>
+            <td>R$ {{ premio[3] }}</td>
+          </tr>
+        </table>
+    </div>
+
+
+  
+  </div>
+
+{% endblock %}

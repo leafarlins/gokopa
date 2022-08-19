@@ -252,7 +252,7 @@ h3 {
     clear:both;
     text-align:center;
     padding:5px;
-    position: fixed;
+    /*position: fixed;*/
     left: 0;
     bottom: 0;
     width: 100%;
@@ -328,6 +328,16 @@ div.time-destaque {
   float:left;
   margin-bottom: 10px;
   font-size: small;
+}
+
+div.texto {
+  max-width: 1024px;
+  padding: 5vh;
+  align-self: center;
+  float: center;
+  margin: auto;
+  margin-top: 10;
+  padding-top: 30px;
 }
 
 #more {display: none;}

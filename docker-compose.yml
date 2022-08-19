@@ -2,11 +2,19 @@ version: '3'
 services:
 
     gokopa:
-        #image: gokopa:0.1.0
-        build: .
+        image: leafarlins/gokopa:v1.2.0
+        #build: .
         #restart: always
         #volumes:
         #- "./volume/data:/var/cells/data"
         #  - "data:/var/cells/data"
         #  - "cellsdir:/var/cells"
-        ports: ["80:5000"]
+        ports: ["8081:5000"]
+        environment:
+          FLASK_APP: app.py
+          FLASK_ENV: development
+          MONGO_URI: ${MONGO_URI}
+          SECRET_KEY: ${SECRET_KEY}
+
+    #mongodb:
+        #image: 

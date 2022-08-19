@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="row scoll-pane">
+<!-- <div class="row scoll-pane">
   <div class="sectionj col-12">
     <h2>Sorteio das Chaves da Copa</h2>
   </div>  
@@ -16,7 +16,7 @@
                 {% if hlt == team['nome'] %}
                 <tr style="background-color:#f3ea6a ;">
                 {% else %}<tr>{% endif %}
-                  <td><img class="flag" src="static/img/flag/{{ team['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ team['nome'] }}</td>
+                  <td><img class="flag" src="../static/img/flag/{{ team['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ team['nome'] }}</td>
                   <td>{{ team['rank'] }}</td>  
                 </tr>
             {% endfor %}
@@ -24,7 +24,7 @@
     </div>
     {% endfor %}
 
-  </div>
+  </div> -->
 
 <div class="row scoll-pane">
 
@@ -49,17 +49,17 @@
         <td>{{ p['score'] }}</td>
         <td>{{ p['pc'] }}</td>
         <td>{% if p['last_day'] > 0 %}
-              {% if p['last_day'] > p['posicao'] %}<img class="flag updown" src="static/img/up.png">
-              {% elif p['posicao'] == p['last_day'] %}<img class="flag updown" src="static/img/steady.png">
-              {% else %}<img class="flag updown" src="static/img/down.png">
+              {% if p['last_day'] > p['posicao'] %}<img class="flag updown" src="../static/img/up.png">
+              {% elif p['posicao'] == p['last_day'] %}<img class="flag updown" src="../static/img/steady.png">
+              {% else %}<img class="flag updown" src="../static/img/down.png">
               {% endif %}{{ p['last_day'] - p['posicao'] }}
             {% else %}-
             {% endif %}
         </td>
         <td>{% if p['last_week'] > 0 %}
-              {% if p['last_week'] > p['posicao'] %}<img class="flag updown" src="static/img/up.png">
-              {% elif p['posicao'] == p['last_week'] %}<img class="flag updown" src="static/img/steady.png">
-              {% else %}<img class="flag updown" src="static/img/down.png">
+              {% if p['last_week'] > p['posicao'] %}<img class="flag updown" src="../static/img/up.png">
+              {% elif p['posicao'] == p['last_week'] %}<img class="flag updown" src="../static/img/steady.png">
+              {% else %}<img class="flag updown" src="../static/img/down.png">
               {% endif %}{{ p['last_week'] - p['posicao'] }}
             {% else %}-
             {% endif %}
@@ -79,9 +79,9 @@
       <div class="col-12"><h5>Europa</h5></div>
         {% for time in classificados[0] %}
           {% if time['nome'] == x %}
-          <div class="col-6 time-destaque"><img class="flag" src='static/img/flag/default.png'></div>
+          <div class="col-6 time-destaque"><img class="flag" src='../static/img/flag/default.png'></div>
           {% else %}
-          <div class="col-6 time-destaque"><img class="flag" src="static/img/flag/{{ time['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ time['nome'] }}</div>
+          <div class="col-6 time-destaque"><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</div>
           {% endif %}
         {% endfor %}
     </div>
@@ -90,9 +90,9 @@
       <div class="col-12"><h5>África</h5></div>
       {% for time in classificados[1] %}
         {% if time['nome'] == x %}
-        <div class="col-6 time-destaque"><img class="flag" src='static/img/flag/default.png'></div>
+        <div class="col-6 time-destaque"><img class="flag" src='../static/img/flag/default.png'></div>
         {% else %}
-        <div class="col-6 time-destaque"><img class="flag" src="static/img/flag/{{ time['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ time['nome'] }}</div>
+        <div class="col-6 time-destaque"><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</div>
         {% endif %}
       {% endfor %}
     </div>
@@ -101,9 +101,9 @@
       <div class="col-12"><h5>Ásia-Oceania</h5></div>
       {% for time in classificados[2] %}
         {% if time['nome'] == x %}
-        <div class="col-6 time-destaque"><img class="flag" src='static/img/flag/default.png'></div>
+        <div class="col-6 time-destaque"><img class="flag" src='../static/img/flag/default.png'></div>
         {% else %}
-        <div class="col-6 time-destaque"><img class="flag" src="static/img/flag/{{ time['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ time['nome'] }}</div>
+        <div class="col-6 time-destaque"><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</div>
         {% endif %}
       {% endfor %}
     </div>
@@ -112,9 +112,9 @@
       <div class="col-12"><h5>América</h5></div>
       {% for time in classificados[3] %}
         {% if time['nome'] == x %}
-        <div class="col-6 time-destaque"><img class="flag" src='static/img/flag/default.png'></div>
+        <div class="col-6 time-destaque"><img class="flag" src='../static/img/flag/default.png'></div>
         {% else %}
-        <div class="col-6 time-destaque"><img class="flag" src="static/img/flag/{{ time['nome'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ time['nome'] }}</div>
+        <div class="col-6 time-destaque"><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</div>
         {% endif %}
       {% endfor %}
     </div>
@@ -135,19 +135,19 @@
       </tr>
       <tr>
           <!-- <td>{{ jogo['Data'] }}</td>
-          <td>{{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'"></td>
+          <td>{{ jogo['Time1'] }} <img class="flag" src="../static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'"></td>
           <td>{{ jogo['p1'] }}x{{ jogo['p2'] }}</td>
-          <td><img class="flag" src="static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ jogo['Time2'] }}</td>
+          <td><img class="flag" src="../static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ jogo['Time2'] }}</td>
           <td>{{ jogo['Competição'] }} {{ jogo['Fase'] }}</td> -->
         <td colspan="2">
-            {{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">
+            {{ jogo['Time1'] }} <img class="flag" src="../static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
             {% if jogo['pe1'] or jogo['pe1'] == 0  %}
               <b title="tr: {{ jogo['tr1'] }}x{{ jogo['tr2'] }} pe: {{ jogo['pe1'] }}x{{ jogo['pe2'] }}">{{ jogo['p1'] }}x{{ jogo['p2'] }}</b>
             {% elif jogo['tr1'] or jogo['tr1'] == 0 %}
               <b title="tr: {{ jogo['tr1'] }}x{{ jogo['tr2'] }}">{{ jogo['p1'] }}x{{ jogo['p2'] }}</b>
             {% else %}{{ jogo['p1'] }}x{{ jogo['p2'] }}
             {% endif %}
-             <img class="flag" src="static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ jogo['Time2'] }}
+             <img class="flag" src="../static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ jogo['Time2'] }}
         </td>
       </tr>
     {% endfor %}
@@ -167,14 +167,14 @@
       </tr>
       <tr>
           <!-- <td>{{ jogo['Data'] }}</td>
-          <td>{{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'"></td>
+          <td>{{ jogo['Time1'] }} <img class="flag" src="../static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'"></td>
           <td>{{ jogo['p1'] }}x{{ jogo['p2'] }}</td>
-          <td><img class="flag" src="static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ jogo['Time2'] }}</td>
+          <td><img class="flag" src="../static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ jogo['Time2'] }}</td>
           <td>{{ jogo['Competição'] }} {{ jogo['Fase'] }}</td> -->
         <td colspan="2">
-            {{ jogo['Time1'] }} <img class="flag" src="static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='static/img/flag/default.png'">
+            {{ jogo['Time1'] }} <img class="flag" src="../static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
             x
-             <img class="flag" src="static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='static/img/flag/default.png'"> {{ jogo['Time2'] }}
+             <img class="flag" src="../static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ jogo['Time2'] }}
         </td>
       </tr>
     {% endfor %}
