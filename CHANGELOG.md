@@ -3,7 +3,8 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
-## [1.2.1] - 2022/08/19
+
+## [1.3.0] - 2022-08-19
 
 ### Added
 - Type page for cp (copa) or gk (gokopa), cp for betting in world cup

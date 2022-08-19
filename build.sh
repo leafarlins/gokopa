@@ -7,8 +7,8 @@ edit_changelog() {
 
     sed -i "s/$LASTV\.\./v$VERSAO\.\./" CHANGELOG.md
     sed -i "/^\[unreleased/a [${LASTV/v/}]: https://github.com/leafarlins/gokopa/compare/$LASTV..$VERSAO/" CHANGELOG.md
-    sed -i "/^## \[unreleased/a ## \[${LASTV/v/}\] - $HOJE" CHANGELOG.md
-    sed -n '/## \[unreleased/,/^## /p' CHANGELOG.md | sed '/^## \[/d' > /tmp/tagnotes
+    sed -i "/^## \[unreleased/a ## \[$VERSAO\] - $HOJE" CHANGELOG.md
+    #sed -n '/## \[unreleased/,/^## /p' CHANGELOG.md | sed '/^## \[/d' > /tmp/tagnotes
 
     sed -i "s/Gokopa do Mundo v.*/Gokopa do Mundo v$VERSAO/" app/templates/base.html
 }
@@ -18,21 +18,22 @@ commit_tag() {
     git add CHANGELOG.md
     git add app/templates/base.html
     git commit -m "release v$VERSAO"
-    git tag -a v$VERSAO -F /tmp/tagnotes
-    git push --tags
+    #git tag -a v$VERSAO -F /tmp/tagnotes
+    #git push --tags origin master
+    git push origin master
 
 }
 
 docker_build() {
     echo "Construindo container"
-    docker build -t leafarlins/gokopa:v$VERSAO
-    docker build -t leafarlins/gokopa:latest
+    docker build -t leafarlins/gokopa:v$VERSAO .
+    docker build -t leafarlins/gokopa:latest .
     docker push leafarlins/gokopa:v$VERSAO
     docker push leafarlins/gokopa:latest
 }
 
 VERSAO=$1
-HOJE=$(date "+%Y/%m/%d")
+HOJE=$(date "+%Y-%m-%d")
 
 echo "Construindo versao $VERSAO"
 

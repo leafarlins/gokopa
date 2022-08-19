@@ -50,8 +50,13 @@ def get_classificados():
     #print(lista_final)
     return lista_final
 
+@gokopa.route('/')
+@cache.cached(timeout=5*60)
+def home():
+    return redirect(url_for('gokopa.index',tipo='gk'))
+
 # Rota / associada a função index
-@gokopa.route('/<tipo>/home')
+@gokopa.route('/<tipo>/')
 @cache.cached(timeout=5*60)
 def index(tipo):
     past_jogos = [u for u in mongo.db.jogos.find({'Ano': 20}).sort([('Jogo',pymongo.DESCENDING)])]
