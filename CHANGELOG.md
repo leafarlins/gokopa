@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file. Based on [K
 
 ### Added
 - Type page for cp (copa) or gk (gokopa), cp for betting in world cup
+- History for 20th season and old playoffs
+- Commands for users and games
 
 ### Changed
 - All pages pointing to 21st season

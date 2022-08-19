@@ -83,7 +83,11 @@ def get_bet_results(users,aposta,jogo):
             score = 0
         else:
             aposta_str=str(b1)+"x"+str(b2)
-            score = get_score_game(jogo['p1'],jogo['p2'],b1,b2)
+            # Caso jogo esta sem resultado ainda
+            if jogo['p1'] == "" or jogo['p1'] == None:
+                score = 0
+            else:
+                score = get_score_game(jogo['p1'],jogo['p2'],b1,b2)
         # Score com valor de pontos e valor de pontos*peso
         jogo[user]=[aposta_str,score,score*peso]
     return jogo
@@ -202,7 +206,7 @@ def apostas(tipo):
         #aposta = apostas.find_one_or_404({"Jogo": id_jogo})
         aposta = get_aposta(id_jogo)
         # If game is old and score not empty -> and jogo['p1'] != ""
-        if data_jogo < now and jogo.get('p1') != None and jogo.get('p1') != "":
+        if data_jogo < now:
             jogo_inc = get_bet_results(allUsers,aposta,jogo)
             resultados.append(jogo_inc)
         # If game will happen, is definned and user is logged in
