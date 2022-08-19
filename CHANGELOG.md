@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
+## [1.2.1] - 2022/08/19
 
 ### Added
 - Type page for cp (copa) or gk (gokopa), cp for betting in world cup
@@ -78,7 +79,8 @@ All notable changes to this project will be documented in this file. Based on [K
 - Table from games from first season year 20
 
 
-[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.2.1...HEAD
+[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.3.0...HEAD
+[1.2.1]: https://github.com/leafarlins/gokopa/compare/v1.2.1..1.3.0/
 [1.2.1]: https://github.com/leafarlins/gokopa/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/leafarlins/gokopa/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/leafarlins/gokopa/compare/v1.0.3...v1.1.0
