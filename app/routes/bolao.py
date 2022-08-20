@@ -187,12 +187,11 @@ def apostas(tipo):
     ano_jogos = get_games()
     allUsers = get_users(tipo)
     resultados = []
-    
-    if "username" in session:
+    if session.get('username') == None:
+        userLogado=False
+    else:
         apostador = get_user_name(session["username"])
         userLogado=True
-    else:
-        userLogado=False
     
     for jogo in ano_jogos:
         id_jogo = jogo["Jogo"]

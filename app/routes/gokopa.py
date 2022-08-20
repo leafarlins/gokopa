@@ -1,3 +1,4 @@
+import re
 from app.routes.bolao import get_rank, make_score_board, read_config_ranking
 from array import array
 from datetime import datetime, time
@@ -53,7 +54,10 @@ def get_classificados():
 @gokopa.route('/')
 @cache.cached(timeout=5*60)
 def home():
-    return redirect(url_for('gokopa.index',tipo='gk'))
+    if re.match('.*gokopa.leafarlins',request.url_root):
+        return redirect(url_for('gokopa.index',tipo='gk'))
+    else:
+        return redirect(url_for('gokopa.index',tipo='cp'))
 
 # Rota / associada a função index
 @gokopa.route('/<tipo>/')
