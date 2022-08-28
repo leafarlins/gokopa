@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file. Based on [K
 
 ## [unreleased]
 
-## [1.3.0] - 2022-08-19
+## [1.3.0] - 2022-08-28
 
 ### Added
 - Type page for cp (copa) or gk (gokopa), cp for betting in world cup

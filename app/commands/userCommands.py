@@ -61,12 +61,16 @@ def list_users():
     lista_users = [u for u in mongo.db.users.find()]
     ativos = ""
     inativos = ""
+    gokopa = ""
     for u in lista_users:
         if u["active"]:
             ativos += " " + u["name"]
+            if u.get("gokopa"):
+                gokopa += " " + u["name"]
         else:
             inativos += " " + u["name"]
     print(f'Lista de users ativos:{ativos}')
+    print(f'Lista de users gokopa:{gokopa}')
     print(f'Lista de users inativos:{inativos}')
 
 @userCommands.cli.command("activeUser")
