@@ -237,7 +237,7 @@ def report(jogos,proximos):
         print(j['Time1'],e1['flag'],placar,e2['flag'],j['Time2'],tr)
 
 
-    allUsers = get_users()
+    allUsers = get_users('gk')
     #print(allUsers)
     missing_users = set()
     for j in range(int(next_list[0]),int(next_list[1])+1):

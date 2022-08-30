@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file. Based on [K
 
 ## [unreleased]
 
+### Added
+- History for each team position in past games and graph with rank positions
+- Progress bar of completed games and scores
+
+### Changed
+- Layout of table of results
+
 ## [1.3.0] - 2022-08-28
 
 ### Added

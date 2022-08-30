@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, session, request, url_for, flash
+from app.routes.backend import progress_data
 import pymongo
 from werkzeug.utils import redirect
 from ..extentions.database import mongo
@@ -156,7 +157,7 @@ def get_history_data(results,tipo):
     gr_users = get_users(tipo)
     gr_data = []
     dias = [u['Dia'] for u in mongo.db.bolao21his.find({"nome": gr_users[0],"tipo":tipo}).sort("Dia",pymongo.ASCENDING)]
-    print("Dias l",len(dias))
+    #print("Dias l",len(dias))
     dias.append('H')
     for usr in gr_users:
         historia = [u['score'] for u in mongo.db.bolao21his.find({"nome": usr, "tipo": tipo}).sort("Dia",pymongo.ASCENDING)]
@@ -230,7 +231,7 @@ def apostas(tipo):
     #print(gr_labels,gr_data)
     #rendered=render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers,gr_labels=gr_labels,gr_data=gr_data)
     #print(rendered)
-    return render_template("bolao.html",menu="Bolao",tipo=tipo,userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers,gr_labels=gr_labels,gr_data=gr_data)
+    return render_template("bolao.html",menu="Bolao",tipo=tipo,userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers,gr_labels=gr_labels,gr_data=gr_data,progress_data=progress_data())
     
 
 @bolao.route('/cp/regras')

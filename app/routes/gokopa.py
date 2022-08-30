@@ -1,5 +1,6 @@
 import re
 from app.routes.bolao import get_rank, make_score_board, read_config_ranking
+from app.routes.backend import progress_data
 from array import array
 from datetime import datetime, time
 from typing import Collection
@@ -61,7 +62,7 @@ def home():
 
 # Rota / associada a função index
 @gokopa.route('/<tipo>/')
-@cache.cached(timeout=5*60)
+#@cache.cached(timeout=5*60)
 def index(tipo):
     past_jogos = [u for u in mongo.db.jogos.find({'Ano': 20}).sort([('Jogo',pymongo.DESCENDING)])]
     #past_jogos=[]
@@ -86,7 +87,7 @@ def index(tipo):
 
     tabelas_label = ['A','B','C','D','E','F','G','H']
     tabelas = get_tabelas_copa()
-    return render_template("inicio.html",menu="Home",tipo=tipo,past_jogos=past_jogos[:20],next_jogos=next_jogos[:20],classificados=classificados,total=lista_bolao,tabelas=tabelas,labels=tabelas_label)
+    return render_template("inicio.html",menu="Home",tipo=tipo,past_jogos=past_jogos[:20],next_jogos=next_jogos[:20],classificados=classificados,total=lista_bolao,tabelas=tabelas,labels=tabelas_label,progress_data=progress_data())
 
 
 @cache.memoize(300)
@@ -308,18 +309,39 @@ def return_historic_duels(team1,team2):
 
     return historico_total,vev
 
+@cache.memoize(3600*24*7)
+def return_team_history(team1):
+    historia = mongo.db.timehistory.find_one({'Time': team1})
+    pos_copa = []
+    pos_rank = []
+    for i in range(20):
+        copa = "c" + str(i+1)
+        rank = "r" + str(i+1)
+        pos_copa.append(historia[copa])
+        if historia[rank] == "-":
+            pos_rank.append('null')
+        else:
+            pos_rank.append(int(historia[rank]))
+    return pos_copa,pos_rank
+
 @gokopa.route('/gk/historico',methods=["GET","POST"])
 def historico():
+    time_1 = dict()
+    time_2 = dict()
     if request.method == "POST":
-        time1 = request.values.get("time1")
-        time2 = request.values.get("time2")
-        times = [time1,time2]
-        lista_jogos,vev = return_historic_duels(time1,time2)
+        time_1["nome"] = request.values.get("time1")
+        time_2["nome"] = request.values.get("time2")
+        #times = [time1,time2]
+        lista_jogos,vev = return_historic_duels(time_1["nome"],time_2["nome"])
+        time_1["hc"],time_1["hr"] = return_team_history(time_1["nome"])
+        time_2["hc"],time_2["hr"] = return_team_history(time_2["nome"])
+        print(time_1)
+        print(time_2)
     else:
         lista_jogos = []
         vev=[]
-        times=[]
-    return render_template('historico.html',menu='Historico',tipo='gk',lista_jogos=lista_jogos,vev=vev,times=times,lista_times=get_team_list())
+        #time1=""
+    return render_template('historico.html',menu='Historico',tipo='gk',lista_jogos=lista_jogos,vev=vev,time1=time_1,time2=time_2,lista_times=get_team_list())
 
 def get_tabela_pot():
     tabela_pot = []

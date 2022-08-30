@@ -56,6 +56,42 @@ def load_csv(csv_file):
     else:
         exit()
 
+@timeCommands.cli.command("loadTimeHistory")
+@click.argument("csv_file")
+def load_csv(csv_file):
+    data = []
+    with open(csv_file) as arq:
+        headers = next(arq, None)
+        # Caso valor default None, retorna []
+        if headers is None:
+            return []
+
+        cabecalho = headers.strip().split(SEPARADOR_CSV)
+        #print(cabecalho)
+
+        for linha in arq:
+            #print("linha:",linha)
+            colunas = linha.strip().split(SEPARADOR_CSV)
+            documento = zip(cabecalho,colunas)
+            documento = dict(documento)
+            data.append(documento)
+
+        if not data:
+            print("Sem dados.")
+            return None
+        
+        print(data)
+    
+    
+    question = input(f'Deseja inserir os dados impressos? (S/N) ')
+    if question.upper() == "S":
+        timeCollection = mongo.db.timehistory
+        timeCollection.insert(data)
+        print("Dados inseridos")
+    else:
+        exit()
+
+
 @timeCommands.cli.command("loadEmojis")
 @click.argument("csv_file")
 def load_emoji(csv_file):

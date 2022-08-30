@@ -11,25 +11,25 @@
             {{ message }}
         </div>
         {% endfor %} {% endif %} {% endwith %}
-        {% if times %}
-          <table class="tab_gokopa">
-              <tr>
-                <td>V. <img class="flag" src="../static/img/flag/{{ times[0] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ times[0] }}</td>
-                <td>{{ vev[0] }}</td>
-              </tr>
-              <tr>
-                <td>Empates</td>
-                <td>{{ vev[1] }}</td>
-              </tr>
-              <tr>
-                <td>V. <img class="flag" src="../static/img/flag/{{ times[1] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ times[1] }}</td>
-                <td>{{ vev[2] }}</td>
-              </tr>
-              <tr>
-                <td><b>Total</b></td>
-                <td><b>{{ vev[3] }}</b></td>
-              </tr>
-          </table>
+        {% if time1 %}
+        <table class="tab_gokopa">
+          <tr>
+            <td>V. <img class="flag" src="../static/img/flag/{{ time1['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time1['nome'] }}</td>
+            <td>{{ vev[0] }}</td>
+          </tr>
+          <tr>
+            <td>Empates</td>
+            <td>{{ vev[1] }}</td>
+          </tr>
+          <tr>
+            <td>V. <img class="flag" src="../static/img/flag/{{ time2['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time2['nome'] }}</td>
+            <td>{{ vev[2] }}</td>
+          </tr>
+          <tr>
+            <td><b>Total</b></td>
+            <td><b>{{ vev[3] }}</b></td>
+          </tr>
+        </table>
         {% endif %}
             <p>Escolha dois times para verificar histórico de confrontos.</p>
             <form action="{{ url_for('gokopa.historico') }}" method="post">
@@ -79,5 +79,124 @@
 
   
   </div>
+
+{% if time1 %}
+  <div class="row scoll-pane">
+
+    <div class="sectionj col-12 col-sd-12 col-md-10">
+
+      <h4>Histórico de posições na copa</h4>
+      <table class="tab_gokopa">
+        <tr>
+          <td>Edição:</td>
+          {% for i in range(0,20)|reverse %}
+          <td>
+            {{ i+1 }}
+          </td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <td>
+            <img class="flag" src="../static/img/flag/{{ time1['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time1['nome'] }}
+          </td>
+          {% for i in range(0,20)|reverse %}
+          <td>
+            {% if time1['hc'][i]|int != 0 %}<b>{{ time1['hc'][i] }}</b>
+            {% else %}{{ time1['hc'][i] }}
+            {% endif %}
+          </td>
+          {% endfor %}
+        </tr>
+        <tr>
+          <td>
+            <img class="flag" src="../static/img/flag/{{ time2['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time2['nome'] }}
+          </td>
+          {% for i in range(0,20)|reverse %}
+          <td>
+            {% if time2['hc'][i]|int != 0 %}<b>{{ time2['hc'][i] }}</b>
+            {% else %}{{ time2['hc'][i] }}
+            {% endif %}
+          </td>
+          {% endfor %}
+        </tr>
+      </table>
+      <p>Legenda: "-" (não participou), "e" (eliminatórias), "t" (taça regional), "a" ou "b" (ligas regionais)</p>
+
+        <h4>Histórico de posições nos rankings</h4>
+        {% set times = [ time1["nome"] , time2["nome"] ] %}
+        {% set datag = [ time1["hr"], time2["hr"] ] %}
+        <div width="99%" height="40vh"><canvas id="grafico" style="position: relative; text-align: center; display: unset;"></canvas></div>
+        <script>
+
+          var labelsgr = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20'];
+          const colors = ['#3e95cd','#d19c2a'];
+          let nomes = {{ times | safe }}; 
+          let datagr = {{ datag | safe }};
+          
+          myLineChart= new Chart(document.getElementById("grafico"), {
+            type: 'line',
+            data: {
+              labels: labelsgr,
+              datasets: [
+                {
+                  data: datagr[0],
+                  label: nomes[0],
+                  borderColor: colors[0],
+                  fill: false
+                }, {
+                  data: datagr[1],
+                  label: nomes[1],
+                  borderColor: colors[1],
+                  fill: false
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              resizeDelay: 200,
+              //maintainAspectRatio: true,
+              spanGaps: true,
+              scales: {
+                yAxes: [{
+                  ticks: { reverse: true }
+                }]
+              },
+              title: {
+                display: true,
+                text: 'Posição em cada ano'
+              },
+              hover: {
+              mode: 'index',
+              intersect: true
+              },
+              labels: {
+                boxWidth: 20
+              }
+            }
+          });
+
+          // function getDataset(index, data) { 
+          //   return { 
+          //     data: datagr[0],
+          //         label: nomes[0],
+          //         borderColor: colors[0],
+          //         fill: false
+          //   }; 
+          // }
+
+          // for(let i=0;i<2;i++){
+          //     myLineChart.data.datasets.push({
+          //       data: datagr[i],
+          //       label: nomes[i],
+          //       borderColor: colors[i],
+          //       fill: false
+          //         });
+          // }
+
+        </script>
+
+    </div>
+  </div>
+{% endif %}
 
 {% endblock %}

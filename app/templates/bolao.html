@@ -9,7 +9,7 @@
 
 <div class="row scoll-pane">
 
-  <div class="sectionj col-12 col-sd-12 col-md-8 col-lg-8 col-xl-8">
+  <div class="sectionj col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8">
     <h3>Minhas apostas</h3>
       {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %}
       <div class="alert alert-success" role="alert">
@@ -45,7 +45,7 @@
   </div>
 
 
-  <div class="sectionj col-12 col-sd-12 col-md-4 col-lg-4 col-xl-4">
+  <div class="sectionj col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
       <h3>Resultado geral</h3>
         {% if resultados %}
         <table class="tab_gokopa">
@@ -83,6 +83,18 @@
           </tr>
           {% endfor %}
         </table>
+
+        <div class="sectionj">
+          <p>Jogos disputados: {{ progress_data["last_game"] }}/{{ progress_data["total_games"] }}</p>
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped" role="progressbar" style="width: {{ progress_data['game_progress'] }}%;" aria-valuenow="{{ progress_data['game_progress'] }}" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+          <br> <p>Pontuação disputada: {{ progress_data['score_progress'] }}%</p>
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ progress_data['score_progress'] }}%;" aria-valuenow="{{ progress_data['score_progress'] }}" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+
         {% else %}<p class="center">Não há resultados para mostrar.</p>
         {% endif %}
   </div>
@@ -168,6 +180,29 @@ for(let i=0;i<nomes.length;i++){
 
 <div>
       <p>&nbsp;</p><p class="center">Tabela de pontuação</p>
+</div>
+
+{% for jogo in resultados|sort(attribute='Jogo', reverse = True) %}
+<div class="row scoll-pane">
+  <div class="col-12 col-sm-12 col-md-6 col-lg-4">
+    <table class="tab_gokopa tab_jogos smallt">
+      <tr>
+        <td>J:{{ jogo['Jogo'] }} {{ jogo['Data'] }}</td>
+        <td>{{ jogo['Competição'] }} {{ jogo['Fase'] }}</td>
+      </tr><tr>
+        <td colspan="2">{{ jogo['Time1'] }} <img class="flag" src="../static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+          {{ jogo['p1'] }}x{{ jogo['p2'] }} <img class="flag" src="../static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ jogo['Time2'] }}</td>
+      </tr>
+    </table>
+  </div>
+  <div class="col-12 col-sm-12 col-md-6 col-lg-8">
+    {% for u in users %}
+    <div class="betcorner"><p>{{ u }}<br>{{ jogo[u][0] }} | {{ jogo[u][1] }} | {{ jogo[u][2] }}</p></div>
+    {% endfor %}
+  </div>
+</div>
+<hr class="bethr">
+{% endfor %}
 
      <table class="tab_gokopa smallt">
           <tr>
