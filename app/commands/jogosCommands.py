@@ -3,7 +3,7 @@ import click
 import pymongo
 from ..extentions.database import mongo
 from flask import Blueprint
-from ..routes.bolao import get_users, make_score_board
+from ..routes.backend import get_users, make_score_board
 from ..cache import cache
 from random import randrange
 
@@ -218,7 +218,7 @@ def report(jogos,proximos):
     jogos_list[1] = int(jogos_list[1]) + 1
     #next_list[0] = int(next_list[0]) - 1
     #next_list[1] = int(next_list[1]) + 1
-    recentes = [u for u in jogosdb.find({'Ano': 21, "Jogo": {'$gt': jogos_list[0], '$lt': jogos_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
+    recentes = [u for u in jogosdb.find({'Ano': ANO, "Jogo": {'$gt': jogos_list[0], '$lt': jogos_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
     #next_games = [u for u in jogosdb.find({'Ano': 20, "Jogo": {'$gt': next_list[0], '$lt': next_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
     print("⚽ Gokopa 21 - Jogos recentes")
     for j in recentes:

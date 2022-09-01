@@ -53,8 +53,31 @@
         <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ progress_data['score_progress'] }}%;" aria-valuenow="{{ progress_data['score_progress'] }}" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
 
-      <p class="smallt"></p><br><p class="smallt">&nbsp;</p>
     </div>
+
+    {% if probabilidade['jogos_restantes'] > 0 %}
+    <div class="sectionj">
+      <h3>Chances de vitória</h3>
+      <p>Ainda temos {{ probabilidade['jogos_restantes'] }} jogos pela frente e {{ probabilidade['pontos_restantes'] }} pontos em disputa.</p>
+      <p>Confira a probabilidade de cada jogador ganhar o bolão!</p>
+      <table class="tab_gokopa">
+        <tr>
+          <th title="Score possível">Score</th>
+          <th style="min-width: 100px;">Nome</th>
+          <th style="min-width: 50px;">Probabilidade</th>
+        </tr>
+        {% for p in probabilidade['users'] %}
+        <tr>
+          <td>{{ p['score_range'] }}</td>
+          <td>{{ p['user'] }}</td>
+          <td>{{ p['prob_vitoria'] }} %</td>
+        </tr>
+        {% endfor %}
+      </table>
+      <p class="smallt">Atualizado em {{ probabilidade['atualizado'] }}</p>
+    </div>
+    {% endif %}
+    <p>&nbsp;</p>
   
 </div>
 

@@ -5,7 +5,7 @@ import getpass
 import pymongo
 from ..extentions.database import mongo
 from flask import Blueprint
-from ..routes.bolao import get_aposta, get_bet_results, get_games, get_score_results, get_users
+from app.routes.backend import get_aposta,get_users,get_games,make_score_board,get_bet_results,get_score_results
 
 configCommands = Blueprint('config',__name__)
 

@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. Based on [K
 ### Added
 - History for each team position in past games and graph with rank positions
 - Progress bar of completed games and scores
+- Probability of winning
 
 ### Changed
 - Layout of table of results

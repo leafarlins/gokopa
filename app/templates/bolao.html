@@ -204,28 +204,6 @@ for(let i=0;i<nomes.length;i++){
 <hr class="bethr">
 {% endfor %}
 
-     <table class="tab_gokopa smallt">
-          <tr>
-            <th>#</th>
-            <th>Jogo</th>
-            {% for u in users %}
-            <th colspan="3">{{ u }}</th>
-            {% endfor %}
-          </tr>
-        {% for jogo in resultados|sort(attribute='Jogo', reverse = True) %}
-          <tr>
-          <td title="{{ jogo['Data'] }}">{{ jogo['Jogo'] }}</td>
-          <td>{{ jogo['Time1'] }} <img class="flag" src="../static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
-            {{ jogo['p1'] }}x{{ jogo['p2'] }} <img class="flag" src="../static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ jogo['Time2'] }}</td>
-          {% for u in users %}
-            <td>{{ jogo[u][0] }}</td>
-            <td>{{ jogo[u][1] }}</td>
-            <td>{{ jogo[u][2] }}</td>
-          {% endfor %}
-          </tr>
-        {% endfor %}
-      </table>
-</div>
 {% endif %}
 
 {% if tipo == 'gk' %}

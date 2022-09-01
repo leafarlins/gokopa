@@ -1,6 +1,5 @@
 import re
-from app.routes.bolao import get_rank, make_score_board, read_config_ranking
-from app.routes.backend import progress_data
+from app.routes.backend import progress_data,get_aposta,get_score_game,get_rank, make_score_board,read_config_ranking,probability
 from array import array
 from datetime import datetime, time
 from typing import Collection
@@ -87,7 +86,7 @@ def index(tipo):
 
     tabelas_label = ['A','B','C','D','E','F','G','H']
     tabelas = get_tabelas_copa()
-    return render_template("inicio.html",menu="Home",tipo=tipo,past_jogos=past_jogos[:20],next_jogos=next_jogos[:20],classificados=classificados,total=lista_bolao,tabelas=tabelas,labels=tabelas_label,progress_data=progress_data())
+    return render_template("inicio.html",menu="Home",tipo=tipo,past_jogos=past_jogos[:20],next_jogos=next_jogos[:20],classificados=classificados,total=lista_bolao,tabelas=tabelas,labels=tabelas_label,progress_data=progress_data(),probabilidade=probability(tipo))
 
 
 @cache.memoize(300)
