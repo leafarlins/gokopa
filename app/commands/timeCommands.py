@@ -80,16 +80,16 @@ def load_csv(csv_file):
             print("Sem dados.")
             return None
         
-        print(data)
+        #print(data)
     
     
-    question = input(f'Deseja inserir os dados impressos? (S/N) ')
-    if question.upper() == "S":
-        timeCollection = mongo.db.timehistory
-        timeCollection.insert(data)
-        print("Dados inseridos")
-    else:
-        exit()
+    # question = input(f'Deseja inserir os dados impressos? (S/N) ')
+    # if question.upper() == "S":
+    timeCollection = mongo.db.timehistory
+    timeCollection.insert(data)
+    print("Dados inseridos")
+    # else:
+    #     exit()
 
 
 @timeCommands.cli.command("loadEmojis")
