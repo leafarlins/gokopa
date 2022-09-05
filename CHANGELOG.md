@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file. Based on [K
 - History for each team position in past games and graph with rank positions
 - Progress bar of completed games and scores
 - Probability of winning
+- Contact page
 
 ### Changed
 - Layout of table of results
@@ -89,7 +90,7 @@ All notable changes to this project will be documented in this file. Based on [K
 
 
 [unreleased]: https://github.com/leafarlins/gokopa/compare/v1.3.0...HEAD
-[1.2.1]: https://github.com/leafarlins/gokopa/compare/v1.2.1..1.3.0/
+[1.3.0]: https://github.com/leafarlins/gokopa/compare/v1.2.1..1.3.0/
 [1.2.1]: https://github.com/leafarlins/gokopa/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/leafarlins/gokopa/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/leafarlins/gokopa/compare/v1.0.3...v1.1.0

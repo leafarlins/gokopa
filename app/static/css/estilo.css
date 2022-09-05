@@ -14,7 +14,7 @@
 body {
   background-color: Ivory;
   background-size: auto 100vh;
-  height: 100vh;
+  min-height: 100vh;
   font-size: 16px;
 }
 
@@ -252,8 +252,9 @@ h3 {
     color:white;
     clear:both;
     text-align:center;
+    font-size: small;
     padding:5px;
-    /*position: fixed;*/
+    position: fixed;
     left: 0;
     bottom: 0;
     width: 100%;
@@ -391,3 +392,51 @@ hr.bethr {
   margin-top: 0;
   border: 1px solid #71756b;
 }
+
+ /* Style all font awesome icons */
+ .fa {
+  padding: 10px;
+  font-size: 30px;
+  width: 40px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 50%;
+}
+
+/* Add a hover effect if you want */
+.fa:hover {
+  opacity: 0.7;
+  text-decoration: none;
+}
+
+/* Set a specific color for each brand */
+
+/* Facebook */
+.fa-facebook {
+  background: #3B5998;
+  color: white;
+}
+
+/* Twitter */
+.fa-twitter {
+  background: #55ACEE;
+  color: white;
+} 
+
+/* Email */
+.fa-envelope {
+  background: #c5221F;
+  color: white;
+} 
+
+/* GitHub */
+.fa-github {
+  background: #24292f;
+  color: white;
+} 
+
+/* LinkedIn */
+.fa-linkedin {
+  background: #0A66C2;
+  color: white;
+} 

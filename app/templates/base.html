@@ -65,6 +65,7 @@
                     {% if session['username'] %}<a href="/{{ tipo }}/logout">Logout</a>
                     {% else %}<a {% if menu=='Login' %}class="active"{% endif %} href="/{{ tipo }}/login">Login</a>
                 {% endif %}</li>
+                <li ><a {% if menu=='Contato' %}class="active"{% endif %}href="/{{ tipo }}/contato">Contato</a></li>
               </ul>
             </nav>
           </header>
@@ -74,6 +75,7 @@
         {% endblock %}
         
         <p>&nbsp;</p>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <div class="footer">
             Gokopa do Mundo v1.3.0
         </div>

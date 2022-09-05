@@ -102,6 +102,11 @@ def regras():
     premio = [qtd,"{:.2f}".format(bolao*0.6),"{:.2f}".format(bolao*0.3),"{:.2f}".format(bolao*0.1),"{:.2f}".format(bolao)]
     return render_template("regras.html",menu="Regras",tipo='cp',premio=premio)
 
+
+@bolao.route('/<tipo>/contato')
+def contato(tipo):
+    return render_template("contato.html",menu="Contato",tipo=tipo)
+
 @bolao.route('/<tipo>/editaposta',methods=["GET","POST"])
 def edit_aposta(tipo):
     if "username" in session:

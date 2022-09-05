@@ -6,7 +6,7 @@ edit_changelog() {
     LASTV=$(echo $LASTHEAD | grep -Po "compare/\K(v[0-9]\.[0-9]*\.[0-9]*)")
 
     sed -i "s/$LASTV\.\./v$VERSAO\.\./" CHANGELOG.md
-    sed -i "/^\[unreleased/a [${LASTV/v/}]: https://github.com/leafarlins/gokopa/compare/$LASTV..$VERSAO/" CHANGELOG.md
+    sed -i "/^\[unreleased/a [${VERSAO/v/}]: https://github.com/leafarlins/gokopa/compare/$LASTV..$VERSAO/" CHANGELOG.md
     sed -i "/^## \[unreleased/a ## \[$VERSAO\] - $HOJE" CHANGELOG.md
     #sed -n '/## \[unreleased/,/^## /p' CHANGELOG.md | sed '/^## \[/d' > /tmp/tagnotes
 
