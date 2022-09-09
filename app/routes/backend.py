@@ -308,3 +308,19 @@ def probability(tipo):
     #prob_vit["users"] = array_user_prob
     now = datetime.strftime(datetime.now(),"%H:%M de %d/%m/%Y")
     return {"jogos_restantes": jogos_restantes, "pontos_restantes": pontos_restantes, "prob_array": prob_array, "users": array_user_prob, "p_acu": p_acu,"atualizado": now}
+
+#@backend.route('/api/bet_report', methods=['GET'])
+#@cache.cached(timeout=30*30)
+def bet_report():
+    progresso = progress_data()
+    l_game = progresso['last_game']
+    l_jogo = mongo.db.jogos.find_one_or_404({"Ano": ANO, "Jogo": l_game})
+    bet_results = get_aposta(l_game)
+    print(bet_results)
+    apostas = []
+    for user in get_users('cp'):
+        placar1 = str(user) + "_p1"
+        placar2 = str(user) + "_p2"
+        if bet_results.get(placar1) != None:
+            apostas.append(dict({"Nome": user, "p1": bet_results.get(placar1),"p2": bet_results.get(placar2)}))
+    return {"Jogo": l_game, "Data": l_jogo["Data"], "Time1": l_jogo['Time1'], "Time2": l_jogo['Time2'], "Apostas": apostas}
