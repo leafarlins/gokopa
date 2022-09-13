@@ -3,6 +3,8 @@ Gokopa is a soccer tournament simulated by videogame, with tables, statistics, r
 
 This is an app to allow users to bet in the Gokopa's games. It could be adapted for beting in other championships.
 
+Create venv: `pip install -r requirements.txt`
+
 Work in the environment: `source venv/bin/activate`
 To leave: `deactivate`
 
@@ -12,7 +14,7 @@ Generate requirements: `pip freeze > requirements.txt`
 
 The database is creating importing the files in dataset, using flask commands.
 
-The database used is a mongodb server, hosted in Atlas Cloud.
+The database used is a mongodb server.
 
 Create the vars in .env file with 
 
@@ -23,37 +25,29 @@ MONGO_URI="mongodb+srv://...
 SECRET_KEY="somesecretkey"
 ```
 
-Load the dataset for past games (Gokopas 1 to 19) and load last ranking
+Load the dataset for past games with last db dump files, in dataset/dump.
+
+Execute initial script for this version.
 
 ```
-flask jogos loadCsv dataset/jogos_ano1a18.csv
-flask jogos loadCsv dataset/jogos_ano19.csv
-flask jogos loadCsv dataset/jogos_ano20_pt1v2_prod.csv
-flask jogos loadCsv dataset/jogos_ano20_pt2_prod.csv
-flask jogos loadCsv dataset/rank_19-3.csv
+cat dataset/initial_db | sh
 ```
 
-Load emoji flags
-
-```
-flask time loadEmojis dataset/emojis.csv
-```
-
-Read dataset/history file to run commands and load historic results.
+Or migrate using the corresponding file in dataset/migrations, when upgrading.
 
 ## Initialize app and create users
-
-
-Init database for betting
-
-```
-flask jogos initApostas20
-```
 
 Create users for the app. For each user:
 
 ```
 flask user addUser <username> <name>
+```
+
+Activate user in app and/or in gokopa score board.
+
+```
+flask user activeUser <name> active true
+flask user activeUser <name> gokopa true
 ```
 
 ## Update app games
@@ -79,9 +73,9 @@ flask time editTime Áustria p2B-EUR
 Run command to create score history of the day
 
 ```
-flask bolaoc setHistory
+flask config setHistory
 ```
 
 ## Deploy in production
 
-Automated by github/heroku.
+Made using docker-compose template and docker containers.

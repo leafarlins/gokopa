@@ -63,16 +63,21 @@ def home():
 @gokopa.route('/<tipo>/')
 #@cache.cached(timeout=5*60)
 def index(tipo):
-    past_jogos = [u for u in mongo.db.jogos.find({'Ano': 20}).sort([('Jogo',pymongo.DESCENDING)])]
+    if tipo == 'cp':
+        past_jogos = []
+    else:
+        past_jogos = [u for u in mongo.db.jogos.find({'Ano': 20}).sort([('Jogo',pymongo.DESCENDING)])]
     #past_jogos=[]
-    ano20_jogos = mongo.db.jogos.find({'Ano': ANO}).sort([("Jogo",pymongo.ASCENDING)])
+    ano_jogos = mongo.db.jogos.find({'Ano': ANO}).sort([("Jogo",pymongo.ASCENDING)])
     next_jogos = []
+
     classificados = get_classificados()
+    
     now = datetime.now()
-    for n in ano20_jogos:
+    for n in ano_jogos:
         if n["Time1"] and n["Time2"]:
             # Temporario para o Catar
-            if n["Time1"] == 'Bahrein':
+            if n["Time1"] == 'Bahrein' and tipo == 'cp':
                 n["Time1"] = 'Qatar'
 
             data_jogo = datetime.strptime(n["Data"],"%d/%m/%Y %H:%M")

@@ -1,6 +1,8 @@
 import click
 import getpass
 from pwgen import pwgen
+
+from app.commands.email import send_reset_email
 from ..extentions.database import mongo
 from werkzeug.security import generate_password_hash
 from flask import Blueprint
@@ -32,6 +34,7 @@ def create_user(username,name):
         "password": generate_password_hash(password),
         "active": False,
         "gokopa": False,
+        "sendEmail": True,
         "passwordActive": False
     }
         userCollection.insert(user)
@@ -43,7 +46,8 @@ def create_user(username,name):
 
 @userCommands.cli.command("resetPassword")
 @click.argument("username")
-def reset_password(username):
+@click.argument("test",required=False)
+def reset_password(username,test=False):
     userCollection = mongo.db.users
     password = pwgen(10, symbols=False)
     #password = getpass.getpass()
@@ -54,6 +58,9 @@ def reset_password(username):
         print("Usuário teve senha resetada. Acesse pelo link: https://gokopa.leafarlins.com/")
         print(f'Usuário: {username}')
         print(f'Senha temporária: {password}')
+        if userExists["sendEmail"]:
+            print("Enviando email de reset...")
+            send_reset_email(username,password,test)
     else:
         print("Usuário não encontrado.")
 
@@ -90,7 +97,7 @@ def list_users(user,tipo,status):
     userExists = userCollection.find_one({"name": user})
     if userExists:
         userCollection.find_one_and_update({'name': user},{'$set': {tipo: atividade}})
-        print("Usuário setado para status ",tipo," = ",atividade)
+        print("Usuário",user,"setado para status",tipo,"=",atividade)
     else:
         print("Usuário não encontrado.")
 

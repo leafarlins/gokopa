@@ -12,7 +12,7 @@ from flask import Blueprint
 
 SEPARADOR_CSV=","
 ANO=21
-RANKING='19-3'
+RANKING='20-4'
 
 timeCommands = Blueprint('time',__name__)
 
@@ -48,13 +48,16 @@ def load_csv(csv_file):
         print(data)
     
     
-    question = input(f'Deseja inserir os dados impressos? (S/N) ')
-    if question.upper() == "S":
-        timeCollection = mongo.db.ranking
-        timeCollection.insert(data)
-        print("Dados inseridos")
-    else:
-        exit()
+    timeCollection = mongo.db.ranking
+    timeCollection.insert(data)
+    print("Dados inseridos")
+    # question = input(f'Deseja inserir os dados impressos? (S/N) ')
+    # if question.upper() == "S":
+    #     timeCollection = mongo.db.ranking
+    #     timeCollection.insert(data)
+    #     print("Dados inseridos")
+    # else:
+    #     exit()
 
 @timeCommands.cli.command("loadTimeHistory")
 @click.argument("csv_file")

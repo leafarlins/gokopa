@@ -1,3 +1,5 @@
+import json
+import requests
 from app.commands.configCommands import get_ordered
 import click
 import pymongo
@@ -6,9 +8,15 @@ from flask import Blueprint
 from ..routes.backend import get_users, make_score_board
 from ..cache import cache
 from random import randrange
+#from twilio.rest import Client
 
 SEPARADOR_CSV=","
 ANO=21
+#TWILIO_SID=''
+#TWILIO_TKN=''
+TELEGRAM_TOKEN='5784816479:AAGTll1w7PZDFZjRI7T6alL_21RXUDb9GK8'
+TELEGRAM_CHAT_ID='-1001682071904'
+
 
 jogosCommands = Blueprint('jogos',__name__)
 
@@ -40,13 +48,9 @@ def load_csv(csv_file):
         print(data)
     
     
-    question = input(f'Deseja inserir os dados impressos? (S/N) ')
-    if question.upper() == "S":
-        jogosCollection = mongo.db.jogos
-        jogosCollection.insert(data)
-        print("Dados inseridos")
-    else:
-        exit()
+    jogosCollection = mongo.db.jogos
+    jogosCollection.insert(data)
+    print("Dados inseridos")
     
 
 @jogosCommands.cli.command("getJogo")
@@ -208,7 +212,8 @@ def delete_ano(ano):
 @jogosCommands.cli.command("report")
 @click.argument("jogos")
 @click.argument("proximos")
-def report(jogos,proximos):
+@click.argument("texto")
+def report(jogos,proximos,texto):
     jogosdb = mongo.db.jogos
     emojis = mongo.db.emoji
     apostas = mongo.db.apostas21
@@ -220,9 +225,9 @@ def report(jogos,proximos):
     #next_list[1] = int(next_list[1]) + 1
     recentes = [u for u in jogosdb.find({'Ano': ANO, "Jogo": {'$gt': jogos_list[0], '$lt': jogos_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
     #next_games = [u for u in jogosdb.find({'Ano': 20, "Jogo": {'$gt': next_list[0], '$lt': next_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
-    print("⚽ Gokopa 21 - Jogos recentes")
+    mensagem="⚽ Gokopa 21 - Jogos recentes\n"
     for j in recentes:
-        print(j['Competição'],"-",j['Fase'])
+        mensagem+=" ".join([j['Competição'],"-",j['Fase']])+"\n"
         placar = str(j['p1']) + "x" + str(j['p2'])
         e1 = emojis.find_one({'País': j['Time1']})
         e2 = emojis.find_one({'País': j['Time2']})
@@ -234,9 +239,9 @@ def report(jogos,proximos):
                 tr = tr + ")"
         else:
             tr = ""
-        print(j['Time1'],e1['flag'],placar,e2['flag'],j['Time2'],tr)
+        mensagem+=" ".join([j['Time1'],e1['flag'],placar,e2['flag'],j['Time2'],tr])+"\n"
 
-
+    mensagem+="\n"+texto+"\n"
     allUsers = get_users('gk')
     #print(allUsers)
     missing_users = set()
@@ -249,19 +254,39 @@ def report(jogos,proximos):
         #print(bets)
     #print(missing_users)
     lista_users = ', '.join(missing_users)
-    #if len(missing_users) > 0:
-    print("\n❗ Lista de apostadores pendentes com os próximos jogos ❗")
-    print(lista_users)
+    if len(missing_users) > 0:
+        mensagem+="\n❗ Lista de apostadores pendentes com os próximos jogos ❗\n"
+        mensagem+=lista_users
 
     #ordered_total = get_ordered()
     ordered_total = make_score_board('gk')
     range_print = 5
     if len(ordered_total) < 5:
         range_print = len(ordered_total)
-    print("\n🔝 Bolão Hoje ")
+    mensagem+="\n🔝 Bolão Hoje \n"
     string_placar = ""
     for i in range(range_print):
         string_placar += " ▪️ " + str(ordered_total[i]['score']) + " - " + str(ordered_total[i]['nome'])
-    print(string_placar)
+    mensagem+=string_placar
         
-    print("\n➡️ Visite e acompanhe: http://gokopa.leafarlins.com")
+    mensagem+="\n\n➡️ Visite e acompanhe: https://gokopa.leafarlins.com"
+    print("Preparando mensagem para envio")
+    print(mensagem)
+    print("Enviando mensagem via telegram")
+    params = {
+        'chat_id': TELEGRAM_CHAT_ID,
+        'text': mensagem
+    }
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+    r = requests.get(url, params=params)
+    if r.status_code == 200:
+        print(json.dumps(r.json(), indent=2))
+    else:
+        r.raise_for_status()
+    # client = Client(TWILIO_SID,TWILIO_TKN)
+    # message = client.messages.create(
+    #     to="+5561992728778",
+    #     from_="+5561992728778",
+    #     body=mensagem)
+    # print(message.sid)
+

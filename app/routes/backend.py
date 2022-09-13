@@ -130,7 +130,7 @@ def make_score_board(tipo):
     return ordered_total
 
 @backend.route('/api/progress_data', methods=['GET'])
-@cache.cached(timeout=5*60)
+#@cache.cached(timeout=5*60)
 def progress_data():
     ano_jogos = [u for u in mongo.db.jogos.find({'Ano': ANO}).sort("Jogo",pymongo.ASCENDING)]
     progress = dict()
@@ -309,7 +309,7 @@ def probability(tipo):
     now = datetime.strftime(datetime.now(),"%H:%M de %d/%m/%Y")
     return {"jogos_restantes": jogos_restantes, "pontos_restantes": pontos_restantes, "prob_array": prob_array, "users": array_user_prob, "p_acu": p_acu,"atualizado": now}
 
-#@backend.route('/api/bet_report', methods=['GET'])
+@backend.route('/api/bet_report', methods=['GET'])
 #@cache.cached(timeout=30*30)
 def bet_report():
     progresso = progress_data()
@@ -323,4 +323,4 @@ def bet_report():
         placar2 = str(user) + "_p2"
         if bet_results.get(placar1) != None:
             apostas.append(dict({"Nome": user, "p1": bet_results.get(placar1),"p2": bet_results.get(placar2)}))
-    return {"Jogo": l_game, "Data": l_jogo["Data"], "Time1": l_jogo['Time1'], "Time2": l_jogo['Time2'], "Apostas": apostas}
+    return {"Jogo": l_game, "Data": l_jogo["Data"], "Fase": l_jogo["Competição"] + " " + l_jogo["Fase"], "Time1": l_jogo['Time1'], "Time2": l_jogo['Time2'], "Apostas": apostas}

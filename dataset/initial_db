@@ -1,0 +1,6 @@
+#flask jogos loadCsv dataset/jogos_ano21.csv
+flask jogos initApostas21
+flask time loadEmojis dataset/emojis.csv
+flask time loadTimeHistory dataset/times_historia_1_20.csv
+flask time loadRanking dataset/rank_20-4.csv
+flask config setRank "20-4"

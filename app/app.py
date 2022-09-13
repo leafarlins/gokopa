@@ -8,6 +8,7 @@ from .commands.userCommands import userCommands
 from .commands.jogosCommands import jogosCommands
 from .commands.timeCommands import timeCommands
 from .commands.configCommands import configCommands
+from .commands.email import emailCommands
 from .cache import cache
 
 def create_app(config_object="app.settings"):
@@ -21,6 +22,7 @@ def create_app(config_object="app.settings"):
     app.register_blueprint(jogosCommands)
     app.register_blueprint(timeCommands)
     app.register_blueprint(configCommands)
+    app.register_blueprint(emailCommands)
     
     cache.init_app(app)
     database.init_app(app)
