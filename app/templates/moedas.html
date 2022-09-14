@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-
 <div class="texto">
   <h2 class="center">Moedas</h2>
   <p>Aqui você pode gerenciar suas moedas de investimentos em seus times favoritos. Diariamente, escolha um clube para tentar ser o patrocinador. Quem der o valor mais alto ao final do dia vira patrocinador do time até sua desclassificação.</p>
@@ -10,32 +9,65 @@
 
 <div class="sectionj">
     <hr>
-    {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %}
-    <div class="alert alert-success" role="alert">
-        {{ message }}
-    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
+      <div class="alert alert-{{ category }}" role="alert">
+          {{ message }}
+      </div>
     {% endfor %} {% endif %} {% endwith %}
     <h2>Área do jogador</h2>
-    {% if userlogado %}
-
+    {% if info["userlogado"] %}
         <table class="tab_gokopa tab_jogos">
             <tr>
                 <td>Saldo de Moedas</td>
             </tr>
             <tr>
-                <td>400 🪙</td>
+                <td>{{ user_info['saldo'] }} 🪙</td>
             </tr>
         </table>
-        <p>Tentativa de patrocínio</p>
-        <input list="times" name="time1" id="time1">
-        <datalist id="times">
-            {% for i in lista_times %}
-              <option value="{{ i }}">
+
+        {% if user_info["lista_livre"] %}
+        <p>&nbsp;</p><p>Tentativa de patrocínio</p>
+        <form action="{{ url_for('moedas.addpat') }}" method="post">
+            <div class="form-row">
+                <div class="form-group col-md-6"><label for="time1">Selecione um time:</label>
+                    <input type="hidden" name="timename" value="" id="timename">
+                    <select list="times" name="time1" id="time1" onchange="update_minimo()">
+                        {% for i in user_info["lista_livre"] %}
+                          <option value="{{ i['Valor'] }}" label="{{ i['Time'] }}">{{ i['Time'] }}</option>
+                        {% endfor %}
+                    </select></div>
+                <div class="form-group col-md-6"><label for="valor_pat">Valor:</label>
+                  <input style="max-width: 80%" type="number" name="valor_pat" id="valor_pat" width="10px" value="0" min="0" max="{{ user_info['saldo'] }}"></div>
+            </div>
+            <button type="submit" class="btn btn-outline-primary">Tentar investimento</button>
+        </form>
+        {% endif %}
+
+        {% if user_info['tentarpat'] %}
+        <p>&nbsp;</p><p>Tentativas enviadas</p>
+        <ul class="list-group">
+            {% for item in user_info['tentarpat'] %}
+            <li class="list-group-item">🪙 {{ item['valor'] }} <img class="flag" src="../static/img/flag/{{ item['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ item['time'] }} <button type="button" class="btn btn-outline-danger btn-sm">X</button></li>
             {% endfor %}
-        </datalist>
+          </ul>
+        {% endif %}
+
+
+        <script type="text/javascript">
+            function update_minimo() {
+                var select = document.getElementById('time1');
+                var option = select.options[select.selectedIndex];
+        
+                document.getElementById('valor_pat').value = option.value;
+                document.getElementById('valor_pat').min = option.value;
+                document.getElementById('timename').value = option.label;
+            }
+        
+            update_minimo();
+        </script>
 
     {% else %}
-    <p>Você não está logado.</p>
+    <p>Você não está logado ou não tem acesso ao jogo de moedas.</p>
     {% endif %}
 
     <hr>
@@ -52,13 +84,15 @@
                 <th title="Investimento" style="min-width: 50px;">Inv.</th>
                 <th title="Saldo" style="min-width: 50px;">Saldo</th>
             </tr>
+            {% for item in info['moedas_board'] %}
             <tr>
-                <td>1</td>
-                <td>Fulano</td>
-                <td>400 🪙</td>
-                <td>200 🪙</td>
-                <td>100 🪙</td>
+                <td>{{ item['pos'] }}</td>
+                <td>{{ item['nome'] }}</td>
+                <td>{{ item['total'] }} 🪙</td>
+                <td>{{ item['investido'] }} 🪙</td>
+                <td>{{ item['saldo'] }} 🪙</td>
             </tr>
+            {% endfor %}
         </table>
     </div>
     <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8">

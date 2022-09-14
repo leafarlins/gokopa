@@ -324,3 +324,68 @@ def bet_report():
         if bet_results.get(placar1) != None:
             apostas.append(dict({"Nome": user, "p1": bet_results.get(placar1),"p2": bet_results.get(placar2)}))
     return {"Jogo": l_game, "Data": l_jogo["Data"], "Fase": l_jogo["Competição"] + " " + l_jogo["Fase"], "Time1": l_jogo['Time1'], "Time2": l_jogo['Time2'], "Apostas": apostas}
+
+@backend.route('/api/get_free_teams', methods=['GET'])
+#@cache.cached(timeout=30*30)
+def get_free_teams():
+    lista = [u for u in mongo.db.patrocinio.find({"Patrocinador": "-"}).sort("Valor",pymongo.DESCENDING)]
+    lista_livres = []
+    for t in lista:
+        lista_livres.append({'Time': t["Time"],'Valor': t["Valor"]})
+    return {"Livres": lista_livres}
+
+@backend.route('/api/moedas_board')
+def get_moedas_board():
+    moedasDb = [u for u in mongo.db.moedas.find()]
+    lista_users = []
+    for item in moedasDb:
+        saldo = item['saldo']+item['bloqueado']
+        total = saldo + item['investido']
+        lista_users.append({'nome': item['nome'],'saldo': saldo, 'investido': item['investido'],'total': total})
+    lista_users = sorted(lista_users, key=lambda k: k['total'],reverse=True)
+    p = 1
+    last_total = lista_users[0]['total']
+    for i in range(len(lista_users)):
+        if lista_users[i]['total'] != last_total:
+            p = i+1
+        lista_users[i]['pos'] = p
+
+
+    return {'moedas_board': lista_users}
+
+@backend.route('/api/get_next_jogos',methods=['GET'])
+def get_next_jogos():
+    ano_jogos = mongo.db.jogos.find({'Ano': ANO}).sort([("Jogo",pymongo.ASCENDING)])
+    next_jogos = []
+    past_jogos = []
+    lista_pat = mongo.db.patrocinio
+    now = datetime.now()
+    for n in ano_jogos:
+        if n["Time1"] and n["Time2"]:
+            time1 = n['Time1']
+            time2 = n['Time2']
+            t1 = lista_pat.find_one({'Time': time1})
+            t2 = lista_pat.find_one({'Time': time2})
+            proporcao = t1['Valor'] / t2['Valor']
+            if proporcao < 1:
+                proporcao = t2['Valor'] / t1['Valor']
+            if proporcao > 3:
+                percent = 60
+            else:
+                percent = int(20*proporcao)
+            if t2['Valor'] > t1['Valor']:
+                moedas_em_jogo = int(t1['Valor']*percent/100)
+            else:
+                moedas_em_jogo = int(t2['Valor']*percent/100)
+            pat1 = lista_pat.find_one({'Time': time1})
+            pat2 = lista_pat.find_one({'Time': time2})
+            jogo = {'jid':n['Jogo'], 'time1': time1, 'time2': time2, 'time1_valor': t1['Valor'], 'time2_valor': t2['Valor'], 'percent': percent, 'moedas_em_jogo': moedas_em_jogo,'pat1':pat1['Patrocinador'], 'pat2': pat2['Patrocinador']}
+        
+            data_jogo = datetime.strptime(n["Data"],"%d/%m/%Y %H:%M")
+            if data_jogo < now and n["p1"] != "" :
+                past_jogos.insert(0,jogo)
+            else:
+                next_jogos.append(jogo)
+
+
+    return {'next_jogos': next_jogos, 'past_jogos': past_jogos}

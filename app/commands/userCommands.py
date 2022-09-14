@@ -29,14 +29,14 @@ def create_user(username,name):
     else:
         password = pwgen(10, symbols=False)
         user = {
-        "username": username,
-        "name": name,
-        "password": generate_password_hash(password),
-        "active": False,
-        "gokopa": False,
-        "sendEmail": True,
-        "passwordActive": False
-    }
+            "username": username,
+            "name": name,
+            "password": generate_password_hash(password),
+            "active": False,
+            "gokopa": False,
+            "sendEmail": True,
+            "passwordActive": False
+        }
         userCollection.insert(user)
         print('Usuário cadastrado com sucesso')
         print("Você foi cadastrado no sistema da Gokopa! Acesse pelo link: https://gokopa.leafarlins.com/")
@@ -116,4 +116,24 @@ def delete_user(username):
             exit()
     else:
         print("Usuário não encontrado.")
+
+@userCommands.cli.command("initMoedas")
+@click.argument("nome")
+@click.argument("moedas")
+def init_moedas(nome,moedas):
+    moedaColl = mongo.db.moedas
+    moedaExists = moedaColl.find_one({"nome": nome})
+    if moedaExists:
+        print(f"Usuário {nome} já existe na base: {moedaExists}")
+    else:
+        novo_user = {
+            "nome": nome,
+            "saldo": int(moedas),
+            "bloqueado": 0,
+            "investido": 0
+        }
+        moedaColl.insert(novo_user)
+        print(f"Inserido user {nome} com {moedas} moedas na base.")
+
+
 
