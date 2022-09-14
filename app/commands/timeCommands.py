@@ -233,3 +233,34 @@ def sorteia(time):
     else:
         print("Item",time,"nao encontrado!")
 
+
+@timeCommands.cli.command("loadPatrocinio")
+@click.argument("csv_file")
+def load_patrocinio(csv_file):
+    data = []
+    with open(csv_file) as arq:
+        headers = next(arq, None)
+        # Caso valor default None, retorna []
+        if headers is None:
+            return []
+
+        cabecalho = headers.strip().split(SEPARADOR_CSV)
+        #print(cabecalho)
+
+        for linha in arq:
+            colunas = linha.strip().split(SEPARADOR_CSV)
+            documento = zip(cabecalho,colunas)
+            documento = dict(documento)
+            documento["Valor"]=int(documento["Valor"])
+            documento["Patrocinador"]="-"
+            data.append(documento)
+
+        if not data:
+            return None
+        
+        print(data)
+    
+    
+    jogosCollection = mongo.db.patrocinio
+    jogosCollection.insert(data)
+    print("Dados inseridos")

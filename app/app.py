@@ -2,6 +2,7 @@ from flask import Flask
 from .routes.usuario import usuario
 from .routes.bolao import bolao
 from .routes.gokopa import gokopa
+from .routes.moedas import moedas
 from .routes.backend import backend
 from .extentions import database
 from .commands.userCommands import userCommands
@@ -17,6 +18,7 @@ def create_app(config_object="app.settings"):
     app.register_blueprint(usuario)
     app.register_blueprint(bolao)
     app.register_blueprint(gokopa)
+    app.register_blueprint(moedas)
     app.register_blueprint(backend)
     app.register_blueprint(userCommands)
     app.register_blueprint(jogosCommands)

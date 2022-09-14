@@ -61,6 +61,9 @@
                 <li ><a {% if menu=='Regras' %}class="active"{% endif %}href="/cp/regras">Regras</a></li>
                 {% endif %}
                 <li ><a {% if menu=='Bolao' %}class="active"{% endif %}href="/{{ tipo }}/bolao">Bolão</a></li>
+                {% if tipo == 'gk' %}
+                <li ><a {% if menu=='Moedas' %}class="active"{% endif %}href="/gk/moedas">Moedas</a></li>
+                {% endif %}
                 <li style="float: right">
                     {% if session['username'] %}<a href="/{{ tipo }}/logout">Logout</a>
                     {% else %}<a {% if menu=='Login' %}class="active"{% endif %} href="/{{ tipo }}/login">Login</a>

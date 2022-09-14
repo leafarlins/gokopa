@@ -1,4 +1,5 @@
 import json
+import os
 import requests
 from app.commands.configCommands import get_ordered
 import click
@@ -14,8 +15,8 @@ SEPARADOR_CSV=","
 ANO=21
 #TWILIO_SID=''
 #TWILIO_TKN=''
-TELEGRAM_TOKEN='5784816479:AAGTll1w7PZDFZjRI7T6alL_21RXUDb9GK8'
-TELEGRAM_CHAT_ID='-1001682071904'
+TELEGRAM_TOKEN=os.getenv('TELEGRAM_TKN')
+TELEGRAM_CHAT_ID=os.getenv('TELEGRAM_CHAT_ID')
 
 
 jogosCommands = Blueprint('jogos',__name__)
@@ -212,8 +213,8 @@ def delete_ano(ano):
 @jogosCommands.cli.command("report")
 @click.argument("jogos")
 @click.argument("proximos")
-@click.argument("texto")
-def report(jogos,proximos,texto):
+@click.argument("texto",required=False)
+def report(jogos,proximos,texto=""):
     jogosdb = mongo.db.jogos
     emojis = mongo.db.emoji
     apostas = mongo.db.apostas21
@@ -241,7 +242,8 @@ def report(jogos,proximos,texto):
             tr = ""
         mensagem+=" ".join([j['Time1'],e1['flag'],placar,e2['flag'],j['Time2'],tr])+"\n"
 
-    mensagem+="\n"+texto+"\n"
+    if texto:
+        mensagem+="\n"+texto+"\n"
     allUsers = get_users('gk')
     #print(allUsers)
     missing_users = set()

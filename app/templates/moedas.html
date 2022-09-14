@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="texto">
+  <h2 class="center">Moedas</h2>
+  <p>Aqui você pode gerenciar suas moedas de investimentos em seus times favoritos. Diariamente, escolha um clube para tentar ser o patrocinador. Quem der o valor mais alto ao final do dia vira patrocinador do time até sua desclassificação.</p>
+  <p>A cada dia de competição, derrotas dos times patrocinados poderão perder moedas (em investimento), vitórias poderão adicionar moedas no saldo. Serão debitados inicialmente 30 moedas caso o jogador tenha saldo fora de uso, e o jogador ganhará moedas extras de acordo com seu desempenho no bolão.</p>
+</div>
+
+<div class="sectionj">
+    <hr>
+    {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %}
+    <div class="alert alert-success" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %} {% endif %} {% endwith %}
+    <h2>Área do jogador</h2>
+    {% if userlogado %}
+
+        <table class="tab_gokopa tab_jogos">
+            <tr>
+                <td>Saldo de Moedas</td>
+            </tr>
+            <tr>
+                <td>400 🪙</td>
+            </tr>
+        </table>
+        <p>Tentativa de patrocínio</p>
+        <input list="times" name="time1" id="time1">
+        <datalist id="times">
+            {% for i in lista_times %}
+              <option value="{{ i }}">
+            {% endfor %}
+        </datalist>
+
+    {% else %}
+    <p>Você não está logado.</p>
+    {% endif %}
+
+    <hr>
+</div>
+
+<div class="row scoll-pane">
+    <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+        <h3>Resultado geral</h3>
+        <table class="tab_gokopa">
+            <tr>
+                <th title="Posição">#</th>
+                <th style="min-width: 100px;">Nome</th>
+                <th style="min-width: 50px;">Total</th>
+                <th title="Investimento" style="min-width: 50px;">Inv.</th>
+                <th title="Saldo" style="min-width: 50px;">Saldo</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Fulano</td>
+                <td>400 🪙</td>
+                <td>200 🪙</td>
+                <td>100 🪙</td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8">
+        <h3>Logs de moedas</h3>
+        <table class="tab_gokopa smallt">
+            <tr>
+                <th title="LogId">#</th>
+                <th style="min-width: 50px;">Nome</th>
+                <th style="min-width: 50px;">Moedas</th>
+                <th style="min-width: 100px;">Descrição</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Fulano</td>
+                <td>+400 🪙</td>
+                <td>Ganho de moedas com Brasil</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
