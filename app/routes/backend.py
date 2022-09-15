@@ -389,3 +389,26 @@ def get_next_jogos():
 
 
     return {'next_jogos': next_jogos, 'past_jogos': past_jogos}
+
+@backend.route('/api/get_pat_teams', methods=['GET'])
+#@cache.cached(timeout=30*30)
+def get_pat_teams():
+    lista = [u for u in mongo.db.patrocinio.find().sort("Valor",pymongo.DESCENDING)]
+    lista_pat = []
+    lista_livres = []
+    jogos = get_next_jogos()
+    for t in lista:
+        if t['Patrocinador'] == "-":
+            lista_livres.append({'time': t["Time"],'valor': t["Valor"]})
+        else:
+            busca = True
+            j=0
+            while busca:
+                jogo=jogos[j]
+                if jogo['time1'] == t['Time'] or jogo['time2'] == t['Time']:
+                    lista_pat.append({'time': t["Time"],'valor': t["Valor"],'moedas_em_jogo': jogo['moedas_em_jogo']})
+                    busca=False
+                else:
+                    j+=1
+        
+    return {"livres": lista_livres, "patrocinados": lista_pat}

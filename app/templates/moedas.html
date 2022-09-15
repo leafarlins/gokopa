@@ -46,10 +46,10 @@
         {% if user_info['tentarpat'] %}
         <p>&nbsp;</p><p>Tentativas enviadas</p>
         <ul class="list-group">
-            {% for item in user_info['tentarpat'] %}
+          {% for item in user_info['tentarpat'] %}
             <li class="list-group-item">🪙 {{ item['valor'] }} <img class="flag" src="../static/img/flag/{{ item['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ item['time'] }} <button type="button" class="btn btn-outline-danger btn-sm">X</button></li>
-            {% endfor %}
-          </ul>
+          {% endfor %}
+        </ul>
         {% endif %}
 
 
@@ -95,7 +95,20 @@
             {% endfor %}
         </table>
     </div>
-    <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8">
+    <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 smallt center">
+        <h3>Jogos próximos</h3>
+        {% if info['jogos'] %}
+        <ul class="list-group">
+          {% for j in info['jogos'] %}
+            <li class="list-group-item">({{ j['time1_valor'] }}🪙) {{ j['time1'] }} <img class="flag" src="../static/img/flag/{{ j['time1'] }}.png" onerror="this.src='../static/img/flag/default.png'"> x <img class="flag" src="../static/img/flag/{{ j['time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ j['time2'] }} ({{ j['time2_valor'] }}🪙)<br>
+            {{ j['moedas_em_jogo'] }}🪙 em jogo</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>Sem jogos para exibir.</p>
+        {% endif %}
+    </div>
+    <div class="col-12 col-sm-12 col-md-4">
         <h3>Logs de moedas</h3>
         <table class="tab_gokopa smallt">
             <tr>

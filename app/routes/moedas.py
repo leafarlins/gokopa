@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, session, request, url_for, flash
-from app.routes.backend import get_free_teams, get_moedas_board, progress_data,get_aposta,get_users,get_games,make_score_board,get_user_name,get_bet_results,get_rank
+from app.routes.backend import get_free_teams, get_moedas_board, get_next_jogos, progress_data,get_aposta,get_users,get_games,make_score_board,get_user_name,get_bet_results,get_rank
 import pymongo
 from werkzeug.utils import redirect
 from ..extentions.database import mongo
@@ -10,6 +10,12 @@ from ..cache import cache
 moedas = Blueprint('moedas',__name__)
 
 ANO=21
+
+@cache.memoize(600)
+def get_moedas_info():
+    jogos = get_next_jogos()
+    board = get_moedas_board()
+    return {'moedas_board': board['moedas_board'], 'jogos': jogos['next_jogos'][:16]}
 
 @moedas.route('/gk/moedas')
 def gamemoedas():
@@ -29,8 +35,8 @@ def gamemoedas():
         else:
             userLogado = False
     
-    board = get_moedas_board()
-    info = {"userlogado": userLogado, 'moedas_board': board['moedas_board']}
+    info = get_moedas_info()
+    info['userlogado': userLogado]
     return render_template('moedas.html',menu='Moedas',tipo='gk',info=info,user_info=user_info)
 
 @moedas.route('/gk/moedas/addpat',methods=["POST"])

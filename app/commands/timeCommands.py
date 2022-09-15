@@ -264,3 +264,24 @@ def load_patrocinio(csv_file):
     jogosCollection = mongo.db.patrocinio
     jogosCollection.insert(data)
     print("Dados inseridos")
+
+@timeCommands.cli.command("processaPat")
+def processa_pat():
+    lista_pat = mongo.db.patrocinio
+    lista_tentarpat = [u for u in mongo.db.tentarpat.find().sort('valor',pymongo.DESCENDING)]
+    print(lista_pat.find())
+    print("Lista a processar:")
+    impedidos = []
+    for j in range(len(lista_tentarpat)-1):
+        time = lista_tentarpat[j]['time']
+        print(lista_tentarpat[j]['valor'],time)
+        if lista_tentarpat[j]['valor'] == lista_tentarpat[j+1]['valor'] and time == lista_tentarpat[j+1]['time']:
+            print(f'Impedido patrocinio de {time}')
+            impedidos.append(time)
+    for t in lista_tentarpat:
+        if t['time'] in impedidos:
+            print(t['time'],"impedido de patrocinio")
+        else:
+            print(f"{t['nome']} é patrocinador de {t['time']} por {t['valor']}🪙.")
+
+    print(impedidos)
