@@ -7,15 +7,17 @@
   <p>A cada dia de competição, derrotas dos times patrocinados poderão perder moedas (em investimento), vitórias poderão adicionar moedas no saldo. Serão debitados inicialmente 30 moedas caso o jogador tenha saldo fora de uso, e o jogador ganhará moedas extras de acordo com seu desempenho no bolão.</p>
 </div>
 
-<div class="sectionj">
+<div class="row scool-pane">
+<div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
     <hr>
-    {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
-      <div class="alert alert-{{ category }}" role="alert">
-          {{ message }}
-      </div>
-    {% endfor %} {% endif %} {% endwith %}
     <h2>Área do jogador</h2>
-    {% if info["userlogado"] %}
+    <div class="sectionj">
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
+          <div class="alert alert-{{ category }}" role="alert">
+              {{ message }}
+          </div>
+        {% endfor %} {% endif %} {% endwith %}
+        {% if info["userlogado"] %}
         <table class="tab_gokopa tab_jogos">
             <tr>
                 <td>Saldo de Moedas</td>
@@ -66,15 +68,23 @@
             update_minimo();
         </script>
 
-    {% else %}
-    <p>Você não está logado ou não tem acesso ao jogo de moedas.</p>
-    {% endif %}
+        {% else %}
+        <p>Você não está logado ou não tem acesso ao jogo de moedas.</p>
+        {% endif %}
+    </div>
 
     <hr>
 </div>
 
+
+<div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8">
+    <h2>Patrocínios e apoios</h2>
+</div>
+
+</div>
+
 <div class="row scoll-pane">
-    <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+    <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
         <h3>Resultado geral</h3>
         <table class="tab_gokopa">
             <tr>
@@ -95,7 +105,7 @@
             {% endfor %}
         </table>
     </div>
-    <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 smallt center">
+    <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 smallt center">
         <h3>Jogos próximos</h3>
         {% if info['jogos'] %}
         <ul class="list-group">
@@ -108,21 +118,25 @@
         <p>Sem jogos para exibir.</p>
         {% endif %}
     </div>
-    <div class="col-12 col-sm-12 col-md-4">
+    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 smallt center">
         <h3>Logs de moedas</h3>
         <table class="tab_gokopa smallt">
             <tr>
-                <th title="LogId">#</th>
-                <th style="min-width: 50px;">Nome</th>
-                <th style="min-width: 50px;">Moedas</th>
+                <th title="LogId">Data</th>
+                <th style="min-width: 20px;">Nome</th>
+                <th style="min-width: 20px;">Time</th>
+                <th style="min-width: 20px;">🪙</th>
                 <th style="min-width: 100px;">Descrição</th>
             </tr>
+            {% for l in info['logs'] %}
             <tr>
-                <td>1</td>
-                <td>Fulano</td>
-                <td>+400 🪙</td>
-                <td>Ganho de moedas com Brasil</td>
+                <td title="{{ l['lid'] }}">{{ l['data'] }}</td>
+                <td>{% if info['username'] == l['nome'] %}<b>{{ l['nome'] }}</b>{% else %}{{ l['nome'] }}{% endif %}</td>
+                <td><img class="flag" src="../static/img/flag/{{ l['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"></td>
+                <td>{{ l['moedas'] }}</td>
+                <td style="text-align: left;">{{ l['msg'] }}</td>
             </tr>
+            {% endfor %}
         </table>
     </div>
 </div>

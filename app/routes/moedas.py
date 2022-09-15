@@ -15,17 +15,20 @@ ANO=21
 def get_moedas_info():
     jogos = get_next_jogos()
     board = get_moedas_board()
-    return {'moedas_board': board['moedas_board'], 'jogos': jogos['next_jogos'][:16]}
+    logs = [u for u in mongo.db.moedaslog.find().sort('lid',pymongo.DESCENDING)]
+    return {'moedas_board': board['moedas_board'], 'jogos': jogos['next_jogos'][:16],'logs': logs}
 
 @moedas.route('/gk/moedas')
 def gamemoedas():
     user_info = {}
+    info = get_moedas_info()
     if session.get('username') == None:
         userLogado=False
     else:
         validUser = mongo.db.users.find_one_or_404({'username': session["username"]})
         if validUser["gokopa"]:
             userLogado = True
+            info['username'] = validUser['name']
             lista = get_free_teams()
             user_info["lista_livre"] = lista['Livres']
             user_info["nome"] = validUser['name']
@@ -35,8 +38,9 @@ def gamemoedas():
         else:
             userLogado = False
     
-    info = get_moedas_info()
-    info['userlogado': userLogado]
+    info['userlogado'] = userLogado
+    if not userLogado:
+        info['username'] = 'false'
     return render_template('moedas.html',menu='Moedas',tipo='gk',info=info,user_info=user_info)
 
 @moedas.route('/gk/moedas/addpat',methods=["POST"])

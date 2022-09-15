@@ -353,6 +353,27 @@ def get_moedas_board():
 
     return {'moedas_board': lista_users}
 
+def moedas_log(nome,moedas,time,msg):
+    data = datetime.strftime(datetime.now(),"%d/%m")
+    log_id = mongo.db.settings.find_one_and_update({'config':'logid'},{'$inc': {'lid': 1}})
+    if log_id:
+        lid = log_id['lid']+1
+    else:
+        print("Sem base de log, iniciando")
+        lid = 1
+        mongo.db.settings.insert_one({'config':'logid','lid': 1})
+
+    log = {
+        'nome': nome,
+        'moedas': moedas,
+        'time': time,
+        'msg': msg,
+        'data': data,
+        'lid': lid
+    }
+    mongo.db.moedaslog.insert_one(log)
+
+
 @backend.route('/api/get_next_jogos',methods=['GET'])
 def get_next_jogos():
     ano_jogos = mongo.db.jogos.find({'Ano': ANO}).sort([("Jogo",pymongo.ASCENDING)])

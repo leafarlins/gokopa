@@ -1,18 +1,25 @@
+import json
 from re import T
 import sys
 from bson.objectid import ObjectId
 import click
 import getpass
+import os
+import requests
 from bson.objectid import ObjectId
 from flask_pymongo import BSONObjectIdConverter
 import pymongo
 from pymongo.collection import ReturnDocument
+
+from app.routes.backend import moedas_log
 from ..extentions.database import mongo
 from flask import Blueprint
 
 SEPARADOR_CSV=","
 ANO=21
 RANKING='20-4'
+TELEGRAM_TOKEN=os.getenv('TELEGRAM_TKN')
+TELEGRAM_CHAT_ID=os.getenv('TELEGRAM_CHAT_ID')
 
 timeCommands = Blueprint('time',__name__)
 
@@ -265,23 +272,67 @@ def load_patrocinio(csv_file):
     jogosCollection.insert(data)
     print("Dados inseridos")
 
+@timeCommands.cli.command("exec")
+def exec():
+    #mongo.db.moedas.find_one_and_update({'nome': 'ze1'},{'$set': {'saldo': 1000, 'bloqueado': 0, 'investido': 0}})
+    mongo.db.patrocinio.find_one_and_update({'Time': 'Holanda'},{'$set': {"Patrocinador" : "-"}})
+    #mongo.db.tentarpat.find_one_and_update({'valor':500},{'$set': {'valor':0}})
+
 @timeCommands.cli.command("processaPat")
 def processa_pat():
-    lista_pat = mongo.db.patrocinio
-    lista_tentarpat = [u for u in mongo.db.tentarpat.find().sort('valor',pymongo.DESCENDING)]
-    print(lista_pat.find())
-    print("Lista a processar:")
+    emojis = mongo.db.emoji
+    #{"Time" : "Coréia do Sul", "Valor" : 272, "Patrocinador" : "-" }
+    patrocinios = mongo.db.patrocinio
+    #{"nome" : "ze1", "valor" : 140, "time" : "Dinamarca", "timestamp" : ISODate...}
+    lista_tentarpat = [u for u in mongo.db.tentarpat.find().sort([('time',pymongo.ASCENDING),("valor",pymongo.DESCENDING)])]
+    #{"nome" : "ze8", "saldo" : 1000, "bloqueado" : 0, "investido" : 0 }
+    moedas = mongo.db.moedas
+    if lista_tentarpat == None:
+        print("Sem lista a processar hoje.")
+        exit(0)
     impedidos = []
+    patrocinados = []
+    patok = []
+    texto_imp = ""
+    texto_pat = ""
     for j in range(len(lista_tentarpat)-1):
         time = lista_tentarpat[j]['time']
         print(lista_tentarpat[j]['valor'],time)
-        if lista_tentarpat[j]['valor'] == lista_tentarpat[j+1]['valor'] and time == lista_tentarpat[j+1]['time']:
+        if lista_tentarpat[j]['valor'] == lista_tentarpat[j+1]['valor'] and time == lista_tentarpat[j+1]['time'] and time not in patok:
             print(f'Impedido patrocinio de {time}')
             impedidos.append(time)
+        elif time not in patok:
+            patok.append(time)
     for t in lista_tentarpat:
-        if t['time'] in impedidos:
-            print(t['time'],"impedido de patrocinio")
+        et = emojis.find_one({'País': t['time']})['flag']
+        if t['time'] in impedidos or t['time'] in patrocinados:
+            texto_imp+=f"{t['nome']} tentou patrocinar {et} {t['time']} por {t['valor']}🪙.\n"
+            moedas_log(t['nome'],"x "+str(t['valor']),t['time'],"Não conseguiu patrocinar.")
+            moedas.find_one_and_update({'nome': t['nome']}, {'$inc': {'saldo': t['valor'],'bloqueado': -t['valor']}})
         else:
-            print(f"{t['nome']} é patrocinador de {t['time']} por {t['valor']}🪙.")
+            texto_pat+=f"{t['nome']} conseguiu patrocinar {et} {t['time']} por {t['valor']}🪙!\n"
+            moedas_log(t['nome'],"i "+str(t['valor']),t['time'],"Conseguiu patrocinar.")
+            patrocinados.append(t['time'])
+            moedas.find_one_and_update({'nome': t['nome']}, {'$inc': {'bloqueado': -t['valor'],'investido': t['valor']}})
+            patrocinios.find_one_and_update({'Time': t['time']}, {'$set': {'Patrocinador': t['nome'],'Valor': t['valor']}})
+    mongo.db.tentarpat.drop()
 
-    print(impedidos)
+    mensagem="🪙 PATROCÍNIOS DO DIA 🪙\n"
+    if texto_imp:
+        mensagem+= "\n=> Sem sucesso :T\n"
+        mensagem+=texto_imp
+    if texto_pat:
+        mensagem+= "\n=> Com sucesso :)\n"
+        mensagem+=texto_pat
+    print(mensagem)
+    print("Enviando mensagem via telegram")
+    params = {
+        'chat_id': TELEGRAM_CHAT_ID,
+        'text': mensagem
+    }
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+    #r = requests.get(url, params=params)
+    #if r.status_code == 200:
+    #    print(json.dumps(r.json(), indent=2))
+    #else:
+    #    r.raise_for_status()
