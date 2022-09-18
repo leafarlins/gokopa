@@ -400,24 +400,43 @@ def get_next_jogos():
                 moedas_em_jogo = int(t2['Valor']*percent/100)
             pat1 = lista_pat.find_one({'Time': time1})
             pat2 = lista_pat.find_one({'Time': time2})
-            jogo = {'jid':n['Jogo'], 'time1': time1, 'time2': time2, 'time1_valor': t1['Valor'], 'time2_valor': t2['Valor'], 'percent': percent, 'moedas_em_jogo': moedas_em_jogo,'pat1':pat1['Patrocinador'], 'pat2': pat2['Patrocinador']}
-        
+            jogo = {
+                'data': n['Data'],
+                'jid' :n['Jogo'],
+                'time1': time1,
+                'time2': time2,
+                'time1_valor': t1['Valor'],
+                'time2_valor': t2['Valor'],
+                'percent': percent,
+                'moedas_em_jogo': moedas_em_jogo,
+                'pat1': pat1['Patrocinador'], 
+                'pat2': pat2['Patrocinador']}
             data_jogo = datetime.strptime(n["Data"],"%d/%m/%Y %H:%M")
             if data_jogo < now and n["p1"] != "" :
+                if n['p1'] > n['p2']:
+                    timevit = time1
+                elif n['p1'] < n['p2']:
+                    timevit = time2
+                else:
+                    timevit = 'empate'
+                jogo['p1'] = n['p1']
+                jogo['p2'] = n['p2']
+                jogo['vitoria'] = timevit
                 past_jogos.insert(0,jogo)
             else:
                 next_jogos.append(jogo)
 
-
     return {'next_jogos': next_jogos, 'past_jogos': past_jogos}
 
 @backend.route('/api/get_pat_teams', methods=['GET'])
-#@cache.cached(timeout=30*30)
+@cache.cached(timeout=30)
 def get_pat_teams():
     lista = [u for u in mongo.db.patrocinio.find().sort("Valor",pymongo.DESCENDING)]
     lista_pat = []
     lista_livres = []
-    jogos = get_next_jogos()
+    next_jogos_list = get_next_jogos()
+    jogos = next_jogos_list['next_jogos']
+    past_jogos = next_jogos_list['past_jogos'][:4]
     for t in lista:
         if t['Patrocinador'] == "-":
             lista_livres.append({'time': t["Time"],'valor': t["Valor"]})
@@ -427,9 +446,26 @@ def get_pat_teams():
             while busca:
                 jogo=jogos[j]
                 if jogo['time1'] == t['Time'] or jogo['time2'] == t['Time']:
-                    lista_pat.append({'time': t["Time"],'valor': t["Valor"],'moedas_em_jogo': jogo['moedas_em_jogo']})
+                    apoio_liberado = True
+                    # Busca em jogos recentes
+                    for pastj in past_jogos:
+                        if pastj['time1'] == t['Time'] or pastj['time2'] == t['Time']:
+                            data = datetime.strptime(pastj['data'],"%d/%m/%Y %H:%M")
+                            now = datetime.strftime(datetime.now(),"%d/%m")
+                            if datetime.strftime(now,"%d/%m") == datetime.strftime(data,"%d/%m") and now > data:
+                                apoio_liberado = False
+                    lista_pat.append({
+                        'next_jogo': {'t1': jogo['time1'],'t2':jogo['time2']},
+                        'patrocinador': t['Patrocinador'],
+                        'time': t["Time"],
+                        'valor': t["Valor"],
+                        'apoiadores': t.get('Apoiadores'),
+                        'moedas_em_jogo': jogo['moedas_em_jogo'],
+                        'apoio_liberado': apoio_liberado})
                     busca=False
                 else:
                     j+=1
+                    if j >= len(jogos):
+                        busca = False
         
     return {"livres": lista_livres, "patrocinados": lista_pat}

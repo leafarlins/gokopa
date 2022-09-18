@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, session, request, url_for, flash
-from app.routes.backend import get_free_teams, get_moedas_board, get_next_jogos, progress_data,get_aposta,get_users,get_games,make_score_board,get_user_name,get_bet_results,get_rank
+from app.routes.backend import get_free_teams, get_moedas_board, get_next_jogos, get_pat_teams, moedas_log, progress_data,get_aposta,get_users,get_games,make_score_board,get_user_name,get_bet_results,get_rank
 import pymongo
 from werkzeug.utils import redirect
 from ..extentions.database import mongo
@@ -11,7 +11,7 @@ moedas = Blueprint('moedas',__name__)
 
 ANO=21
 
-@cache.memoize(600)
+@cache.memoize(60)
 def get_moedas_info():
     jogos = get_next_jogos()
     board = get_moedas_board()
@@ -22,6 +22,7 @@ def get_moedas_info():
 def gamemoedas():
     user_info = {}
     info = get_moedas_info()
+    lista_pat = get_pat_teams()
     if session.get('username') == None:
         userLogado=False
     else:
@@ -30,7 +31,7 @@ def gamemoedas():
             userLogado = True
             info['username'] = validUser['name']
             lista = get_free_teams()
-            user_info["lista_livre"] = lista['Livres']
+            user_info["lista_livre"] = lista_pat['livres']
             user_info["nome"] = validUser['name']
             moedas_user = mongo.db.moedas.find_one({'nome': validUser['name']})
             user_info['saldo'] = moedas_user['saldo']
@@ -41,6 +42,8 @@ def gamemoedas():
     info['userlogado'] = userLogado
     if not userLogado:
         info['username'] = 'false'
+    info['patrocinados'] = lista_pat['patrocinados']
+
     return render_template('moedas.html',menu='Moedas',tipo='gk',info=info,user_info=user_info)
 
 @moedas.route('/gk/moedas/addpat',methods=["POST"])
@@ -74,4 +77,66 @@ def addpat():
         flash(f'Usuário não logado.','danger')
     return redirect(url_for('moedas.gamemoedas'))
 
+@moedas.route('/gk/moedas/addapoio',methods=["POST"])
+def addapoio():
+    if "username" in session:
+        validUser = mongo.db.users.find_one({"username": session["username"]})
+        apostador = validUser["name"]
+        time = request.values.get("time_apoio")
+        valor = int(request.values.get("valor_apoio"))
+        print(f'time {time} valor {valor}')
+        moedasDb = mongo.db.moedas.find_one({'nome': apostador})
+        saldo_atual = moedasDb['saldo']
+        timeDb = mongo.db.patrocinio.find_one({'Time': time})
+        if valor > saldo_atual:
+            flash(f'Usuário não possui saldo suficiente.','danger')
+        #elif not timeDb['apoio_liberado']:
+        #    flash(f'Apoio não liberado no momento.','danger')
+        else:
+            apoios = timeDb.get('Apoiadores')
+            atualizado = False
+            if apoios:
+                for a in apoios:
+                    if a['nome'] == apostador:
+                        a['valor'] += valor
+                        atualizado = True
+            else:
+                apoios = []
+            if not atualizado:
+                apoios.append({'nome': apostador, 'valor': valor})
+            outdb = mongo.db.moedas.find_one_and_update({'nome': apostador},{'$inc': {'saldo': -valor,'investido': valor}})
+            outdb2 = mongo.db.patrocinio.find_one_and_update({'Time': time},{'$set': {'Apoiadores': apoios}})
+            if outdb and outdb2:
+                flash(f'Apoio adicionado','success')
+                moedas_log(apostador,'+'+str(valor),time,"Apoio adicionado")
+            else:
+                flash(f'Erro na atualização da base.','danger')
+    else:
+        flash(f'Usuário não logado.','danger')
+    return redirect(url_for('moedas.gamemoedas'))
 
+
+@moedas.route('/gk/moedas/addvalorpat',methods=["POST"])
+def addvalorpat():
+    if "username" in session:
+        validUser = mongo.db.users.find_one({"username": session["username"]})
+        apostador = validUser["name"]
+        time = request.values.get("time_apoio")
+        valor = int(request.values.get("valor_apoio"))
+        moedasDb = mongo.db.moedas.find_one({'nome': apostador})
+        saldo_atual = moedasDb['saldo']
+        if valor > saldo_atual:
+            flash(f'Usuário não possui saldo suficiente.','danger')
+        #elif not timeDb['apoio_liberado']:
+        #    flash(f'Apoio não liberado no momento.','danger')
+        else:
+            outdb = mongo.db.moedas.find_one_and_update({'nome': apostador},{'$inc': {'saldo': -valor,'investido': valor}})
+            outdb2 = mongo.db.patrocinio.find_one_and_update({'Time': time},{'$inc': {'Valor': valor}})
+            if outdb and outdb2:
+                flash(f'Patrocínio adicionado','success')
+                moedas_log(apostador,'+'+str(valor),time,"Patrocínio adicionado")
+            else:
+                flash(f'Erro na atualização da base.','danger')
+    else:
+        flash(f'Usuário não logado.','danger')
+    return redirect(url_for('moedas.gamemoedas'))

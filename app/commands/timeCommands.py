@@ -11,7 +11,7 @@ from flask_pymongo import BSONObjectIdConverter
 import pymongo
 from pymongo.collection import ReturnDocument
 
-from app.routes.backend import moedas_log
+from app.routes.backend import get_moedas_board, get_next_jogos, moedas_log
 from ..extentions.database import mongo
 from flask import Blueprint
 
@@ -260,6 +260,7 @@ def load_patrocinio(csv_file):
             documento = dict(documento)
             documento["Valor"]=int(documento["Valor"])
             documento["Patrocinador"]="-"
+            #documento["Apoiadores"]=[]
             data.append(documento)
 
         if not data:
@@ -274,22 +275,47 @@ def load_patrocinio(csv_file):
 
 @timeCommands.cli.command("exec")
 def exec():
-    #mongo.db.moedas.find_one_and_update({'nome': 'ze1'},{'$set': {'saldo': 1000, 'bloqueado': 0, 'investido': 0}})
-    mongo.db.patrocinio.find_one_and_update({'Time': 'Holanda'},{'$set': {"Patrocinador" : "-"}})
+    mongo.db.moedas.find_one_and_update({'nome': 'ze1'},{'$set': {'saldo': 0, 'bloqueado': 0, 'investido': 1000}})
+    #mongo.db.patrocinio.find_one_and_update({'Time': 'Holanda'},{'$set': {"Patrocinador" : "-"}})
     #mongo.db.tentarpat.find_one_and_update({'valor':500},{'$set': {'valor':0}})
 
+def processa_jogos():
+
+
 @timeCommands.cli.command("processaPat")
-def processa_pat():
+@click.argument("jogos",required=False)
+def processa_pat(jogos=0):
     emojis = mongo.db.emoji
-    #{"Time" : "Coréia do Sul", "Valor" : 272, "Patrocinador" : "-" }
+    #{"Time" : "Coréia do Sul", "Valor" : 272, "Patrocinador" : "-", "Apoiadores": [] }
     patrocinios = mongo.db.patrocinio
     #{"nome" : "ze1", "valor" : 140, "time" : "Dinamarca", "timestamp" : ISODate...}
     lista_tentarpat = [u for u in mongo.db.tentarpat.find().sort([('time',pymongo.ASCENDING),("valor",pymongo.DESCENDING)])]
     #{"nome" : "ze8", "saldo" : 1000, "bloqueado" : 0, "investido" : 0 }
     moedas = mongo.db.moedas
-    if lista_tentarpat == None:
-        print("Sem lista a processar hoje.")
-        exit(0)
+
+    # Processamento dos últimos jogos
+    if jogos > 0:
+        past_jogos = get_next_jogos()['past_jogos'][:jogos]
+        for jogo in past_jogos:
+            if jogo['vitoria'] == 'empate':
+                moedas_ganhas = int(jogo['moedas_em_jogo']/3)
+                lista_t = [jogo['time1'],jogo['time2']]
+            else:
+                moedas_ganhas = jogo['moedas_em_jogo']
+                lista_t = [jogo['vitoria']]
+            for t in lista_t:
+                patDb = patrocinios.find_one_and_update({'Time': t},{'$inc': {'Valor': moedas_ganhas}})
+                if patDb['Patrocinador'] != '-':
+                    moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'investido': moedas_ganhas,'saldo': moedas_ganhas}})
+                    apoios_taxa =  0
+                    for a in patDb['Apoiadores']:
+                        moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'investido': moedas_ganhas,'saldo': moedas_ganhas}})
+
+
+
+
+
+
     impedidos = []
     patrocinados = []
     patok = []
@@ -317,13 +343,36 @@ def processa_pat():
             patrocinios.find_one_and_update({'Time': t['time']}, {'$set': {'Patrocinador': t['nome'],'Valor': t['valor']}})
     mongo.db.tentarpat.drop()
 
-    mensagem="🪙 PATROCÍNIOS DO DIA 🪙\n"
-    if texto_imp:
-        mensagem+= "\n=> Sem sucesso :T\n"
-        mensagem+=texto_imp
-    if texto_pat:
-        mensagem+= "\n=> Com sucesso :)\n"
-        mensagem+=texto_pat
+    if texto_imp or texto_pat:
+        mensagem="🪙 PATROCÍNIOS DO DIA 🪙\n"
+        if texto_imp:
+            mensagem+= "\n=> Sem sucesso :T\n"
+            mensagem+=texto_imp
+        if texto_pat:
+            mensagem+= "\n=> Com sucesso :)\n"
+            mensagem+=texto_pat
+        print(mensagem)
+        print("Enviando mensagem via telegram")
+        params = {
+            'chat_id': TELEGRAM_CHAT_ID,
+            'text': mensagem
+        }
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+        r = requests.get(url, params=params)
+        if r.status_code == 200:
+            print(json.dumps(r.json(), indent=2))
+        else:
+            r.raise_for_status()
+    else:
+        print("Sem patrocinadores novos hoje.")
+    ranking_moedas()
+
+#@timeCommands.cli.command("rankingMoedas")
+def ranking_moedas():
+    ranking_moedas = get_moedas_board()['moedas_board']
+    mensagem = "== Ranking de moedas ==\n"
+    for j in ranking_moedas:
+        mensagem+=f"{j['pos']}  {j['total']}🪙 - {j['nome']}\n"
     print(mensagem)
     print("Enviando mensagem via telegram")
     params = {
@@ -331,8 +380,11 @@ def processa_pat():
         'text': mensagem
     }
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    #r = requests.get(url, params=params)
-    #if r.status_code == 200:
-    #    print(json.dumps(r.json(), indent=2))
-    #else:
-    #    r.raise_for_status()
+    r = requests.get(url, params=params)
+    if r.status_code == 200:
+        print(json.dumps(r.json(), indent=2))
+    else:
+        r.raise_for_status()
+
+
+    

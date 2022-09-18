@@ -3,11 +3,11 @@
 
 <div class="texto">
   <h2 class="center">Moedas</h2>
-  <p>Aqui você pode gerenciar suas moedas de investimentos em seus times favoritos. Diariamente, escolha um clube para tentar ser o patrocinador. Quem der o valor mais alto ao final do dia vira patrocinador do time até sua desclassificação.</p>
-  <p>A cada dia de competição, derrotas dos times patrocinados poderão perder moedas (em investimento), vitórias poderão adicionar moedas no saldo. Serão debitados inicialmente 30 moedas caso o jogador tenha saldo fora de uso, e o jogador ganhará moedas extras de acordo com seu desempenho no bolão.</p>
+  <p>Aqui você pode gerenciar suas moedas de investimentos em seus times favoritos. Diariamente os leilões são processados e os retornos dos investimentos dos jogos do dia também.</p>
+  <p>Atue como patrocinador (ganhando moedas + patrimônio) ou como apoiador livre. Saldo livre no fim do dia poderá ser penalizado.</p>
 </div>
 
-<div class="row scool-pane">
+<div class="row scoll-pane">
 <div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
     <hr>
     <h2>Área do jogador</h2>
@@ -28,18 +28,27 @@
         </table>
 
         {% if user_info["lista_livre"] %}
-        <p>&nbsp;</p><p>Tentativa de patrocínio</p>
+        <p>&nbsp;</p><p>Tentar um patrocínio</p>
         <form action="{{ url_for('moedas.addpat') }}" method="post">
-            <div class="form-row">
-                <div class="form-group col-md-6"><label for="time1">Selecione um time:</label>
+            <div class="row mb-2">
+                <div class="col-sm-6 text-sm-end">
+                    <label for="time1">Selecione um time:</label>
+                </div>
+                <div class="col-sm-6 text-sm-start">
                     <input type="hidden" name="timename" value="" id="timename">
                     <select list="times" name="time1" id="time1" onchange="update_minimo()">
                         {% for i in user_info["lista_livre"] %}
-                          <option value="{{ i['Valor'] }}" label="{{ i['Time'] }}">{{ i['Time'] }}</option>
+                          <option value="{{ i['valor'] }}" label="{{ i['time'] }}">{{ i['time'] }}</option>
                         {% endfor %}
-                    </select></div>
-                <div class="form-group col-md-6"><label for="valor_pat">Valor:</label>
-                  <input style="max-width: 80%" type="number" name="valor_pat" id="valor_pat" width="10px" value="0" min="0" max="{{ user_info['saldo'] }}"></div>
+                    </select>
+                </div>
+            </div><div class="row mb-3">
+                <div class="col-sm-6 text-sm-end">
+                    <label for="valor_pat">Valor:</label>
+                </div>
+                <div class="col-sm-6 text-sm-start">
+                    <input style="max-width: 10rem" type="number" name="valor_pat" id="valor_pat" width="10px" value="0" min="0" max="{{ user_info['saldo'] }}">
+                </div>
             </div>
             <button type="submit" class="btn btn-outline-primary">Tentar investimento</button>
         </form>
@@ -79,6 +88,28 @@
 
 <div class="col-12 col-sm-12 col-md-12 col-lg-8 col-xl-8">
     <h2>Patrocínios e apoios</h2>
+    {% if info['patrocinados'] %}
+    <div class="row">{% for t in info['patrocinados'] %}
+    <div class="card {% if t['patrocinador'] == info['username'] %}text-bg-secondary{% else %}text-bg-light{% endif %} mb-3 col-12 col-sm-6 col-md-4 col-lg-6 col-xl-4" style="max-width: 25rem;">
+        <div class="card-header">{% if t['patrocinador'] == info['username'] %}<b>{{ t['patrocinador'] }}</b>{% else %}{{ t['patrocinador'] }}{% endif %}</div>
+        <div class="card-body">
+          <h5 class="card-title"><img class="flag" src="../static/img/flag/{{ t['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ t['time'] }} - {{ t['valor'] }}🪙</h5>
+          <p class="card-text">Próximo jogo: <img class="miniflag" title="{{ t['next_jogo']['t1'] }}" src="../static/img/flag/{{ t['next_jogo']['t1'] }}.png" onerror="this.src='../static/img/flag/default.png'">x<img class="miniflag" title="{{ t['next_jogo']['t2'] }}" src="../static/img/flag/{{ t['next_jogo']['t2'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+            <br>{{ t['moedas_em_jogo'] }}🪙 em jogo</p>
+          {% if t['apoiadores'] %}<p class="card-text">Apoiadores:{% for a in t['apoiadores'] %}
+          <br> - {{ a['nome'] }} {{ a['valor'] }}🪙
+          {% if a['nome'] == info['username'] %}<button type="button" class="btn btn-outline-danger btn-sm">X</button>{% endif %}
+          {% endfor %}</p>{% endif %}
+            {% if info['userlogado'] %}{% if t['apoio_liberado'] %}<form action="{% if t['patrocinador'] == info['username'] %}{{ url_for('moedas.addvalorpat') }}{% else %}{{ url_for('moedas.addapoio') }}{% endif %}" method="post" class="text-end">
+                <input type="hidden" name="time_apoio" value="{{ t['time'] }}" id="time_apoio">
+                <input style="max-width: 5rem" type="number" name="valor_apoio" id="valor_apoio" width="10px" value="0" min="0" max="{{ user_info['saldo'] }}">
+                <button title="Adicionar apoio" type="submit" class="btn btn-outline-warning btn-sm">+</button>
+            </form>
+            {% endif %}{% endif %}
+        </div>
+    </div>
+    {% endfor %}</div>{% endif %}
+      
 </div>
 
 </div>

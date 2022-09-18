@@ -28,12 +28,17 @@ header {
   padding:5px;
 }
 
+.menu nav {
+  width: 100%;
+}
+
 .menu ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
   overflow: hidden;
   background-color: #333;
+  width: 100%;
 }
 
 .menu li {
