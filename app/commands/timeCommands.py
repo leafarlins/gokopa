@@ -279,12 +279,14 @@ def exec():
     #mongo.db.patrocinio.find_one_and_update({'Time': 'Holanda'},{'$set': {"Patrocinador" : "-"}})
     #mongo.db.tentarpat.find_one_and_update({'valor':500},{'$set': {'valor':0}})
 
-def processa_jogos():
+#def processa_jogos():
 
 
 @timeCommands.cli.command("processaPat")
 @click.argument("jogos",required=False)
-def processa_pat(jogos=0):
+@click.argument("telegram",required=False)
+def processa_pat(jogos='0',telegram=False):
+    jogos = int(jogos)
     emojis = mongo.db.emoji
     #{"Time" : "Coréia do Sul", "Valor" : 272, "Patrocinador" : "-", "Apoiadores": [] }
     patrocinios = mongo.db.patrocinio
@@ -296,26 +298,76 @@ def processa_pat(jogos=0):
     # Processamento dos últimos jogos
     if jogos > 0:
         past_jogos = get_next_jogos()['past_jogos'][:jogos]
+
+        # Debito de saldo parado
+        if past_jogos[0]['jid'] > 48:
+            debito_parado = int(past_jogos[0]['jid']/2)
+        else:
+            debito_parado = 0
+        if debito_parado > 0:
+            lista_moedas = [u for u in moedas.find()]
+            for user in lista_moedas:
+                if user['saldo'] > 0:
+                    deb_saldo = debito_parado
+                    if deb_saldo > user['saldo']:
+                        deb_saldo = user['saldo']
+                    moedas.find_one_and_update({'nome': user['nome']},{'$inc': {'saldo': -deb_saldo}})
+                    moedas_log(user['nome'],"-"+str(deb_saldo),"","Débido de saldo parado")
+
+        # Processamento dos jogos
         for jogo in past_jogos:
             if jogo['vitoria'] == 'empate':
-                moedas_ganhas = int(jogo['moedas_em_jogo']/3)
-                lista_t = [jogo['time1'],jogo['time2']]
+                lista_m = [int(jogo['moedas_em_jogo']/3),int(jogo['moedas_em_jogo']/3)]
             else:
-                moedas_ganhas = jogo['moedas_em_jogo']
-                lista_t = [jogo['vitoria']]
-            for t in lista_t:
-                patDb = patrocinios.find_one_and_update({'Time': t},{'$inc': {'Valor': moedas_ganhas}})
+                if jogo['vitoria'] == jogo['time1']:
+                    lista_m = [jogo['moedas_em_jogo'],-jogo['moedas_em_jogo']]
+                else:
+                    lista_m = [-jogo['moedas_em_jogo'],jogo['moedas_em_jogo']]
+            lista_t = [(jogo['time1'],lista_m[0]),(jogo['time2'],lista_m[1])]
+            for t,moeda_ganha in lista_t:
+                # Atualização do valor do time
+                patDb = patrocinios.find_one_and_update({'Time': t},{'$inc': {'Valor': moeda_ganha}})
+                # Atualizaçao nos valores de cada jogador
                 if patDb['Patrocinador'] != '-':
-                    moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'investido': moedas_ganhas,'saldo': moedas_ganhas}})
-                    apoios_taxa =  0
-                    for a in patDb['Apoiadores']:
-                        moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'investido': moedas_ganhas,'saldo': moedas_ganhas}})
+                    if moeda_ganha > 0:
+                        moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'investido': moeda_ganha,'saldo': moeda_ganha}})
+                        moedas_log(patDb['Patrocinador'],"+"+str(moeda_ganha),t,"Jogo de time patrocinado")
+                        moedas_log(patDb['Patrocinador'],"i+"+str(moeda_ganha),t,"Ganho de valor patrocinado")
+                    else:
+                        moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'investido': moeda_ganha}})
+                        moedas_log(patDb['Patrocinador'],"i"+str(moeda_ganha),t,"Perda de valor patrocinado")
+                    # Processamento da lista de apoios
+                    lista_apoios = patDb.get('Apoiadores')
+                    if lista_apoios:
+                        apoios_taxa =  0
+                        for a in lista_apoios:
+                            valor_max = moeda_ganha
+                            if moeda_ganha > a['valor']:
+                                valor_max = a['valor']
+                            # Se perda, perda no valor do patrocinio
+                            if moeda_ganha < 0:
+                                novo_valor_apoio = a['valor'] + moeda_ganha
+                                if novo_valor_apoio <=0:
+                                    moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'investido': -a['valor']}})
+                                    moedas_log(a['nome'],"x"+str(-a['valor']),t,"Perda de apoio ao time")
+                                    lista_apoios.remove(a)
+                                else:
+                                    moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'investido': moeda_ganha}})
+                                    moedas_log(a['nome'],"i"+str(moeda_ganha),t,"Perda parcial do apoio ao time")
+                                    a['valor'] = novo_valor_apoio
+                            # Se ganho, incrementa saldo apos debitar 10%
+                            else:
+                                valor_apoio = int(valor_max*90/100)
+                                apoios_taxa += valor_max - valor_apoio
+                                moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'saldo': valor_apoio}})
+                                moedas_log(a['nome'],"+"+str(valor_apoio),t,"Jogo de time apoiado")
+                        # Adiciona taxa de apoios ao patrocinador e atualiza apoios
+                        if apoios_taxa > 0:
+                            moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'saldo': apoios_taxa}})
+                            moedas_log(patDb['Patrocinador'],"+"+str(apoios_taxa),t,"Taxa de apoios")
+                        patrocinios.find_one_and_update({'Time': t},{'$set': {'Apoiadores': lista_apoios}})
 
-
-
-
-
-
+    # Processamento da lista de paotrocinios no leilao
     impedidos = []
     patrocinados = []
     patok = []
@@ -333,11 +385,11 @@ def processa_pat(jogos=0):
         et = emojis.find_one({'País': t['time']})['flag']
         if t['time'] in impedidos or t['time'] in patrocinados:
             texto_imp+=f"{t['nome']} tentou patrocinar {et} {t['time']} por {t['valor']}🪙.\n"
-            moedas_log(t['nome'],"x "+str(t['valor']),t['time'],"Não conseguiu patrocinar.")
+            moedas_log(t['nome'],"x "+str(t['valor']),t['time'],"Não conseguiu patrocinar")
             moedas.find_one_and_update({'nome': t['nome']}, {'$inc': {'saldo': t['valor'],'bloqueado': -t['valor']}})
         else:
             texto_pat+=f"{t['nome']} conseguiu patrocinar {et} {t['time']} por {t['valor']}🪙!\n"
-            moedas_log(t['nome'],"i "+str(t['valor']),t['time'],"Conseguiu patrocinar.")
+            moedas_log(t['nome'],"i "+str(t['valor']),t['time'],"Conseguiu patrocinar")
             patrocinados.append(t['time'])
             moedas.find_one_and_update({'nome': t['nome']}, {'$inc': {'bloqueado': -t['valor'],'investido': t['valor']}})
             patrocinios.find_one_and_update({'Time': t['time']}, {'$set': {'Patrocinador': t['nome'],'Valor': t['valor']}})
@@ -352,6 +404,31 @@ def processa_pat(jogos=0):
             mensagem+= "\n=> Com sucesso :)\n"
             mensagem+=texto_pat
         print(mensagem)
+        if telegram:
+            print("Enviando mensagem via telegram")
+            params = {
+                'chat_id': TELEGRAM_CHAT_ID,
+                'text': mensagem
+            }
+            url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+            r = requests.get(url, params=params)
+            if r.status_code == 200:
+                print(json.dumps(r.json(), indent=2))
+            else:
+                r.raise_for_status()
+    else:
+        print("Sem patrocinadores novos hoje.")
+    ranking_moedas()
+
+#@timeCommands.cli.command("rankingMoedas")
+def ranking_moedas():
+    telegram=False
+    ranking_moedas = get_moedas_board()['moedas_board']
+    mensagem = "== Ranking de moedas ==\n"
+    for j in ranking_moedas:
+        mensagem+=f"{j['pos']}  {j['total']}🪙 - {j['nome']}\n"
+    print(mensagem)
+    if telegram:
         print("Enviando mensagem via telegram")
         params = {
             'chat_id': TELEGRAM_CHAT_ID,
@@ -363,28 +440,6 @@ def processa_pat(jogos=0):
             print(json.dumps(r.json(), indent=2))
         else:
             r.raise_for_status()
-    else:
-        print("Sem patrocinadores novos hoje.")
-    ranking_moedas()
-
-#@timeCommands.cli.command("rankingMoedas")
-def ranking_moedas():
-    ranking_moedas = get_moedas_board()['moedas_board']
-    mensagem = "== Ranking de moedas ==\n"
-    for j in ranking_moedas:
-        mensagem+=f"{j['pos']}  {j['total']}🪙 - {j['nome']}\n"
-    print(mensagem)
-    print("Enviando mensagem via telegram")
-    params = {
-        'chat_id': TELEGRAM_CHAT_ID,
-        'text': mensagem
-    }
-    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    r = requests.get(url, params=params)
-    if r.status_code == 200:
-        print(json.dumps(r.json(), indent=2))
-    else:
-        r.raise_for_status()
 
 
     

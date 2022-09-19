@@ -451,7 +451,7 @@ def get_pat_teams():
                     for pastj in past_jogos:
                         if pastj['time1'] == t['Time'] or pastj['time2'] == t['Time']:
                             data = datetime.strptime(pastj['data'],"%d/%m/%Y %H:%M")
-                            now = datetime.strftime(datetime.now(),"%d/%m")
+                            now = datetime.now()
                             if datetime.strftime(now,"%d/%m") == datetime.strftime(data,"%d/%m") and now > data:
                                 apoio_liberado = False
                     lista_pat.append({

@@ -96,13 +96,18 @@
           <h5 class="card-title"><img class="flag" src="../static/img/flag/{{ t['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ t['time'] }} - {{ t['valor'] }}🪙</h5>
           <p class="card-text">Próximo jogo: <img class="miniflag" title="{{ t['next_jogo']['t1'] }}" src="../static/img/flag/{{ t['next_jogo']['t1'] }}.png" onerror="this.src='../static/img/flag/default.png'">x<img class="miniflag" title="{{ t['next_jogo']['t2'] }}" src="../static/img/flag/{{ t['next_jogo']['t2'] }}.png" onerror="this.src='../static/img/flag/default.png'">
             <br>{{ t['moedas_em_jogo'] }}🪙 em jogo</p>
-          {% if t['apoiadores'] %}<p class="card-text">Apoiadores:{% for a in t['apoiadores'] %}
+          {% if t['apoiadores'] %}<p style="display: inline" class="card-text">Apoiadores:{% for a in t['apoiadores'] %}
           <br> - {{ a['nome'] }} {{ a['valor'] }}🪙
-          {% if a['nome'] == info['username'] %}<button type="button" class="btn btn-outline-danger btn-sm">X</button>{% endif %}
+          {% if a['nome'] == info['username'] %}<form style="display: inline" action="{{ url_for('moedas.removeapoio') }}" method="post" class="">
+            <button title="Remover apoio" type="submit" class="btn btn-outline-danger btn-sm">x</button>
+            <input type="hidden" name="time_apoio" value="{{ t['time'] }}" id="time_apoio">
+            <input type="hidden" name="valor_apoio" value="{{ a['valor'] }}" id="valor_apoio">
+          </form>{% endif %}
           {% endfor %}</p>{% endif %}
-            {% if info['userlogado'] %}{% if t['apoio_liberado'] %}<form action="{% if t['patrocinador'] == info['username'] %}{{ url_for('moedas.addvalorpat') }}{% else %}{{ url_for('moedas.addapoio') }}{% endif %}" method="post" class="text-end">
+            {% if info['userlogado'] %}{% if t['apoio_liberado'] %}
+            <form action="{% if t['patrocinador'] == info['username'] %}{{ url_for('moedas.addvalorpat') }}{% else %}{{ url_for('moedas.addapoio') }}{% endif %}" method="post" class="text-end">
                 <input type="hidden" name="time_apoio" value="{{ t['time'] }}" id="time_apoio">
-                <input style="max-width: 5rem" type="number" name="valor_apoio" id="valor_apoio" width="10px" value="0" min="0" max="{{ user_info['saldo'] }}">
+                <input style="max-width: 5rem" type="number" name="valor_apoio" id="valor_apoio" width="10px" value="0" min="1" max="{{ user_info['saldo'] }}">
                 <button title="Adicionar apoio" type="submit" class="btn btn-outline-warning btn-sm">+</button>
             </form>
             {% endif %}{% endif %}
@@ -137,21 +142,32 @@
         </table>
     </div>
     <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 smallt center">
-        <h3>Jogos próximos</h3>
         {% if info['jogos'] %}
-        <ul class="list-group">
+        <h3>Jogos próximos</h3>
+        <ul class="list-group m-2">
           {% for j in info['jogos'] %}
-            <li class="list-group-item">({{ j['time1_valor'] }}🪙) {{ j['time1'] }} <img class="flag" src="../static/img/flag/{{ j['time1'] }}.png" onerror="this.src='../static/img/flag/default.png'"> x <img class="flag" src="../static/img/flag/{{ j['time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ j['time2'] }} ({{ j['time2_valor'] }}🪙)<br>
+            <li class="list-group-item">({{ j['time1_valor'] }}🪙) {% if j['pat1'] != '-' %}<b title="{{ j['pat1'] }}">{{ j['time1'] }}</b>{% else %}{{ j['time1'] }}{% endif %} <img class="flag" src="../static/img/flag/{{ j['time1'] }}.png" onerror="this.src='../static/img/flag/default.png'"> x <img class="flag" src="../static/img/flag/{{ j['time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {% if j['pat2'] != '-' %}<b title="{{ j['pat2'] }}">{{ j['time2'] }}</b>{% else %}{{ j['time2'] }}{% endif %} ({{ j['time2_valor'] }}🪙)<br>
             {{ j['moedas_em_jogo'] }}🪙 em jogo</li>
           {% endfor %}
         </ul>
         {% else %}
         <p>Sem jogos para exibir.</p>
         {% endif %}
+        {% if info['ultimos_jogos'] %}
+        <h3>Jogos recentes</h3>
+        <ul class="list-group m-2">
+          {% for j in info['ultimos_jogos'] %}
+            <li class="list-group-item">({{ j['time1_valor'] }}🪙) {% if j['pat1'] != '-' %}<b title="{{ j['pat1'] }}">{{ j['time1'] }}</b>{% else %}{{ j['time1'] }}{% endif %} <img class="flag" src="../static/img/flag/{{ j['time1'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ j['p1'] }}x{{ j['p2'] }} <img class="flag" src="../static/img/flag/{{ j['time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {% if j['pat2'] != '-' %}<b title="{{ j['pat2'] }}">{{ j['time2'] }}</b>{% else %}{{ j['time2'] }}{% endif %} ({{ j['time2_valor'] }}🪙)</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>Sem jogos para exibir.</p>
+        {% endif %}
     </div>
+
     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 smallt center">
         <h3>Logs de moedas</h3>
-        <table class="tab_gokopa smallt">
+        <table class="tab_gokopa smallt mb-3" id="logtable">
             <tr>
                 <th title="LogId">Data</th>
                 <th style="min-width: 20px;">Nome</th>
@@ -159,7 +175,7 @@
                 <th style="min-width: 20px;">🪙</th>
                 <th style="min-width: 100px;">Descrição</th>
             </tr>
-            {% for l in info['logs'] %}
+            {% for l in info['logs'][info['logsindex']*50:info['logsindex']*50+50] %}
             <tr>
                 <td title="{{ l['lid'] }}">{{ l['data'] }}</td>
                 <td>{% if info['username'] == l['nome'] %}<b>{{ l['nome'] }}</b>{% else %}{{ l['nome'] }}{% endif %}</td>
@@ -169,6 +185,24 @@
             </tr>
             {% endfor %}
         </table>
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+              <li class="page-item {% if info['logsindex'] == 0 %}disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('moedas.gamemoedas',pageind=0) }}" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              {% for i in range(info['logspages']) %}
+              <li class="page-item {% if info['logsindex'] == i %}disabled{% endif %}"><a class="page-link" href="{{ url_for('moedas.gamemoedas',pageind=i) }}">{{ i + 1 }}</a></li>
+              {% endfor %}
+              <li class="page-item">
+                <a class="page-link {% if info['logsindex'] == info['logspages']-1 %}disabled{% endif %}" href="{{ url_for('moedas.gamemoedas',pageind=info['logspages']-1) }}" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+
     </div>
 </div>
 

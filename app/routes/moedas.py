@@ -16,13 +16,18 @@ def get_moedas_info():
     jogos = get_next_jogos()
     board = get_moedas_board()
     logs = [u for u in mongo.db.moedaslog.find().sort('lid',pymongo.DESCENDING)]
-    return {'moedas_board': board['moedas_board'], 'jogos': jogos['next_jogos'][:16],'logs': logs}
 
-@moedas.route('/gk/moedas')
+
+    return {'moedas_board': board['moedas_board'], 'jogos': jogos['next_jogos'][:16], 'ultimos_jogos': jogos['past_jogos'][:8],'logs': logs,'logsindex': 0,'logspages': int(len(logs)/50)+1}
+
+@moedas.route('/gk/moedas',methods=['GET','POST'])
 def gamemoedas():
     user_info = {}
     info = get_moedas_info()
     lista_pat = get_pat_teams()
+    print(request.values.get("pageind"))
+    if request.values.get("pageind"):
+        info['logsindex'] = int(request.values.get("pageind"))
     if session.get('username') == None:
         userLogado=False
     else:
@@ -84,14 +89,22 @@ def addapoio():
         apostador = validUser["name"]
         time = request.values.get("time_apoio")
         valor = int(request.values.get("valor_apoio"))
-        print(f'time {time} valor {valor}')
+        #print(f'time {time} valor {valor}')
         moedasDb = mongo.db.moedas.find_one({'nome': apostador})
         saldo_atual = moedasDb['saldo']
         timeDb = mongo.db.patrocinio.find_one({'Time': time})
+        pat_teams = get_pat_teams()['patrocinados']
+        apoio_liberado = False
+        for t in pat_teams:
+            if t['time'] == time:
+                if t['apoio_liberado']:
+                    apoio_liberado = True
         if valor > saldo_atual:
             flash(f'Usuário não possui saldo suficiente.','danger')
-        #elif not timeDb['apoio_liberado']:
-        #    flash(f'Apoio não liberado no momento.','danger')
+        elif not apoio_liberado:
+            flash(f'Apoio não liberado no momento.','danger')
+        elif valor <=0:
+            flash(f'Valor inválido!','danger')
         else:
             apoios = timeDb.get('Apoiadores')
             atualizado = False
@@ -108,9 +121,35 @@ def addapoio():
             outdb2 = mongo.db.patrocinio.find_one_and_update({'Time': time},{'$set': {'Apoiadores': apoios}})
             if outdb and outdb2:
                 flash(f'Apoio adicionado','success')
-                moedas_log(apostador,'+'+str(valor),time,"Apoio adicionado")
+                moedas_log(apostador,'i '+str(valor),time,"Apoio adicionado")
             else:
                 flash(f'Erro na atualização da base.','danger')
+    else:
+        flash(f'Usuário não logado.','danger')
+    return redirect(url_for('moedas.gamemoedas'))
+
+@moedas.route('/gk/moedas/removeapoio',methods=["POST"])
+def removeapoio():
+    if "username" in session:
+        validUser = mongo.db.users.find_one({"username": session["username"]})
+        apostador = validUser["name"]
+        time = request.values.get("time_apoio")
+        valor = int(request.values.get("valor_apoio"))
+        moedasDb = mongo.db.moedas.find_one({'nome': apostador})
+        timeDb = mongo.db.patrocinio.find_one({'Time': time})
+        apoios = timeDb['Apoiadores']
+        try:
+            apoios.remove({'nome': apostador,'valor': valor})
+        except:
+            flash(f'Erro na remoção de apoio de {apostador}.','danger')
+        
+        outdb = mongo.db.moedas.find_one_and_update({'nome': apostador},{'$inc': {'saldo': valor,'investido': -valor}})
+        outdb2 = mongo.db.patrocinio.find_one_and_update({'Time': time},{'$set': {'Apoiadores': apoios}})
+        if outdb and outdb2:
+            flash(f'Apoio removido','success')
+            moedas_log(apostador,'x '+str(valor),time,"Retirada de apoio")
+        else:
+            flash(f'Erro na atualização da base.','danger')
     else:
         flash(f'Usuário não logado.','danger')
     return redirect(url_for('moedas.gamemoedas'))
@@ -133,8 +172,8 @@ def addvalorpat():
             outdb = mongo.db.moedas.find_one_and_update({'nome': apostador},{'$inc': {'saldo': -valor,'investido': valor}})
             outdb2 = mongo.db.patrocinio.find_one_and_update({'Time': time},{'$inc': {'Valor': valor}})
             if outdb and outdb2:
-                flash(f'Patrocínio adicionado','success')
-                moedas_log(apostador,'+'+str(valor),time,"Patrocínio adicionado")
+                flash(f'Patrocínio atualizado','success')
+                moedas_log(apostador,'i '+str(valor),time,"Patrocínio adicionado")
             else:
                 flash(f'Erro na atualização da base.','danger')
     else:
