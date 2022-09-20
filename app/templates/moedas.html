@@ -142,8 +142,8 @@
         </table>
     </div>
     <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 smallt center">
-        {% if info['jogos'] %}
         <h3>Jogos próximos</h3>
+        {% if info['jogos'] %}
         <ul class="list-group m-2">
           {% for j in info['jogos'] %}
             <li class="list-group-item">({{ j['time1_valor'] }}🪙) {% if j['pat1'] != '-' %}<b title="{{ j['pat1'] }}">{{ j['time1'] }}</b>{% else %}{{ j['time1'] }}{% endif %} <img class="flag" src="../static/img/flag/{{ j['time1'] }}.png" onerror="this.src='../static/img/flag/default.png'"> x <img class="flag" src="../static/img/flag/{{ j['time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {% if j['pat2'] != '-' %}<b title="{{ j['pat2'] }}">{{ j['time2'] }}</b>{% else %}{{ j['time2'] }}{% endif %} ({{ j['time2_valor'] }}🪙)<br>
@@ -153,11 +153,13 @@
         {% else %}
         <p>Sem jogos para exibir.</p>
         {% endif %}
-        {% if info['ultimos_jogos'] %}
         <h3>Jogos recentes</h3>
+        {% if info['ultimos_jogos'] %}
         <ul class="list-group m-2">
           {% for j in info['ultimos_jogos'] %}
-            <li class="list-group-item">({{ j['time1_valor'] }}🪙) {% if j['pat1'] != '-' %}<b title="{{ j['pat1'] }}">{{ j['time1'] }}</b>{% else %}{{ j['time1'] }}{% endif %} <img class="flag" src="../static/img/flag/{{ j['time1'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ j['p1'] }}x{{ j['p2'] }} <img class="flag" src="../static/img/flag/{{ j['time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {% if j['pat2'] != '-' %}<b title="{{ j['pat2'] }}">{{ j['time2'] }}</b>{% else %}{{ j['time2'] }}{% endif %} ({{ j['time2_valor'] }}🪙)</li>
+            <li class="list-group-item">
+                ({{ j['time1_valor'] }}🪙) {% if j['pat1'] != '-' %}<b title="{{ j['pat1'] }}">{{ j['time1'] }}</b>{% else %}{{ j['time1'] }}{% endif %} <img class="flag" src="../static/img/flag/{{ j['time1'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ j['p1'] }}x{{ j['p2'] }} <img class="flag" src="../static/img/flag/{{ j['time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {% if j['pat2'] != '-' %}<b title="{{ j['pat2'] }}">{{ j['time2'] }}</b>{% else %}{{ j['time2'] }}{% endif %} ({{ j['time2_valor'] }}🪙)<br>
+            {% if j['processado'] %}{{ j['moedas_em_jogo'] }}🪙 em jogo{% else %}a processar{% endif %}</li>
           {% endfor %}
         </ul>
         {% else %}

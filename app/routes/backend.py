@@ -353,7 +353,7 @@ def get_moedas_board():
 
     return {'moedas_board': lista_users}
 
-def moedas_log(nome,moedas,time,msg):
+def moedas_log(nome,moedas,time,jid,msg):
     data = datetime.strftime(datetime.now(),"%d/%m")
     log_id = mongo.db.settings.find_one_and_update({'config':'logid'},{'$inc': {'lid': 1}})
     if log_id:
@@ -362,14 +362,14 @@ def moedas_log(nome,moedas,time,msg):
         print("Sem base de log, iniciando")
         lid = 1
         mongo.db.settings.insert_one({'config':'logid','lid': 1})
-
     log = {
         'nome': nome,
         'moedas': moedas,
         'time': time,
         'msg': msg,
         'data': data,
-        'lid': lid
+        'lid': lid,
+        'jid': jid
     }
     mongo.db.moedaslog.insert_one(log)
 
@@ -401,7 +401,7 @@ def get_next_jogos():
                     moedas_em_jogo = int(t1['Valor']*percent/100)
                 else:
                     moedas_em_jogo = int(t2['Valor']*percent/100)
-                print(t1,t2)
+                #print(t1,t2)
                 patdb1 = lista_pat.find_one({'Time': time1})
                 patdb2 = lista_pat.find_one({'Time': time2})
                 pat1 = patdb1['Patrocinador']
@@ -435,6 +435,9 @@ def get_next_jogos():
                 jogo['p1'] = n['p1']
                 jogo['p2'] = n['p2']
                 jogo['vitoria'] = timevit
+                jogo['processado'] = n.get('processado')
+                if n.get('moedas_em_jogo'):
+                    jogo['moedas_em_jogo']=n['moedas_em_jogo']
                 past_jogos.insert(0,jogo)
             else:
                 next_jogos.append(jogo)

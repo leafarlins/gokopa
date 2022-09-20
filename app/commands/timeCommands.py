@@ -293,21 +293,23 @@ def desclassifica(time):
         moedas = mongo.db.moedas
         valor = patDb['Valor']
         moedas.find_one_and_update({'nome':patrocinador},{'$inc': {'saldo': valor,'investido': -valor}})
-        moedas_log(patrocinador,"x "+str(valor),time,"Retorno de patrocínio")
+        moedas_log(patrocinador,"x "+str(valor),time,0,"Retorno de patrocínio")
         if patDb.get('Apoiadores'):
             for a in patDb.get('Apoiadores'):
                 apoiador = a['nome']
                 avalor = a['valor']
                 moedas.find_one_and_update({'nome':apoiador},{'$inc': {'saldo': avalor,'investido': -avalor}})
-                moedas_log(apoiador,"x "+str(avalor),time,"Retorno de apoio")
+                moedas_log(apoiador,"x "+str(avalor),time,0,"Retorno de apoio")
     mongo.db.patrocinio.find_one_and_delete({'Time': time})
     print(f"Removido time {time}")
 
 @timeCommands.cli.command("processaPat")
 @click.argument("jogos",required=False)
-@click.argument("telegram",required=False)
-def processa_pat(jogos='0',telegram=False):
-    telegram = True
+@click.argument("leilao",required=False)
+def processa_pat(jogos='0',leilao=False):
+    if leilao == 'true':
+        leilao = True
+    telegram = False
     jogos = int(jogos)
     emojis = mongo.db.emoji
     #{"Time" : "Coréia do Sul", "Valor" : 272, "Patrocinador" : "-", "Apoiadores": [] }
@@ -334,60 +336,69 @@ def processa_pat(jogos='0',telegram=False):
                     if deb_saldo > user['saldo']:
                         deb_saldo = user['saldo']
                     moedas.find_one_and_update({'nome': user['nome']},{'$inc': {'saldo': -deb_saldo}})
-                    moedas_log(user['nome'],"-"+str(deb_saldo),"","Débido de saldo parado")
+                    moedas_log(user['nome'],"-"+str(deb_saldo),"",0,"Débido de saldo parado")
 
         # Processamento dos jogos
         for jogo in past_jogos:
-            if jogo['vitoria'] == 'empate':
-                lista_m = [int(jogo['moedas_em_jogo']/3),int(jogo['moedas_em_jogo']/3)]
+            jogoDb = mongo.db.jogos.find_one({'Ano': ANO, 'Jogo': jogo['jid']})
+            if not jogoDb:
+                print("Erro ao buscar jogo")
+            elif jogoDb.get('processado'):
+                print(f"Jogo {jogo['jid']} já foi processado.")
+                quit(0)
             else:
-                if jogo['vitoria'] == jogo['time1']:
-                    lista_m = [jogo['moedas_em_jogo'],-jogo['moedas_em_jogo']]
+                if jogo['vitoria'] == 'empate':
+                    lista_m = [int(jogo['moedas_em_jogo']/3),int(jogo['moedas_em_jogo']/3)]
                 else:
-                    lista_m = [-jogo['moedas_em_jogo'],jogo['moedas_em_jogo']]
-            lista_t = [(jogo['time1'],lista_m[0]),(jogo['time2'],lista_m[1])]
-            for t,moeda_ganha in lista_t:
-                # Atualização do valor do time
-                patDb = patrocinios.find_one_and_update({'Time': t},{'$inc': {'Valor': moeda_ganha}})
-                # Atualizaçao nos valores de cada jogador
-                if patDb['Patrocinador'] != '-':
-                    if moeda_ganha > 0:
-                        moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'investido': moeda_ganha,'saldo': moeda_ganha}})
-                        moedas_log(patDb['Patrocinador'],"+"+str(moeda_ganha),t,"Jogo de time patrocinado")
-                        moedas_log(patDb['Patrocinador'],"i+"+str(moeda_ganha),t,"Ganho de valor patrocinado")
+                    if jogo['vitoria'] == jogo['time1']:
+                        lista_m = [jogo['moedas_em_jogo'],-jogo['moedas_em_jogo']]
                     else:
-                        moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'investido': moeda_ganha}})
-                        moedas_log(patDb['Patrocinador'],"i"+str(moeda_ganha),t,"Perda de valor patrocinado")
-                    # Processamento da lista de apoios
-                    lista_apoios = patDb.get('Apoiadores')
-                    if lista_apoios:
-                        apoios_taxa =  0
-                        for a in lista_apoios:
-                            valor_max = moeda_ganha
-                            if moeda_ganha > a['valor']:
-                                valor_max = a['valor']
-                            # Se perda, perda no valor do patrocinio
-                            if moeda_ganha < 0:
-                                novo_valor_apoio = a['valor'] + moeda_ganha
-                                if novo_valor_apoio <=0:
-                                    moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'investido': -a['valor']}})
-                                    moedas_log(a['nome'],"x"+str(-a['valor']),t,"Perda de apoio ao time")
-                                    lista_apoios.remove(a)
+                        lista_m = [-jogo['moedas_em_jogo'],jogo['moedas_em_jogo']]
+                lista_t = [(jogo['time1'],lista_m[0]),(jogo['time2'],lista_m[1])]
+                for t,moeda_ganha in lista_t:
+                    # Atualização do valor do time
+                    patDb = patrocinios.find_one_and_update({'Time': t},{'$inc': {'Valor': moeda_ganha}})
+                    # Atualizaçao nos valores de cada jogador
+                    if patDb['Patrocinador'] != '-':
+                        if moeda_ganha > 0:
+                            moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'investido': moeda_ganha,'saldo': moeda_ganha}})
+                            moedas_log(patDb['Patrocinador'],"+"+str(moeda_ganha),t,jogo['jid'],"Jogo de time patrocinado")
+                            moedas_log(patDb['Patrocinador'],"i+"+str(moeda_ganha),t,jogo['jid'],"Ganho de valor patrocinado")
+                        else:
+                            moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'investido': moeda_ganha}})
+                            moedas_log(patDb['Patrocinador'],"i"+str(moeda_ganha),t,jogo['jid'],"Perda de valor patrocinado")
+                        # Processamento da lista de apoios
+                        lista_apoios = patDb.get('Apoiadores')
+                        if lista_apoios:
+                            apoios_taxa =  0
+                            for a in lista_apoios:
+                                valor_max = moeda_ganha
+                                if moeda_ganha > a['valor']:
+                                    valor_max = a['valor']
+                                # Se perda, perda no valor do patrocinio
+                                if moeda_ganha < 0:
+                                    novo_valor_apoio = a['valor'] + moeda_ganha
+                                    if novo_valor_apoio <=0:
+                                        moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'investido': -a['valor']}})
+                                        moedas_log(a['nome'],"x"+str(-a['valor']),t,jogo['jid'],"Perda de apoio ao time")
+                                        lista_apoios.remove(a)
+                                    else:
+                                        moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'investido': moeda_ganha}})
+                                        moedas_log(a['nome'],"i"+str(moeda_ganha),t,jogo['jid'],"Perda parcial do apoio ao time")
+                                        a['valor'] = novo_valor_apoio
+                                # Se ganho, incrementa saldo apos debitar 10%
                                 else:
-                                    moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'investido': moeda_ganha}})
-                                    moedas_log(a['nome'],"i"+str(moeda_ganha),t,"Perda parcial do apoio ao time")
-                                    a['valor'] = novo_valor_apoio
-                            # Se ganho, incrementa saldo apos debitar 10%
-                            else:
-                                valor_apoio = int(valor_max*90/100)
-                                apoios_taxa += valor_max - valor_apoio
-                                moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'saldo': valor_apoio}})
-                                moedas_log(a['nome'],"+"+str(valor_apoio),t,"Jogo de time apoiado")
-                        # Adiciona taxa de apoios ao patrocinador e atualiza apoios
-                        if apoios_taxa > 0:
-                            moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'saldo': apoios_taxa}})
-                            moedas_log(patDb['Patrocinador'],"+"+str(apoios_taxa),t,"Taxa de apoios")
-                        patrocinios.find_one_and_update({'Time': t},{'$set': {'Apoiadores': lista_apoios}})
+                                    valor_apoio = int(valor_max*90/100)
+                                    apoios_taxa += valor_max - valor_apoio
+                                    moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'saldo': valor_apoio}})
+                                    moedas_log(a['nome'],"+"+str(valor_apoio),t,jogo['jid'],"Jogo de time apoiado")
+                            # Adiciona taxa de apoios ao patrocinador e atualiza apoios
+                            if apoios_taxa > 0:
+                                moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'saldo': apoios_taxa}})
+                                moedas_log(patDb['Patrocinador'],"+"+str(apoios_taxa),t,jogo['jid'],"Taxa de apoios")
+                            patrocinios.find_one_and_update({'Time': t},{'$set': {'Apoiadores': lista_apoios}})
+                # Escreve jogo como processado
+                mongo.db.jogos.find_one_and_update({'Ano': ANO, 'Jogo': jogo['jid']},{'$set': {'moedas_em_jogo': jogo['moedas_em_jogo'],'processado': True}})
 
     # Processamento da lista de paotrocinios no leilao
     impedidos = []
@@ -395,27 +406,88 @@ def processa_pat(jogos='0',telegram=False):
     patok = []
     texto_imp = ""
     texto_pat = ""
-    for j in range(len(lista_tentarpat)-1):
-        time = lista_tentarpat[j]['time']
-        print(lista_tentarpat[j]['valor'],time)
-        if lista_tentarpat[j]['valor'] == lista_tentarpat[j+1]['valor'] and time == lista_tentarpat[j+1]['time'] and time not in patok:
-            print(f'Impedido patrocinio de {time}')
-            impedidos.append(time)
-        elif time not in patok:
-            patok.append(time)
-    for t in lista_tentarpat:
-        et = emojis.find_one({'País': t['time']})['flag']
-        if t['time'] in impedidos or t['time'] in patrocinados:
-            texto_imp+=f"{t['nome']} tentou patrocinar {et} {t['time']} por {t['valor']}🪙.\n"
-            moedas_log(t['nome'],"x "+str(t['valor']),t['time'],"Não conseguiu patrocinar")
-            moedas.find_one_and_update({'nome': t['nome']}, {'$inc': {'saldo': t['valor'],'bloqueado': -t['valor']}})
+
+    palpites = []
+    time_atual = ""
+    lista_t_p = []
+    next_lista_pat = []
+    for p in lista_tentarpat:
+        if p['time'] == time_atual:
+            lista_t_p.append(p)
         else:
-            texto_pat+=f"{t['nome']} conseguiu patrocinar {et} {t['time']} por {t['valor']}🪙!\n"
-            moedas_log(t['nome'],"i "+str(t['valor']),t['time'],"Conseguiu patrocinar")
-            patrocinados.append(t['time'])
-            moedas.find_one_and_update({'nome': t['nome']}, {'$inc': {'bloqueado': -t['valor'],'investido': t['valor']}})
-            patrocinios.find_one_and_update({'Time': t['time']}, {'$set': {'Patrocinador': t['nome'],'Valor': t['valor']}})
-    mongo.db.tentarpat.drop()
+            if time_atual:
+                palpites.append({'time': time_atual, 'palpites': lista_t_p})
+            lista_t_p = [p]
+            time_atual = p['time']
+    palpites.append({'time': time_atual, 'palpites': lista_t_p})
+    print(palpites)
+    for t in palpites:
+        ganhador = ""
+        et = emojis.find_one({'País': t['time']})['flag']
+        if len(t['palpites']) == 1:
+            p = t['palpites'][0]
+            if leilao:
+                if p.get('processar'):
+                    ganhador = p
+                else:
+                    texto_imp+=f"{p['nome']} deu o lance líder do dia em {t['time']} por {p['valor']}🪙.\n"
+                    print(p['nome'],"l "+str(p['valor']),t['time'],0,"Lance líder do dia")
+                    next_lista_pat.append({'time': t['time'],'nome': p['nome'],'valor':p['valor'],'processar': True})
+            else:
+                ganhador = p
+        else:
+            if t['palpites'][0]['valor'] != t['palpites'][1]['valor']:
+                p = t['palpites'][0]
+                if leilao:
+                    if p.get('processar'):
+                        ganhador = p
+                        t['palpites'].remove(p)
+                    else:
+                        t['palpites'].remove(p)
+                        texto_imp+=f"{p['nome']} deu o lance líder do dia em {et} {t['time']} por {p['valor']}🪙.\n"
+                        print(p['nome'],"i "+str(p['valor']),t['time'],0,"Lance líder do dia")
+                        next_lista_pat.append({'time': t['time'],'nome': p['nome'],'valor':p['valor'],'processar': True})
+                else:
+                    ganhador = p
+                    t['palpites'].remove(p)
+            for p in t['palpites']:
+                texto_imp+=f"{p['nome']} tentou patrocinar {et} {t['time']} por {p['valor']}🪙.\n"
+                print(p['nome'],"x "+str(p['valor']),t['time'],0,"Não conseguiu patrocinar")
+                #moedas.find_one_and_update({'nome': t['nome']}, {'$inc': {'saldo': t['valor'],'bloqueado': -t['valor']}})
+        if ganhador:
+            texto_pat+=f"{ganhador['nome']} conseguiu patrocinar {et} {ganhador['time']} por {ganhador['valor']}🪙!\n"
+            print(ganhador['nome'],"i "+str(ganhador['valor']),ganhador['time'],0,"Conseguiu patrocinar")
+            #patrocinados.append(ganhador['time'])
+            #moedas.find_one_and_update({'nome': ganhador['nome']}, {'$inc': {'bloqueado': -ganhador['valor'],'investido': ganhador['valor']}})
+            #patrocinios.find_one_and_update({'Time': ganhador['time']}, {'$set': {'Patrocinador': ganhador['nome'],'Valor': ganhador['valor']}})
+
+
+    # mongo.db.tentarpat.drop()
+    print(next_lista_pat)
+
+
+
+    # for j in range(len(lista_tentarpat)-1):
+    #     time = lista_tentarpat[j]['time']
+    #     #print(lista_tentarpat[j]['valor'],time)
+    #     if lista_tentarpat[j]['valor'] == lista_tentarpat[j+1]['valor'] and time == lista_tentarpat[j+1]['time'] and time not in patok:
+    #         print(f'Impedido patrocinio de {time}')
+    #         impedidos.append(time)
+    #     elif time not in patok:
+    #         patok.append(time)
+    # for t in lista_tentarpat:
+    #     et = emojis.find_one({'País': t['time']})['flag']
+    #     if t['time'] in impedidos or t['time'] in patrocinados:
+    #         texto_imp+=f"{t['nome']} tentou patrocinar {et} {t['time']} por {t['valor']}🪙.\n"
+    #         moedas_log(t['nome'],"x "+str(t['valor']),t['time'],0,"Não conseguiu patrocinar")
+    #         moedas.find_one_and_update({'nome': t['nome']}, {'$inc': {'saldo': t['valor'],'bloqueado': -t['valor']}})
+    #     else:
+    #         texto_pat+=f"{t['nome']} conseguiu patrocinar {et} {t['time']} por {t['valor']}🪙!\n"
+    #         moedas_log(t['nome'],"i "+str(t['valor']),t['time'],0,"Conseguiu patrocinar")
+    #         patrocinados.append(t['time'])
+    #         moedas.find_one_and_update({'nome': t['nome']}, {'$inc': {'bloqueado': -t['valor'],'investido': t['valor']}})
+    #         patrocinios.find_one_and_update({'Time': t['time']}, {'$set': {'Patrocinador': t['nome'],'Valor': t['valor']}})
+    # mongo.db.tentarpat.drop()
 
     if texto_imp or texto_pat:
         mensagem="🪙 PATROCÍNIOS DO DIA 🪙\n"
@@ -444,7 +516,7 @@ def processa_pat(jogos='0',telegram=False):
 
 #@timeCommands.cli.command("rankingMoedas")
 def ranking_moedas():
-    telegram=True
+    telegram=False
     ranking_moedas = get_moedas_board()['moedas_board']
     mensagem = "== Ranking de moedas ==\n"
     for j in ranking_moedas:

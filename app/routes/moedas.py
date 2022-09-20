@@ -18,7 +18,7 @@ def get_moedas_info():
     logs = [u for u in mongo.db.moedaslog.find().sort('lid',pymongo.DESCENDING)]
 
 
-    return {'moedas_board': board['moedas_board'], 'jogos': jogos['next_jogos'][:16], 'ultimos_jogos': jogos['past_jogos'][:8],'logs': logs,'logsindex': 0,'logspages': int(len(logs)/50)+1}
+    return {'moedas_board': board['moedas_board'], 'jogos': jogos['next_jogos'][:16], 'ultimos_jogos': jogos['past_jogos'][:16],'logs': logs,'logsindex': 0,'logspages': int(len(logs)/80)+1}
 
 @moedas.route('/gk/moedas',methods=['GET','POST'])
 def gamemoedas():
@@ -121,7 +121,7 @@ def addapoio():
             outdb2 = mongo.db.patrocinio.find_one_and_update({'Time': time},{'$set': {'Apoiadores': apoios}})
             if outdb and outdb2:
                 flash(f'Apoio adicionado','success')
-                moedas_log(apostador,'i '+str(valor),time,"Apoio adicionado")
+                moedas_log(apostador,'i '+str(valor),time,0,"Apoio adicionado")
             else:
                 flash(f'Erro na atualização da base.','danger')
     else:
@@ -147,7 +147,7 @@ def removeapoio():
         outdb2 = mongo.db.patrocinio.find_one_and_update({'Time': time},{'$set': {'Apoiadores': apoios}})
         if outdb and outdb2:
             flash(f'Apoio removido','success')
-            moedas_log(apostador,'x '+str(valor),time,"Retirada de apoio")
+            moedas_log(apostador,'x '+str(valor),time,0,"Retirada de apoio")
         else:
             flash(f'Erro na atualização da base.','danger')
     else:
@@ -173,7 +173,7 @@ def addvalorpat():
             outdb2 = mongo.db.patrocinio.find_one_and_update({'Time': time},{'$inc': {'Valor': valor}})
             if outdb and outdb2:
                 flash(f'Patrocínio atualizado','success')
-                moedas_log(apostador,'i '+str(valor),time,"Patrocínio adicionado")
+                moedas_log(apostador,'i '+str(valor),time,0,"Patrocínio adicionado")
             else:
                 flash(f'Erro na atualização da base.','danger')
     else:
