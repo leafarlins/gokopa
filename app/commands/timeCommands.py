@@ -144,9 +144,9 @@ def get_rank(rank):
         print("Nada encontrado.")
 
 @timeCommands.cli.command("editTime")
-@click.argument("time")
 @click.argument("desc")
-def edit_time(time,desc):
+@click.argument("time")
+def edit_time(desc,time):
     timeValid = mongo.db.ranking.find_one({"ed": RANKING,'time': time})
     if timeValid:
         print(f'Definindo time {time} em {desc}')
@@ -275,17 +275,39 @@ def load_patrocinio(csv_file):
 
 @timeCommands.cli.command("exec")
 def exec():
-    mongo.db.moedas.find_one_and_update({'nome': 'ze1'},{'$set': {'saldo': 0, 'bloqueado': 0, 'investido': 1000}})
+    #mongo.db.moedas.find_one_and_update({'nome': 'ze1'},{'$set': {'saldo': 0, 'bloqueado': 0, 'investido': 1000}})
     #mongo.db.patrocinio.find_one_and_update({'Time': 'Holanda'},{'$set': {"Patrocinador" : "-"}})
     #mongo.db.tentarpat.find_one_and_update({'valor':500},{'$set': {'valor':0}})
+    mongo.db.patrocinio.find_and_modify({'Time': 'Holanda'},{'$set': {'Patrocinador': "-"}})
 
 #def processa_jogos():
 
+
+@timeCommands.cli.command("desclassifica")
+@click.argument("time")
+def desclassifica(time):
+    patDb = mongo.db.patrocinio.find_one({'Time': time})
+    patrocinador = patDb['Patrocinador']
+    if  patrocinador != "-":
+        # Retorna investimentos
+        moedas = mongo.db.moedas
+        valor = patDb['Valor']
+        moedas.find_one_and_update({'nome':patrocinador},{'$inc': {'saldo': valor,'investido': -valor}})
+        moedas_log(patrocinador,"x "+str(valor),time,"Retorno de patrocínio")
+        if patDb.get('Apoiadores'):
+            for a in patDb.get('Apoiadores'):
+                apoiador = a['nome']
+                avalor = a['valor']
+                moedas.find_one_and_update({'nome':apoiador},{'$inc': {'saldo': avalor,'investido': -avalor}})
+                moedas_log(apoiador,"x "+str(avalor),time,"Retorno de apoio")
+    mongo.db.patrocinio.find_one_and_delete({'Time': time})
+    print(f"Removido time {time}")
 
 @timeCommands.cli.command("processaPat")
 @click.argument("jogos",required=False)
 @click.argument("telegram",required=False)
 def processa_pat(jogos='0',telegram=False):
+    telegram = True
     jogos = int(jogos)
     emojis = mongo.db.emoji
     #{"Time" : "Coréia do Sul", "Valor" : 272, "Patrocinador" : "-", "Apoiadores": [] }
@@ -422,7 +444,7 @@ def processa_pat(jogos='0',telegram=False):
 
 #@timeCommands.cli.command("rankingMoedas")
 def ranking_moedas():
-    telegram=False
+    telegram=True
     ranking_moedas = get_moedas_board()['moedas_board']
     mensagem = "== Ranking de moedas ==\n"
     for j in ranking_moedas:

@@ -387,30 +387,43 @@ def get_next_jogos():
             time2 = n['Time2']
             t1 = lista_pat.find_one({'Time': time1})
             t2 = lista_pat.find_one({'Time': time2})
-            proporcao = t1['Valor'] / t2['Valor']
-            if proporcao < 1:
-                proporcao = t2['Valor'] / t1['Valor']
-            if proporcao > 3:
-                percent = 60
+            if t1 and t2:
+                proporcao = t1['Valor'] / t2['Valor']
+                t1v = t1['Valor']
+                t2v = t2['Valor']
+                if proporcao < 1:
+                    proporcao = t2['Valor'] / t1['Valor']
+                if proporcao > 3:
+                    percent = 60
+                else:
+                    percent = int(20*proporcao)
+                if t2['Valor'] > t1['Valor']:
+                    moedas_em_jogo = int(t1['Valor']*percent/100)
+                else:
+                    moedas_em_jogo = int(t2['Valor']*percent/100)
+                print(t1,t2)
+                patdb1 = lista_pat.find_one({'Time': time1})
+                patdb2 = lista_pat.find_one({'Time': time2})
+                pat1 = patdb1['Patrocinador']
+                pat2 = patdb2['Patrocinador']
             else:
-                percent = int(20*proporcao)
-            if t2['Valor'] > t1['Valor']:
-                moedas_em_jogo = int(t1['Valor']*percent/100)
-            else:
-                moedas_em_jogo = int(t2['Valor']*percent/100)
-            pat1 = lista_pat.find_one({'Time': time1})
-            pat2 = lista_pat.find_one({'Time': time2})
+                pat1 = "-"
+                pat2 = "-"
+                moedas_em_jogo = 0
+                percent=0
+                t1v = 0
+                t2v = 0
             jogo = {
                 'data': n['Data'],
                 'jid' :n['Jogo'],
                 'time1': time1,
                 'time2': time2,
-                'time1_valor': t1['Valor'],
-                'time2_valor': t2['Valor'],
+                'time1_valor': t1v,
+                'time2_valor': t2v,
                 'percent': percent,
                 'moedas_em_jogo': moedas_em_jogo,
-                'pat1': pat1['Patrocinador'], 
-                'pat2': pat2['Patrocinador']}
+                'pat1': pat1, 
+                'pat2': pat2 }
             data_jogo = datetime.strptime(n["Data"],"%d/%m/%Y %H:%M")
             if data_jogo < now and n["p1"] != "" :
                 if n['p1'] > n['p2']:
