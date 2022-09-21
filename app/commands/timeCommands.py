@@ -309,6 +309,8 @@ def desclassifica(time):
 def processa_pat(jogos='0',leilao=False):
     if leilao == 'true':
         leilao = True
+    else:
+        leilao = False
     telegram = False
     jogos = int(jogos)
     emojis = mongo.db.emoji
@@ -400,7 +402,7 @@ def processa_pat(jogos='0',leilao=False):
                 # Escreve jogo como processado
                 mongo.db.jogos.find_one_and_update({'Ano': ANO, 'Jogo': jogo['jid']},{'$set': {'moedas_em_jogo': jogo['moedas_em_jogo'],'processado': True}})
 
-    # Processamento da lista de paotrocinios no leilao
+    # Processamento da lista de patrocinios no leilao
     impedidos = []
     patrocinados = []
     patok = []
@@ -419,8 +421,9 @@ def processa_pat(jogos='0',leilao=False):
                 palpites.append({'time': time_atual, 'palpites': lista_t_p})
             lista_t_p = [p]
             time_atual = p['time']
-    palpites.append({'time': time_atual, 'palpites': lista_t_p})
-    print(palpites)
+    if time_atual:
+        palpites.append({'time': time_atual, 'palpites': lista_t_p})
+    #print(palpites)
     for t in palpites:
         ganhador = ""
         et = emojis.find_one({'País': t['time']})['flag']
@@ -431,7 +434,7 @@ def processa_pat(jogos='0',leilao=False):
                     ganhador = p
                 else:
                     texto_imp+=f"{p['nome']} deu o lance líder do dia em {t['time']} por {p['valor']}🪙.\n"
-                    print(p['nome'],"l "+str(p['valor']),t['time'],0,"Lance líder do dia")
+                    moedas_log(p['nome'],"l "+str(p['valor']),t['time'],0,"Lance líder do dia")
                     next_lista_pat.append({'time': t['time'],'nome': p['nome'],'valor':p['valor'],'processar': True})
             else:
                 ganhador = p
@@ -445,25 +448,25 @@ def processa_pat(jogos='0',leilao=False):
                     else:
                         t['palpites'].remove(p)
                         texto_imp+=f"{p['nome']} deu o lance líder do dia em {et} {t['time']} por {p['valor']}🪙.\n"
-                        print(p['nome'],"i "+str(p['valor']),t['time'],0,"Lance líder do dia")
+                        moedas_log(p['nome'],"l "+str(p['valor']),t['time'],0,"Lance líder do dia")
                         next_lista_pat.append({'time': t['time'],'nome': p['nome'],'valor':p['valor'],'processar': True})
                 else:
                     ganhador = p
                     t['palpites'].remove(p)
             for p in t['palpites']:
                 texto_imp+=f"{p['nome']} tentou patrocinar {et} {t['time']} por {p['valor']}🪙.\n"
-                print(p['nome'],"x "+str(p['valor']),t['time'],0,"Não conseguiu patrocinar")
-                #moedas.find_one_and_update({'nome': t['nome']}, {'$inc': {'saldo': t['valor'],'bloqueado': -t['valor']}})
+                moedas_log(p['nome'],"x "+str(p['valor']),t['time'],0,"Não conseguiu patrocinar")
+                moedas.find_one_and_update({'nome': p['nome']}, {'$inc': {'saldo': p['valor'],'bloqueado': -p['valor']}})
         if ganhador:
             texto_pat+=f"{ganhador['nome']} conseguiu patrocinar {et} {ganhador['time']} por {ganhador['valor']}🪙!\n"
-            print(ganhador['nome'],"i "+str(ganhador['valor']),ganhador['time'],0,"Conseguiu patrocinar")
-            #patrocinados.append(ganhador['time'])
-            #moedas.find_one_and_update({'nome': ganhador['nome']}, {'$inc': {'bloqueado': -ganhador['valor'],'investido': ganhador['valor']}})
-            #patrocinios.find_one_and_update({'Time': ganhador['time']}, {'$set': {'Patrocinador': ganhador['nome'],'Valor': ganhador['valor']}})
+            moedas_log(ganhador['nome'],"i "+str(ganhador['valor']),ganhador['time'],0,"Conseguiu patrocinar")
+            moedas.find_one_and_update({'nome': ganhador['nome']}, {'$inc': {'bloqueado': -ganhador['valor'],'investido': ganhador['valor']}})
+            patrocinios.find_one_and_update({'Time': ganhador['time']}, {'$set': {'Patrocinador': ganhador['nome'],'Valor': ganhador['valor']}})
 
 
-    # mongo.db.tentarpat.drop()
-    print(next_lista_pat)
+    mongo.db.tentarpat.drop()
+    if leilao:
+        mongo.db.tentarpat.insert_many(next_lista_pat)
 
 
 

@@ -58,10 +58,26 @@
         <h4 class="m-3">Tentativas enviadas</h4>
         <ul class="list-group">
           {% for item in user_info['tentarpat'] %}
-            <li class="list-group-item">🪙 {{ item['valor'] }} <img class="flag" src="../static/img/flag/{{ item['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ item['time'] }} <button type="button" class="btn btn-outline-danger btn-sm">X</button></li>
+            <li class="list-group-item">{{ item['valor'] }}🪙 <img class="flag" src="../static/img/flag/{{ item['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ item['time'] }} 
+              <form style="display: inline" action="{{ url_for('moedas.removepat') }}" method="post">
+                <button type="submit" class="btn btn-outline-danger btn-sm">X</button>
+                <input type="hidden" name="time_pat" value="{{ item['time'] }}" id="time_pat">
+                <input type="hidden" name="valor_pat" value="{{ item['valor'] }}" id="valor_pat">
+              </form></li>
           {% endfor %}
         </ul>
         {% endif %}
+
+        {% if user_info['lista_leilao'] %}
+        <h4 class="m-3">Leilão a processar</h4>
+        <ul class="list-group">
+          {% for item in user_info['lista_leilao'] %}
+            <li class="list-group-item">{{ item['valor'] }}🪙 {{ item['nome'] }} <img class="flag" src="../static/img/flag/{{ item['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ item['time'] }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+
 
 
         <script type="text/javascript">
@@ -120,7 +136,7 @@
 </div>
 
 <div class="row scoll-pane">
-    <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
+    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4">
         <h3>Resultado geral</h3>
         <table class="tab_gokopa">
             <tr>
@@ -167,7 +183,7 @@
         {% endif %}
     </div>
 
-    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4 smallt center">
+    <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 smallt center">
         <h3>Logs de moedas</h3>
         <table class="tab_gokopa smallt mb-3" id="logtable">
             <tr>
@@ -177,7 +193,7 @@
                 <th style="min-width: 20px;">🪙</th>
                 <th style="min-width: 100px;">Descrição</th>
             </tr>
-            {% for l in info['logs'][info['logsindex']*50:info['logsindex']*50+50] %}
+            {% for l in info['logs'][info['logsindex']*80:info['logsindex']*80+80] %}
             <tr>
                 <td title="{{ l['lid'] }}">{{ l['data'] }}</td>
                 <td>{% if info['username'] == l['nome'] %}<b>{{ l['nome'] }}</b>{% else %}{{ l['nome'] }}{% endif %}</td>

@@ -35,7 +35,7 @@ def gamemoedas():
         if validUser["gokopa"]:
             userLogado = True
             info['username'] = validUser['name']
-            lista = get_free_teams()
+            user_info['lista_leilao'] = lista_pat['lista_leilao']
             user_info["lista_livre"] = lista_pat['livres']
             user_info["nome"] = validUser['name']
             moedas_user = mongo.db.moedas.find_one({'nome': validUser['name']})
@@ -50,6 +50,19 @@ def gamemoedas():
     info['patrocinados'] = lista_pat['patrocinados']
 
     return render_template('moedas.html',menu='Moedas',tipo='gk',info=info,user_info=user_info)
+
+@cache.memoize(60)
+def get_apoio_liberado(time):
+    pat_teams = get_pat_teams()
+    apoio_liberado = False
+    for t in pat_teams['livres']:
+        if t['time'] == time:
+            return True
+    for t in pat_teams['patrocinados']:
+        if t['time'] == time:
+            if t['apoio_liberado']:
+                return True
+    return apoio_liberado
 
 @moedas.route('/gk/moedas/addpat',methods=["POST"])
 def addpat():
@@ -82,6 +95,31 @@ def addpat():
         flash(f'Usuário não logado.','danger')
     return redirect(url_for('moedas.gamemoedas'))
 
+
+@moedas.route('/gk/moedas/removepat',methods=["POST"])
+def removepat():
+    if "username" in session:
+        validUser = mongo.db.users.find_one({"username": session["username"]})
+        apostador = validUser["name"]
+        time = request.values.get("time_pat")
+        valor = int(request.values.get("valor_pat"))
+        apoio_liberado = get_apoio_liberado(time)
+        if not apoio_liberado:
+            flash(f'Apoio não liberado no momento.','danger')
+        else:
+            patDb = mongo.db.tentarpat.find_one_and_delete({'nome': apostador, 'time': time})
+            if not patDb:
+                flash(f'Tentativa de apoio não encontrada.','danger')
+            else:
+                outdb = mongo.db.moedas.find_one_and_update({'nome': apostador},{'$inc':{'saldo': valor,'bloqueado': -valor}})
+                if outdb:
+                    flash(f'Tentativa de patrocínio removida para {time}!','success')
+                else:
+                    flash(f'Erro na atualização da base.','danger')
+    else:
+        flash(f'Usuário não logado.','danger')
+    return redirect(url_for('moedas.gamemoedas'))
+
 @moedas.route('/gk/moedas/addapoio',methods=["POST"])
 def addapoio():
     if "username" in session:
@@ -93,12 +131,7 @@ def addapoio():
         moedasDb = mongo.db.moedas.find_one({'nome': apostador})
         saldo_atual = moedasDb['saldo']
         timeDb = mongo.db.patrocinio.find_one({'Time': time})
-        pat_teams = get_pat_teams()['patrocinados']
-        apoio_liberado = False
-        for t in pat_teams:
-            if t['time'] == time:
-                if t['apoio_liberado']:
-                    apoio_liberado = True
+        apoio_liberado = get_apoio_liberado(time)
         if valor > saldo_atual:
             flash(f'Usuário não possui saldo suficiente.','danger')
         elif not apoio_liberado:
@@ -135,21 +168,24 @@ def removeapoio():
         apostador = validUser["name"]
         time = request.values.get("time_apoio")
         valor = int(request.values.get("valor_apoio"))
-        moedasDb = mongo.db.moedas.find_one({'nome': apostador})
         timeDb = mongo.db.patrocinio.find_one({'Time': time})
         apoios = timeDb['Apoiadores']
-        try:
-            apoios.remove({'nome': apostador,'valor': valor})
-        except:
-            flash(f'Erro na remoção de apoio de {apostador}.','danger')
-        
-        outdb = mongo.db.moedas.find_one_and_update({'nome': apostador},{'$inc': {'saldo': valor,'investido': -valor}})
-        outdb2 = mongo.db.patrocinio.find_one_and_update({'Time': time},{'$set': {'Apoiadores': apoios}})
-        if outdb and outdb2:
-            flash(f'Apoio removido','success')
-            moedas_log(apostador,'x '+str(valor),time,0,"Retirada de apoio")
+        apoio_liberado = get_apoio_liberado(time)
+        if not apoio_liberado:
+            flash(f'Apoio não liberado no momento.','danger')
         else:
-            flash(f'Erro na atualização da base.','danger')
+            try:
+                apoios.remove({'nome': apostador,'valor': valor})
+            except:
+                flash(f'Erro na remoção de apoio de {apostador}.','danger')
+            
+            outdb = mongo.db.moedas.find_one_and_update({'nome': apostador},{'$inc': {'saldo': valor,'investido': -valor}})
+            outdb2 = mongo.db.patrocinio.find_one_and_update({'Time': time},{'$set': {'Apoiadores': apoios}})
+            if outdb and outdb2:
+                flash(f'Apoio removido','success')
+                moedas_log(apostador,'x '+str(valor),time,0,"Retirada de apoio")
+            else:
+                flash(f'Erro na atualização da base.','danger')
     else:
         flash(f'Usuário não logado.','danger')
     return redirect(url_for('moedas.gamemoedas'))
@@ -164,10 +200,11 @@ def addvalorpat():
         valor = int(request.values.get("valor_apoio"))
         moedasDb = mongo.db.moedas.find_one({'nome': apostador})
         saldo_atual = moedasDb['saldo']
-        if valor > saldo_atual:
+        apoio_liberado = get_apoio_liberado(time)
+        if not apoio_liberado:
+            flash(f'Apoio não liberado no momento.','danger')
+        elif valor > saldo_atual:
             flash(f'Usuário não possui saldo suficiente.','danger')
-        #elif not timeDb['apoio_liberado']:
-        #    flash(f'Apoio não liberado no momento.','danger')
         else:
             outdb = mongo.db.moedas.find_one_and_update({'nome': apostador},{'$inc': {'saldo': -valor,'investido': valor}})
             outdb2 = mongo.db.patrocinio.find_one_and_update({'Time': time},{'$inc': {'Valor': valor}})

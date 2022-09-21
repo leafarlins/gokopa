@@ -450,12 +450,23 @@ def get_pat_teams():
     lista = [u for u in mongo.db.patrocinio.find().sort("Valor",pymongo.DESCENDING)]
     lista_pat = []
     lista_livres = []
+    lista_leilao = []
     next_jogos_list = get_next_jogos()
     jogos = next_jogos_list['next_jogos']
     past_jogos = next_jogos_list['past_jogos'][:4]
     for t in lista:
         if t['Patrocinador'] == "-":
-            lista_livres.append({'time': t["Time"],'valor': t["Valor"]})
+            valor = t["Valor"]
+            procpatDb = mongo.db.tentarpat.find({'processar': True,'time':t['Time']})
+            if procpatDb:
+                for item in procpatDb:
+                    lista_leilao.append({
+                        'time': item['time'],
+                        'nome': item['nome'],
+                        'valor': item['valor']
+                    })
+                    valor = item['valor']
+            lista_livres.append({'time': t["Time"],'valor': valor})
         else:
             busca = True
             j=0
@@ -484,4 +495,4 @@ def get_pat_teams():
                     if j >= len(jogos):
                         busca = False
         
-    return {"livres": lista_livres, "patrocinados": lista_pat}
+    return {"livres": lista_livres, "patrocinados": lista_pat, 'lista_leilao': lista_leilao}
