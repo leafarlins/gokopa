@@ -11,92 +11,91 @@
 <div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
     <hr>
     <h2>Área do jogador</h2>
-    <div class="sectionj">
-        {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
-          <div class="alert alert-{{ category }}" role="alert">
-              {{ message }}
-          </div>
-        {% endfor %} {% endif %} {% endwith %}
-        {% if info["userlogado"] %}
-        <table class="tab_gokopa tab_jogos mb-3">
-            <tr>
-                <td>Saldo de Moedas</td>
-            </tr>
-            <tr>
-                <td>{{ user_info['saldo'] }} 🪙</td>
-            </tr>
-        </table>
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
+        <div class="alert alert-{{ category }} text-center" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %} {% endif %} {% endwith %}
+    {% if info["userlogado"] %}
+    <table class="tab_gokopa tab_jogos mb-3">
+        <tr>
+            <td>Saldo de Moedas</td>
+        </tr>
+        <tr>
+            <td>{{ user_info['saldo'] }} 🪙</td>
+        </tr>
+    </table>
 
-        {% if user_info["lista_livre"] %}
-        <h4 class=m-3>Tentar patrocinar</h4>
-        <form action="{{ url_for('moedas.addpat') }}" method="post">
-            <div class="row mb-2">
-                <div class="col-sm-6 text-sm-end">
-                    <label for="time1">Selecione um time:</label>
-                </div>
-                <div class="col-sm-6 text-sm-start">
-                    <input type="hidden" name="timename" value="" id="timename">
-                    <select list="times" name="time1" id="time1" onchange="update_minimo()">
-                        {% for i in user_info["lista_livre"] %}
-                          <option value="{{ i['valor'] }}" label="{{ i['time'] }}">{{ i['time'] }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div><div class="row mb-3">
-                <div class="col-sm-6 text-sm-end">
-                    <label for="valor_pat">Valor:</label>
-                </div>
-                <div class="col-sm-6 text-sm-start">
-                    <input style="max-width: 10rem" type="number" name="valor_pat" id="valor_pat" width="10px" value="0" min="0" max="{{ user_info['saldo'] }}">
-                </div>
+    {% if user_info["lista_livre"] %}
+    <h4 class="m-3 text-center">Tentar patrocinar</h4>
+    <form action="{{ url_for('moedas.addpat') }}" method="post">
+        <div class="row mb-2">
+            <div class="col-sm-6 text-sm-end">
+                <label for="time1">Selecione um time:</label>
             </div>
-            <button type="submit" class="btn btn-outline-primary">Tentar investimento</button>
-        </form>
-        {% endif %}
-
-        {% if user_info['tentarpat'] %}
-        <h4 class="m-3">Tentativas enviadas</h4>
-        <ul class="list-group">
-          {% for item in user_info['tentarpat'] %}
-            <li class="list-group-item">{{ item['valor'] }}🪙 <img class="flag" src="../static/img/flag/{{ item['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ item['time'] }} 
-              <form style="display: inline" action="{{ url_for('moedas.removepat') }}" method="post">
-                <button type="submit" class="btn btn-outline-danger btn-sm">X</button>
-                <input type="hidden" name="time_pat" value="{{ item['time'] }}" id="time_pat">
-                <input type="hidden" name="valor_pat" value="{{ item['valor'] }}" id="valor_pat">
-              </form></li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-
-        {% if user_info['lista_leilao'] %}
-        <h4 class="m-3">Leilão a processar</h4>
-        <ul class="list-group">
-          {% for item in user_info['lista_leilao'] %}
-            <li class="list-group-item">{{ item['valor'] }}🪙 {{ item['nome'] }} <img class="flag" src="../static/img/flag/{{ item['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ item['time'] }}</li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-
-
-
-
-        <script type="text/javascript">
-            function update_minimo() {
-                var select = document.getElementById('time1');
-                var option = select.options[select.selectedIndex];
+            <div class="col-sm-6 text-sm-start">
+                <input type="hidden" name="timename" value="" id="timename">
+                <select list="times" name="time1" id="time1" onchange="update_minimo()">
+                    {% for i in user_info["lista_livre"] %}
+                        <option value="{{ i['valor'] }}" label="{{ i['time'] }}">{{ i['time'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div><div class="row mb-3">
+            <div class="col-sm-6 text-sm-end">
+                <label for="valor_pat">Valor:</label>
+            </div>
+            <div class="col-sm-6 text-sm-start">
+                <input style="max-width: 5rem" type="number" name="valor_pat" id="valor_pat" width="10px" value="0" min="0" max="{{ user_info['saldo'] }}">
+            </div>
+            <div class="col-12 text-center m-3"><button type="submit" class="btn btn-outline-primary">Tentar investimento</button></div>
+        </div>
         
-                document.getElementById('valor_pat').value = option.value;
-                document.getElementById('valor_pat').min = option.value;
-                document.getElementById('timename').value = option.label;
-            }
-        
-            update_minimo();
-        </script>
+    </form>
+    {% endif %}
 
-        {% else %}
-        <p>Você não está logado ou não tem acesso ao jogo de moedas.</p>
-        {% endif %}
-    </div>
+    {% if user_info['tentarpat'] %}
+    <h4 class="m-3 text-center">Tentativas enviadas</h4>
+    <ul class="list-group text-center">
+        {% for item in user_info['tentarpat'] %}
+        <li class="list-group-item">{{ item['valor'] }}🪙 <img class="flag" src="../static/img/flag/{{ item['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ item['time'] }} 
+            <form style="display: inline" action="{{ url_for('moedas.removepat') }}" method="post">
+            <button type="submit" class="btn btn-outline-danger btn-sm">X</button>
+            <input type="hidden" name="time_pat" value="{{ item['time'] }}" id="time_pat">
+            <input type="hidden" name="valor_pat" value="{{ item['valor'] }}" id="valor_pat">
+            </form></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if user_info['lista_leilao'] %}
+    <h4 class="m-3 text-center">Leilão a processar</h4>
+    <ul class="list-group text-center">
+        {% for item in user_info['lista_leilao'] %}
+        <li class="list-group-item">{{ item['valor'] }}🪙 {{ item['nome'] }} <img class="flag" src="../static/img/flag/{{ item['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ item['time'] }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+
+
+
+    <script type="text/javascript">
+        function update_minimo() {
+            var select = document.getElementById('time1');
+            var option = select.options[select.selectedIndex];
+    
+            document.getElementById('valor_pat').value = option.value;
+            document.getElementById('valor_pat').min = option.value;
+            document.getElementById('timename').value = option.label;
+        }
+    
+        update_minimo();
+    </script>
+
+    {% else %}
+    <p>Você não está logado ou não tem acesso ao jogo de moedas.</p>
+    {% endif %}
 
     <hr>
 </div>
@@ -109,8 +108,8 @@
     <div class="card {% if t['patrocinador'] == info['username'] %}text-bg-secondary{% else %}text-bg-light{% endif %} mb-3 col-12 col-sm-6 col-md-4 col-lg-6 col-xl-4" style="max-width: 25rem;">
         <div class="card-header">{% if t['patrocinador'] == info['username'] %}<b>{{ t['patrocinador'] }}</b>{% else %}{{ t['patrocinador'] }}{% endif %}</div>
         <div class="card-body">
-          <h5 class="card-title"><img class="flag" src="../static/img/flag/{{ t['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ t['time'] }} - {{ t['valor'] }}🪙</h5>
-          <p class="card-text">Próximo jogo: <img class="miniflag" title="{{ t['next_jogo']['t1'] }}" src="../static/img/flag/{{ t['next_jogo']['t1'] }}.png" onerror="this.src='../static/img/flag/default.png'">x<img class="miniflag" title="{{ t['next_jogo']['t2'] }}" src="../static/img/flag/{{ t['next_jogo']['t2'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+          <h5 class="card-title"><img class="flag" src="../static/img/flag/{{ t['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ t['time'] }} {{ t['valor'] }}🪙</h5>
+          <p class="card-text">Próximo jogo: {% if t['next_jogo']['t1'] == '-' %}?{% else %}<img class="miniflag" title="{{ t['next_jogo']['t1'] }}" src="../static/img/flag/{{ t['next_jogo']['t1'] }}.png" onerror="this.src='../static/img/flag/default.png'">x<img class="miniflag" title="{{ t['next_jogo']['t2'] }}" src="../static/img/flag/{{ t['next_jogo']['t2'] }}.png" onerror="this.src='../static/img/flag/default.png'">{% endif %}
             <br>{{ t['moedas_em_jogo'] }}🪙 em jogo</p>
           {% if t['apoiadores'] %}<p style="display: inline" class="card-text">Apoiadores:{% for a in t['apoiadores'] %}
           <br> - {{ a['nome'] }} {{ a['valor'] }}🪙

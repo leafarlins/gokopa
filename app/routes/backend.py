@@ -468,8 +468,15 @@ def get_pat_teams():
                     valor = item['valor']
             lista_livres.append({'time': t["Time"],'valor': valor})
         else:
-            busca = True
+            if jogos:
+                busca = True
+            else:
+                busca = False
             j=0
+            apoio_liberado = False
+            moedas_do_jogo = 0
+            t1 = "-"
+            t2 = "-"
             while busca:
                 jogo=jogos[j]
                 if jogo['time1'] == t['Time'] or jogo['time2'] == t['Time']:
@@ -481,18 +488,22 @@ def get_pat_teams():
                             now = datetime.now()
                             if datetime.strftime(now,"%d/%m") == datetime.strftime(data,"%d/%m") and now > data:
                                 apoio_liberado = False
-                    lista_pat.append({
-                        'next_jogo': {'t1': jogo['time1'],'t2':jogo['time2']},
-                        'patrocinador': t['Patrocinador'],
-                        'time': t["Time"],
-                        'valor': t["Valor"],
-                        'apoiadores': t.get('Apoiadores'),
-                        'moedas_em_jogo': jogo['moedas_em_jogo'],
-                        'apoio_liberado': apoio_liberado})
+                    t1 = jogo['time1']
+                    t2 = jogo['time2']
+                    moedas_do_jogo = jogo['moedas_em_jogo']
                     busca=False
                 else:
                     j+=1
                     if j >= len(jogos):
                         busca = False
+            lista_pat.append({
+                'next_jogo': {'t1': t1,'t2':t2},
+                'patrocinador': t['Patrocinador'],
+                'time': t["Time"],
+                'valor': t["Valor"],
+                'apoiadores': t.get('Apoiadores'),
+                'moedas_em_jogo': moedas_do_jogo,
+                'apoio_liberado': apoio_liberado
+            })
         
     return {"livres": lista_livres, "patrocinados": lista_pat, 'lista_leilao': lista_leilao}

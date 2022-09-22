@@ -6,7 +6,7 @@ import click
 import pymongo
 from ..extentions.database import mongo
 from flask import Blueprint
-from ..routes.backend import get_users, make_score_board
+from ..routes.backend import get_next_jogos, get_users, make_score_board
 from ..cache import cache
 from random import randrange
 #from twilio.rest import Client
@@ -218,47 +218,46 @@ def report(jogos,proximos,texto=""):
     jogosdb = mongo.db.jogos
     emojis = mongo.db.emoji
     apostas = mongo.db.apostas21
-    jogos_list = jogos.split(',')
-    next_list = proximos.split(',')
-    jogos_list[0] = int(jogos_list[0]) - 1
-    jogos_list[1] = int(jogos_list[1]) + 1
+    lista_jogos = get_next_jogos()
+    jogos_list = lista_jogos['past_jogos'][:int(jogos)]
+    next_list = lista_jogos['next_jogos'][:int(proximos)]
+    #jogos_list[0] = int(jogos_list[0]) - 1
+    #jogos_list[1] = int(jogos_list[1]) + 1
     #next_list[0] = int(next_list[0]) - 1
     #next_list[1] = int(next_list[1]) + 1
-    recentes = [u for u in jogosdb.find({'Ano': ANO, "Jogo": {'$gt': jogos_list[0], '$lt': jogos_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
+    #recentes = [u for u in jogosdb.find({'Ano': ANO, "Jogo": {'$gt': jogos_list[0], '$lt': jogos_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
     #next_games = [u for u in jogosdb.find({'Ano': 20, "Jogo": {'$gt': next_list[0], '$lt': next_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
-    mensagem="⚽ Gokopa 21 - Jogos recentes\n"
-    for j in recentes:
-        mensagem+=" ".join([j['Competição'],"-",j['Fase']])+"\n"
-        placar = str(j['p1']) + "x" + str(j['p2'])
-        e1 = emojis.find_one({'País': j['Time1']})
-        e2 = emojis.find_one({'País': j['Time2']})
-        if j['tr1'] or j['tr1'] == 0 :
-            tr = "(tr " + str(j['tr1']) + "x" + str(j['tr2'])
-            if j['pe1'] or j['pe1'] == 0:
-                tr = tr + " pe " + str(j['pe1']) + "x" + str(j['pe2']) + ")"
+    if jogos_list:
+        mensagem="⚽ Gokopa 21 - Jogos recentes\n"
+        for j in jogos_list:
+            #mensagem+=" ".join([j['Competição'],"-",j['Fase']])+"\n"
+            placar = str(j['p1']) + "x" + str(j['p2'])
+            e1 = emojis.find_one({'País': j['time1']})
+            e2 = emojis.find_one({'País': j['time2']})
+            if j['jid'] > 48 and j['p1'] == j['p2']:
+                tr = "vitória: " + j['vitoria']
             else:
-                tr = tr + ")"
-        else:
-            tr = ""
-        mensagem+=" ".join([j['Time1'],e1['flag'],placar,e2['flag'],j['Time2'],tr])+"\n"
+                tr = ""
+            mensagem+=" ".join([j['time1'],e1['flag'],placar,e2['flag'],j['time2'],tr])+"\n"
 
     if texto:
         mensagem+="\n"+texto+"\n"
-    allUsers = get_users('gk')
-    #print(allUsers)
-    missing_users = set()
-    for j in range(int(next_list[0]),int(next_list[1])+1):
-        bets = apostas.find_one({'Jogo': j})
-        for user in allUsers:
-            betu = user + '_p1'
-            if (not bets.get(betu)) and bets.get(betu) != 0:
-                missing_users.add(user)
-        #print(bets)
-    #print(missing_users)
-    lista_users = ', '.join(missing_users)
-    if len(missing_users) > 0:
-        mensagem+="\n❗ Lista de apostadores pendentes com os próximos jogos ❗\n"
-        mensagem+=lista_users
+    if next_list:
+        allUsers = get_users('gk')
+        #print(allUsers)
+        missing_users = set()
+        for j in next_list:
+            bets = apostas.find_one({'Jogo': j['jid']})
+            for user in allUsers:
+                betu = user + '_p1'
+                if (not bets.get(betu)) and bets.get(betu) != 0:
+                    missing_users.add(user)
+            #print(bets)
+        #print(missing_users)
+        lista_users = ', '.join(missing_users)
+        if len(missing_users) > 0:
+            mensagem+="\n❗ Lista de apostadores pendentes com os próximos jogos ❗\n"
+            mensagem+=lista_users
 
     #ordered_total = get_ordered()
     ordered_total = make_score_board('gk')

@@ -2,7 +2,7 @@ import click
 import getpass
 from pwgen import pwgen
 
-from app.commands.email import send_reset_email
+from app.commands.email import send_adduser_email, send_reset_email
 from ..extentions.database import mongo
 from werkzeug.security import generate_password_hash
 from flask import Blueprint
@@ -43,6 +43,8 @@ def create_user(username,name):
         print(f'Usuário: {username}')
         print(f'Senha temporária: {password}')
         print(f'\nSeu nome no bolão será: {name}\nQualquer dúvida, entre em contato!')
+        print("Enviando email...")
+        send_adduser_email(username,password)
 
 @userCommands.cli.command("resetPassword")
 @click.argument("username")

@@ -1,3 +1,5 @@
+import json
+import requests
 import boto3
 from botocore.exceptions import ClientError
 import os
@@ -11,6 +13,8 @@ from ..routes.backend import bet_report, get_users
 emailCommands = Blueprint('email',__name__)
 
 MONGO_URI = os.getenv('MONGO_URI')
+TELEGRAM_TOKEN=os.getenv('TELEGRAM_TKN')
+TELEGRAM_CHAT_ID=os.getenv('TELEGRAM_CHAT_ID')
 
 # Replace sender@example.com with your "From" address.
 # This address must be verified with Amazon SES.
@@ -107,6 +111,27 @@ def test_email(recipient,subject):
 #@click.argument("username")
 #@click.argument("password")
 #@click.argument("test",required=False)
+def send_adduser_email(username,password,test=False):
+    subject="Usuário criado"
+    corpo_html="<h1 style=\"text-align: center\">Gokopa - Criação de usuário</h1><p>Seu usuário foi criado. Acesse com a senha temporária.</p>"
+    corpo_html+="<p>Usuário: "+username+"</p>"
+    corpo_html+="<p>Senha: "+password+"</p><p>Bolão da Copa: <a href=\"https://copa.leafarlins.com\">copa.leafarlins.com</a></p><p>Gokopa do Mundo: <a href=\"https://gokopa.leafarlins.com\">gokopa.leafarlins.com</a></p>"
+    corpo_text = "Usuário: "+username+"\nSenha: "+password
+    BODY_HTML = """<html>
+    <head></head>
+    <body style=\"font-family: \"Trebuchet MS\", Arial, Helvetica, sans-serif;\">
+    """ + corpo_html + """
+    </body>
+    </html>
+                """
+    BODY_TEXT = (corpo_text)
+
+    if test:
+        recipient = "leafarlins@gmail.com"
+    else:
+        recipient = username
+    send_email(recipient,subject,BODY_TEXT,BODY_HTML)
+
 def send_reset_email(username,password,test=False):
     subject="Reset de senha"
     corpo_html="<h1 style=\"text-align: center\">Gokopa - Reset de Senha</h1><p>Sua senha foi resetada. Acesse com a senha temporária.</p>"
@@ -168,6 +193,18 @@ def send_bet_report(test=False):
     for user in user_list:
         print(f'Enviando email para usuário { user["username"] }')
         recipient = user["username"]
-        #send_email(recipient,subject,BODY_TEXT,BODY_HTML)
+        send_email(recipient,subject,BODY_TEXT,BODY_HTML)
     if test:
         send_email("leafarlins@gmail.com",subject,BODY_TEXT,BODY_HTML)
+    
+    print("Enviando mensagem via telegram")
+    params = {
+        'chat_id': TELEGRAM_CHAT_ID,
+        'text': BODY_TEXT
+    }
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+    r = requests.get(url, params=params)
+    if r.status_code == 200:
+        print(json.dumps(r.json(), indent=2))
+    else:
+        r.raise_for_status()

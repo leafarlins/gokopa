@@ -11,7 +11,7 @@ moedas = Blueprint('moedas',__name__)
 
 ANO=21
 
-@cache.memoize(60)
+@cache.memoize(10)
 def get_moedas_info():
     jogos = get_next_jogos()
     board = get_moedas_board()
