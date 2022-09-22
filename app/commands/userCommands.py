@@ -34,7 +34,7 @@ def create_user(username,name):
             "password": generate_password_hash(password),
             "active": False,
             "gokopa": False,
-            "sendEmail": True,
+            "sendEmail": False,
             "passwordActive": False
         }
         userCollection.insert(user)

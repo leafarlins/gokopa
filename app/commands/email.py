@@ -159,6 +159,9 @@ def send_bet_report(test=False):
     #recipient="leafarlins@gmail.com"
     subject="Relatório de apostas"
     betreport = bet_report()
+    emojis = mongo.db.emoji
+    e1 = emojis.find_one({'País': betreport['Time1']})['flag']
+    e2 = emojis.find_one({'País': betreport['Time2']})['flag']
 
     corpo_text = "Relatório de apostas do jogo: "
     corpo_html="<h1 style=\"text-align: center\">Relatório de apostas</h1><p style=\"text-align: center\">Confira as apostas realizadas do jogo atual.</p>"
@@ -167,9 +170,9 @@ def send_bet_report(test=False):
     corpo_html+="</td><td style=\"padding-left: 20px; padding-right: 20px; white-space: nowrap; border: 1px solid #ddd; text-align: center; padding: 8px;\">"
     corpo_html+=betreport["Fase"]
     corpo_html+="</td></tr><tr style=\"min-width: 300px;\"><td colspan=\"2\" style=\"padding-left: 20px; padding-right: 20px; white-space: nowrap; border: 1px solid #ddd; text-align: center; padding: 8px;\">"
-    corpo_html+=betreport["Time1"] + "<img style=\"max-width:30px; max-height:20px;\" src=\"https://copa.leafarlins.com/static/img/flag/" + betreport["Time1"] + ".png\"> x <img style=\"max-width:30px; max-height:20px;\" src=\"https://copa.leafarlins.com/static/img/flag/" + betreport["Time2"] + ".png\"> " + betreport["Time2"]
+    corpo_html+=f'{betreport["Time1"]} {e1} x {e2} {betreport["Time2"]}'
     corpo_html+="</td></tr></table><h3 style=\"text-align: center;text-decoration-color: rgb(2, 32, 1);\">Apostas:</h3><div style=\"float: center; text-align: center;\">"
-    corpo_text+=betreport["Time1"] + " x " + betreport["Time2"] + "\nApostas:\n"
+    corpo_text+=f'{betreport["Time1"]} {e1} x {e2} {betreport["Time2"]}\nApostas:\n'
     # The HTML body of the email.
     for aposta in betreport["Apostas"]:
         corpo_html+="<div style=\"border-radius: 25px; border: 1px solid #73AD21; padding: 4px; padding-left: 10px; padding-right: 10px; height: 35px; text-align: center; float: center; font-size:small; display: inline-block; white-space: nowrap;\">"
