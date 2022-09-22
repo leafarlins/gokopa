@@ -3,12 +3,14 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
+
 ## [1.3.2] - 2022-09-22
 
 ### Added
 - Dump for initial database setup
 - Sending e-mail with last bet report and reset password
 - Support for telegram bot
+- Moedas game
 
 ## [1.3.1] - 2022-09-05
 

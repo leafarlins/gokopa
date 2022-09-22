@@ -215,12 +215,12 @@ def delete_ano(ano):
 @click.argument("proximos")
 @click.argument("texto",required=False)
 def report(jogos,proximos,texto=""):
-    jogosdb = mongo.db.jogos
     emojis = mongo.db.emoji
     apostas = mongo.db.apostas21
     lista_jogos = get_next_jogos()
     jogos_list = lista_jogos['past_jogos'][:int(jogos)]
     next_list = lista_jogos['next_jogos'][:int(proximos)]
+    mensagem="⚽ Gokopa 21"
     #jogos_list[0] = int(jogos_list[0]) - 1
     #jogos_list[1] = int(jogos_list[1]) + 1
     #next_list[0] = int(next_list[0]) - 1
