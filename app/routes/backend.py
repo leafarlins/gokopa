@@ -313,17 +313,22 @@ def probability(tipo):
 #@cache.cached(timeout=30*30)
 def bet_report():
     progresso = progress_data()
-    l_game = progresso['last_game']
-    l_jogo = mongo.db.jogos.find_one_or_404({"Ano": ANO, "Jogo": l_game})
-    bet_results = get_aposta(l_game)
-    print(bet_results)
-    apostas = []
-    for user in get_users('cp'):
-        placar1 = str(user) + "_p1"
-        placar2 = str(user) + "_p2"
-        if bet_results.get(placar1) != None:
-            apostas.append(dict({"Nome": user, "p1": bet_results.get(placar1),"p2": bet_results.get(placar2)}))
-    return {"Jogo": l_game, "Data": l_jogo["Data"], "Fase": l_jogo["Competição"] + " " + l_jogo["Fase"], "Time1": l_jogo['Time1'], "Time2": l_jogo['Time2'], "Apostas": apostas}
+    lista_jogos = []
+    if progresso['last_game'] < 49 and progresso['last_game'] > 32:
+        lista_jid = [progresso['last_game']-1,progresso['last_game']]
+    else:
+        lista_jid = [progresso['last_game']]
+    for l_game in lista_jid:
+        l_jogo = mongo.db.jogos.find_one_or_404({"Ano": ANO, "Jogo": l_game})
+        bet_results = get_aposta(l_game)
+        apostas = []
+        for user in get_users('cp'):
+            placar1 = str(user) + "_p1"
+            placar2 = str(user) + "_p2"
+            if bet_results.get(placar1) != None:
+                apostas.append(dict({"Nome": user, "p1": bet_results.get(placar1),"p2": bet_results.get(placar2)}))
+        lista_jogos.append({"Jogo": l_game, "Data": l_jogo["Data"], "Fase": l_jogo["Competição"] + " " + l_jogo["Fase"], "Time1": l_jogo['Time1'], "Time2": l_jogo['Time2'], "Apostas": apostas})
+    return {'reports': lista_jogos}
 
 @backend.route('/api/get_free_teams', methods=['GET'])
 #@cache.cached(timeout=30*30)

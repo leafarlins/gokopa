@@ -15,6 +15,7 @@ emailCommands = Blueprint('email',__name__)
 MONGO_URI = os.getenv('MONGO_URI')
 TELEGRAM_TOKEN=os.getenv('TELEGRAM_TKN')
 TELEGRAM_CHAT_ID=os.getenv('TELEGRAM_CHAT_ID')
+TELEGRAM=os.getenv('TELEGRAM')
 
 # Replace sender@example.com with your "From" address.
 # This address must be verified with Amazon SES.
@@ -158,26 +159,29 @@ def send_reset_email(username,password,test=False):
 def send_bet_report(test=False):
     #recipient="leafarlins@gmail.com"
     subject="Relatório de apostas"
-    betreport = bet_report()
+    betreports = bet_report()
     emojis = mongo.db.emoji
-    e1 = emojis.find_one({'País': betreport['Time1']})['flag']
-    e2 = emojis.find_one({'País': betreport['Time2']})['flag']
 
     corpo_text = "Relatório de apostas do jogo: "
     corpo_html="<h1 style=\"text-align: center\">Relatório de apostas</h1><p style=\"text-align: center\">Confira as apostas realizadas do jogo atual.</p>"
-    corpo_html+="<table style=\"margin-left:auto; margin-right:auto; border-collapse: collapse;\"><tr style=\"font-size: small; padding-top: 0px; padding-bottom: 0px;\"><td style=\"padding-left: 20px; padding-right: 20px; white-space: nowrap; border: 1px solid #ddd; text-align: center; padding: 8px; padding-top: 0px; padding-bottom: 0px;\">"
-    corpo_html+="J:" + str(betreport["Jogo"]) + " " + betreport["Data"]
-    corpo_html+="</td><td style=\"padding-left: 20px; padding-right: 20px; white-space: nowrap; border: 1px solid #ddd; text-align: center; padding: 8px;\">"
-    corpo_html+=betreport["Fase"]
-    corpo_html+="</td></tr><tr style=\"min-width: 300px;\"><td colspan=\"2\" style=\"padding-left: 20px; padding-right: 20px; white-space: nowrap; border: 1px solid #ddd; text-align: center; padding: 8px;\">"
-    corpo_html+=f'{betreport["Time1"]} {e1} x {e2} {betreport["Time2"]}'
-    corpo_html+="</td></tr></table><h3 style=\"text-align: center;text-decoration-color: rgb(2, 32, 1);\">Apostas:</h3><div style=\"float: center; text-align: center;\">"
-    corpo_text+=f'{betreport["Time1"]} {e1} x {e2} {betreport["Time2"]}\nApostas:\n'
-    # The HTML body of the email.
-    for aposta in betreport["Apostas"]:
-        corpo_html+="<div style=\"border-radius: 25px; border: 1px solid #73AD21; padding: 4px; padding-left: 10px; padding-right: 10px; height: 35px; text-align: center; float: center; font-size:small; display: inline-block; white-space: nowrap;\">"
-        corpo_html+= aposta["Nome"] + "<br>" + str(aposta["p1"]) + "x" + str(aposta["p2"]) + "</div>"
-        corpo_text+= " - " + aposta["Nome"] + ": " + str(aposta["p1"]) + "x" + str(aposta["p2"]) + "\n"
+
+    for betreport in betreports['reports']:
+        e1 = emojis.find_one({'País': betreport['Time1']})['flag']
+        e2 = emojis.find_one({'País': betreport['Time2']})['flag']
+
+        corpo_html+="<table style=\"margin-left:auto; margin-right:auto; border-collapse: collapse;\"><tr style=\"font-size: small; padding-top: 0px; padding-bottom: 0px;\"><td style=\"padding-left: 20px; padding-right: 20px; white-space: nowrap; border: 1px solid #ddd; text-align: center; padding: 8px; padding-top: 0px; padding-bottom: 0px;\">"
+        corpo_html+="J:" + str(betreport["Jogo"]) + " " + betreport["Data"]
+        corpo_html+="</td><td style=\"padding-left: 20px; padding-right: 20px; white-space: nowrap; border: 1px solid #ddd; text-align: center; padding: 8px;\">"
+        corpo_html+=betreport["Fase"]
+        corpo_html+="</td></tr><tr style=\"min-width: 300px;\"><td colspan=\"2\" style=\"padding-left: 20px; padding-right: 20px; white-space: nowrap; border: 1px solid #ddd; text-align: center; padding: 8px;\">"
+        corpo_html+=f'{betreport["Time1"]} {e1} x {e2} {betreport["Time2"]}'
+        corpo_html+="</td></tr></table><h3 style=\"text-align: center;text-decoration-color: rgb(2, 32, 1);\">Apostas:</h3><div style=\"float: center; text-align: center;\">"
+        corpo_text+=f'{betreport["Time1"]} {e1} x {e2} {betreport["Time2"]}\nApostas:\n'
+        # The HTML body of the email.
+        for aposta in betreport["Apostas"]:
+            corpo_html+="<div style=\"border-radius: 25px; border: 1px solid #73AD21; padding: 4px; padding-left: 10px; padding-right: 10px; height: 35px; text-align: center; float: center; font-size:small; display: inline-block; white-space: nowrap;\">"
+            corpo_html+= aposta["Nome"] + "<br>" + str(aposta["p1"]) + "x" + str(aposta["p2"]) + "</div>"
+            corpo_text+= " - " + aposta["Nome"] + ": " + str(aposta["p1"]) + "x" + str(aposta["p2"]) + "\n"
     corpo_html+="</div><p style=\"text-align: center\">Acompanhe em: <a href=\"https://copa.leafarlins.com\">copa.leafarlins.com</a></p><p>&nbsp;</p><p>&nbsp;</p><p style=\"font-size: small;\">Responda a mensagem caso deseje descadastrar o e-mail da lista de relatórios.</p>"
     corpo_text+="\n\nAcompanhe em: https://copa.leafarlins.com"
     BODY_HTML = """<html>
@@ -200,14 +204,15 @@ def send_bet_report(test=False):
     if test:
         send_email("leafarlins@gmail.com",subject,BODY_TEXT,BODY_HTML)
     
-    print("Enviando mensagem via telegram")
-    params = {
-        'chat_id': TELEGRAM_CHAT_ID,
-        'text': BODY_TEXT
-    }
-    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    r = requests.get(url, params=params)
-    if r.status_code == 200:
-        print(json.dumps(r.json(), indent=2))
-    else:
-        r.raise_for_status()
+    if TELEGRAM:
+        print("Enviando mensagem via telegram")
+        params = {
+            'chat_id': TELEGRAM_CHAT_ID,
+            'text': BODY_TEXT
+        }
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+        r = requests.get(url, params=params)
+        if r.status_code == 200:
+            print(json.dumps(r.json(), indent=2))
+        else:
+            r.raise_for_status()

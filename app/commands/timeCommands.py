@@ -20,6 +20,7 @@ ANO=21
 RANKING='20-4'
 TELEGRAM_TOKEN=os.getenv('TELEGRAM_TKN')
 TELEGRAM_CHAT_ID=os.getenv('TELEGRAM_CHAT_ID')
+TELEGRAM=os.getenv('TELEGRAM')
 
 timeCommands = Blueprint('time',__name__)
 
@@ -307,7 +308,6 @@ def desclassifica(time):
 @click.argument("jogos",required=False)
 @click.argument("leilao",required=False)
 def processa_pat(jogos='0',leilao=False):
-    telegram = False
     if leilao == 'true':
         leilao = True
     else:
@@ -484,7 +484,7 @@ def processa_pat(jogos='0',leilao=False):
             mensagem+= "\n=> Com sucesso:\n"
             mensagem+=texto_pat
         print(mensagem)
-        if telegram:
+        if TELEGRAM:
             print("Enviando mensagem via telegram")
             params = {
                 'chat_id': TELEGRAM_CHAT_ID,
@@ -502,13 +502,12 @@ def processa_pat(jogos='0',leilao=False):
 
 #@timeCommands.cli.command("rankingMoedas")
 def ranking_moedas():
-    telegram=False
     ranking_moedas = get_moedas_board()['moedas_board']
     mensagem = "== Ranking de moedas ==\n"
     for j in ranking_moedas:
         mensagem+=f"{j['pos']}  {j['total']}🪙 - {j['nome']}\n"
     print(mensagem)
-    if telegram:
+    if TELEGRAM:
         print("Enviando mensagem via telegram")
         params = {
             'chat_id': TELEGRAM_CHAT_ID,
@@ -521,9 +520,3 @@ def ranking_moedas():
         else:
             r.raise_for_status()
 
-# Impedir apoio contra proprio patrocinio
-@timeCommands.cli.command("verificaTimes")
-def verifica_times():
-    pat_teams = get_pat_teams()
-
-    

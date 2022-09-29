@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file. Based on [K
 
 ## [unreleased]
 
-## [1.3.2] - 2022-09-22
+## [1.3.2] - 2022-09-29
 
 ### Added
 - Dump for initial database setup
