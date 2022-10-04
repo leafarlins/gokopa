@@ -495,6 +495,8 @@ def get_pat_teams():
                             now = datetime.now()
                             if datetime.strftime(now,"%d/%m") == datetime.strftime(data,"%d/%m") and now > data:
                                 apoio_liberado = False
+                                if pastj.get('processado'):
+                                    apoio_liberado = True
                     t1 = jogo['time1']
                     t2 = jogo['time2']
                     moedas_do_jogo = jogo['moedas_em_jogo']
