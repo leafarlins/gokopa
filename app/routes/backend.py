@@ -3,7 +3,7 @@
 #from array import array
 from datetime import datetime, time
 #from typing import Collection
-from flask import Blueprint, app, render_template, session, request, url_for, flash, jsonify
+from flask import Blueprint, app, render_template, session, request, url_for, flash, jsonify, current_app
 import pymongo
 from pymongo import collection
 from ..extentions.database import mongo
@@ -354,6 +354,7 @@ def get_moedas_board():
         if lista_users[i]['total'] != last_total:
             p = i+1
         lista_users[i]['pos'] = p
+        last_total = lista_users[i]['total']
 
 
     return {'moedas_board': lista_users}
@@ -377,6 +378,7 @@ def moedas_log(nome,moedas,time,jid,msg):
         'jid': jid
     }
     mongo.db.moedaslog.insert_one(log)
+    current_app.logger.info(f"Moedaslog: {log}")
 
 
 @backend.route('/api/get_next_jogos',methods=['GET'])

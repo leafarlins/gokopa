@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Blueprint, render_template, session, request, url_for, flash
+from flask import Blueprint, current_app, render_template, session, request, url_for, flash
 from werkzeug.utils import redirect
 from werkzeug.security import check_password_hash, generate_password_hash
 from ..extentions.database import mongo
@@ -41,6 +41,7 @@ def login(tipo):
                     if validActive:
                         session["username"] = validUser
                         flash(f'Bem vindo, {validName}!')
+                        current_app.logger.info(f"Usuário {validName} logado com sucesso")
                         return redirect(url_for('bolao.apostas',tipo=tipo))
                     else:
                         flash(f'Redefina sua senha, {validName}.')
@@ -51,9 +52,11 @@ def login(tipo):
                     return render_template("usuarios/login.html",menu="Login",tipo=tipo)
             else:
                 flash('Usuário inativo, contate o administrador.')
+                current_app.logger.info(f"Usuário {validName} inativado, login sem sucesso")
                 return render_template("usuarios/login.html",menu="Login",tipo=tipo)
         else:
             flash("Usuário não encontrado.")
+            current_app.logger.warn(f"Usuário {validName} não encontrado na base")
             render_template("usuarios/login.html",menu="Login",tipo=tipo)
 
     return render_template("usuarios/login.html",menu="Login",tipo=tipo)

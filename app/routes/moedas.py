@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, request, url_for, flash
+from flask import Blueprint, render_template, session, request, url_for, flash, current_app
 from app.routes.backend import get_free_teams, get_moedas_board, get_next_jogos, get_pat_teams, moedas_log, progress_data,get_aposta,get_users,get_games,make_score_board,get_user_name,get_bet_results,get_rank
 import pymongo
 from werkzeug.utils import redirect
@@ -25,7 +25,7 @@ def gamemoedas():
     user_info = {}
     info = get_moedas_info()
     lista_pat = get_pat_teams()
-    print(request.values.get("pageind"))
+    #print(request.values.get("pageind"))
     if request.values.get("pageind"):
         info['logsindex'] = int(request.values.get("pageind"))
     if session.get('username') == None:
@@ -89,8 +89,10 @@ def addpat():
             outdb = mongo.db.moedas.find_one_and_update({'nome': apostador},{'$set':{'saldo': novo_saldo,'bloqueado': bloqueado}})
             if outdb:
                 flash(f'Tentativa de patrocínio adicionada para {time} com {valor}!','success')
+                current_app.logger.info(f"Tentativa de pat a {time} adicionada pelo {apostador}")
             else:
                 flash(f'Erro na atualização da base.','danger')
+                current_app.logger.error(f"Erro na atualização da base: {apostador} add pat de {time}")
     else:
         flash(f'Usuário não logado.','danger')
     return redirect(url_for('moedas.gamemoedas'))
@@ -114,8 +116,10 @@ def removepat():
                 outdb = mongo.db.moedas.find_one_and_update({'nome': apostador},{'$inc':{'saldo': valor,'bloqueado': -valor}})
                 if outdb:
                     flash(f'Tentativa de patrocínio removida para {time}!','success')
+                    current_app.logger.info(f"Tentativa de pat a {time} retirado pelo usuário {apostador}")
                 else:
                     flash(f'Erro na atualização da base.','danger')
+                    current_app.logger.error(f"Erro na atualização da base: {apostador} remove pat de {time}")
     else:
         flash(f'Usuário não logado.','danger')
     return redirect(url_for('moedas.gamemoedas'))
@@ -155,8 +159,10 @@ def addapoio():
             if outdb and outdb2:
                 flash(f'Apoio adicionado','success')
                 moedas_log(apostador,'i '+str(valor),time,0,"Apoio adicionado")
+                current_app.logger.info(f"Apoio adicionado ao {time} pelo usuário {apostador}")
             else:
                 flash(f'Erro na atualização da base.','danger')
+                current_app.logger.error(f"Erro na atualização da base: {apostador} adiciona apoio {valor} ao {time}")
     else:
         flash(f'Usuário não logado.','danger')
     return redirect(url_for('moedas.gamemoedas'))
@@ -178,14 +184,17 @@ def removeapoio():
                 apoios.remove({'nome': apostador,'valor': valor})
             except:
                 flash(f'Erro na remoção de apoio de {apostador}.','danger')
-            
-            outdb = mongo.db.moedas.find_one_and_update({'nome': apostador},{'$inc': {'saldo': valor,'investido': -valor}})
-            outdb2 = mongo.db.patrocinio.find_one_and_update({'Time': time},{'$set': {'Apoiadores': apoios}})
-            if outdb and outdb2:
-                flash(f'Apoio removido','success')
-                moedas_log(apostador,'x '+str(valor),time,0,"Retirada de apoio")
+                current_app.logger.warn(f"Erro na remoção de apoio de {valor} de {time}, operação não realizada.")
             else:
-                flash(f'Erro na atualização da base.','danger')
+                outdb = mongo.db.moedas.find_one_and_update({'nome': apostador},{'$inc': {'saldo': valor,'investido': -valor}})
+                outdb2 = mongo.db.patrocinio.find_one_and_update({'Time': time},{'$set': {'Apoiadores': apoios}})
+                if outdb and outdb2:
+                    flash(f'Apoio removido','success')
+                    moedas_log(apostador,'x '+str(valor),time,0,"Retirada de apoio")
+                    current_app.logger.info(f"Apoio a {time} retirado pelo usuário {apostador}")
+                else:
+                    flash(f'Erro na atualização da base.','danger')
+                    current_app.logger.error(f"Erro na atualização da base: {apostador} remove apoio de {valor} de {time}")
     else:
         flash(f'Usuário não logado.','danger')
     return redirect(url_for('moedas.gamemoedas'))
@@ -211,8 +220,10 @@ def addvalorpat():
             if outdb and outdb2:
                 flash(f'Patrocínio atualizado','success')
                 moedas_log(apostador,'i '+str(valor),time,0,"Patrocínio adicionado")
+                current_app.logger.info(f"Patrocínio a {time} adicionado pelo usuário {apostador}")
             else:
                 flash(f'Erro na atualização da base.','danger')
+                current_app.logger.error(f"Erro na atualização da base: {apostador} add valor pat de {valor} ao time {time}")
     else:
         flash(f'Usuário não logado.','danger')
     return redirect(url_for('moedas.gamemoedas'))

@@ -41,7 +41,8 @@ SUBJECT = "Amazon SES Test (SDK for Python)"
 CHARSET = "UTF-8"
 
 # Create a new SES resource and specify a region.
-client = boto3.client('ses',region_name=AWS_REGION,verify=False)
+client = boto3.client('ses',region_name=AWS_REGION)
+#client = boto3.client('ses',region_name=AWS_REGION,verify=False)
 
 
 def send_email(RECIPIENT,SUBJECT,BODY_TEXT,BODY_HTML):
@@ -182,8 +183,8 @@ def send_bet_report(test=False):
             corpo_html+="<div style=\"border-radius: 25px; border: 1px solid #73AD21; padding: 4px; padding-left: 10px; padding-right: 10px; height: 35px; text-align: center; float: center; font-size:small; display: inline-block; white-space: nowrap;\">"
             corpo_html+= aposta["Nome"] + "<br>" + str(aposta["p1"]) + "x" + str(aposta["p2"]) + "</div>"
             corpo_text+= " - " + aposta["Nome"] + ": " + str(aposta["p1"]) + "x" + str(aposta["p2"]) + "\n"
-    corpo_html+="</div><p style=\"text-align: center\">Acompanhe em: <a href=\"https://copa.leafarlins.com\">copa.leafarlins.com</a></p><p>&nbsp;</p><p>&nbsp;</p><p style=\"font-size: small;\">Responda a mensagem caso deseje descadastrar o e-mail da lista de relatórios.</p>"
-    corpo_text+="\n\nAcompanhe em: https://copa.leafarlins.com"
+    corpo_html+="</div><p style=\"text-align: center\">Acompanhe em: <a href=\"https://gokopa.leafarlins.com\">gokopa.leafarlins.com</a> <a href=\"https://copa.leafarlins.com\">copa.leafarlins.com</a></p><p>&nbsp;</p><p>&nbsp;</p><p style=\"font-size: small;\">Responda a mensagem caso deseje descadastrar o e-mail da lista de relatórios.</p>"
+    corpo_text+="\n\nAcompanhe em: https://gokopa.leafarlins.com"
     BODY_HTML = """<html>
     <head></head>
     <body style=\"font-family: \"Trebuchet MS\", Arial, Helvetica, sans-serif;\">

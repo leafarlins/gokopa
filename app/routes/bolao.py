@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, request, url_for, flash
+from flask import Blueprint, current_app, render_template, session, request, url_for, flash
 from app.routes.backend import progress_data,get_aposta,get_users,get_games,make_score_board,get_user_name,get_bet_results,get_rank
 import pymongo
 from werkzeug.utils import redirect
@@ -159,14 +159,20 @@ def edit_aposta(tipo):
                 flash("Placar deve ser um número!",'danger')
             elif now > data_jogo:
                 flash("Data do jogo já passou!",'danger')
+                current_app.logger.info(f"Apostador {apostador} tentou apostar no jogo {idjogo} com data passada")
             else:
-                mongo.db.apostas21.find_one_and_update(
+                outdb = mongo.db.apostas21.find_one_and_update(
                     {"Jogo": idjogo},
                     {'$set': {
                         str(apostador + "_p1"): int(p1),
                         str(apostador + "_p2"): int(p2)
                         }})
-                flash(f'Placar adicionado com sucesso no jogo {idjogo}!','success')
+                if outdb:
+                    flash(f'Placar adicionado com sucesso no jogo {idjogo}!','success')
+                    current_app.logger.info(f"Usuário {apostador} apostou no jogo {idjogo}")
+                else:
+                    flash(f'Erro ao escrever na base placar do jogo {idjogo}','danger')
+                    current_app.logger.error(f"Erro ao escrever na base: aposta de {apostador} do jogo {idjogo}")
             return redirect(url_for('bolao.edit_aposta',tipo=tipo,idjogo=next_bet))
     else:
         return redirect(url_for('usuario.login',tipo=tipo))
