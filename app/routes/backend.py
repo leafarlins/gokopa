@@ -136,6 +136,7 @@ def progress_data():
     progress = dict()
     now = datetime.now()
     progress["last_game"]=0
+    progress["current_game"]=0
     progress["total_games"]=64
     progress["game_progress"]=0
     progress["score_progress"]=0
@@ -144,9 +145,11 @@ def progress_data():
     progress["total_weight"]=272
     for jogo in ano_jogos:
         data_jogo = datetime.strptime(jogo["Data"],"%d/%m/%Y %H:%M")
-        if data_jogo < now and jogo["p1"] != "":
-            progress["last_game"]=jogo['Jogo']
-            progress["last_weight"]=int(jogo['p_acu'])
+        if data_jogo < now:
+            progress["current_game"]=jogo['Jogo']
+            if jogo["p1"] != "":
+                progress["last_game"]=jogo['Jogo']
+                progress["last_weight"]=int(jogo['p_acu'])
         else:
             break
     if progress["last_game"] > 0:
@@ -314,10 +317,10 @@ def probability(tipo):
 def bet_report():
     progresso = progress_data()
     lista_jogos = []
-    if progresso['last_game'] < 49 and progresso['last_game'] > 32:
-        lista_jid = [progresso['last_game']-1,progresso['last_game']]
+    if progresso['current_game'] < 49 and progresso['current_game'] > 32:
+        lista_jid = [progresso['current_game']-1,progresso['current_game']]
     else:
-        lista_jid = [progresso['last_game']]
+        lista_jid = [progresso['current_game']]
     for l_game in lista_jid:
         l_jogo = mongo.db.jogos.find_one_or_404({"Ano": ANO, "Jogo": l_game})
         bet_results = get_aposta(l_game)
