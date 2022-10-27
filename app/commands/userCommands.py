@@ -35,6 +35,7 @@ def create_user(username,name):
             "active": False,
             "gokopa": False,
             "sendEmail": False,
+            "pago": False,
             "passwordActive": False
         }
         userCollection.insert(user)
@@ -60,9 +61,9 @@ def reset_password(username,test=False):
         print("Usuário teve senha resetada. Acesse pelo link: https://gokopa.leafarlins.com/")
         print(f'Usuário: {username}')
         print(f'Senha temporária: {password}')
-        if userExists["sendEmail"]:
-            print("Enviando email de reset...")
-            send_reset_email(username,password,test)
+        #if userExists["sendEmail"]:
+        print("Enviando email de reset...")
+        send_reset_email(username,password,test)
     else:
         print("Usuário não encontrado.")
 
@@ -72,16 +73,24 @@ def list_users():
     ativos = ""
     inativos = ""
     gokopa = ""
+    pagos = ""
+    sendemail = ""
     for u in lista_users:
         if u["active"]:
             ativos += " " + u["name"]
             if u.get("gokopa"):
                 gokopa += " " + u["name"]
+            if u.get("pago"):
+                pagos += " " + u["name"]
         else:
             inativos += " " + u["name"]
+        if u["sendEmail"]:
+            sendemail += " " + u["name"]
     print(f'Lista de users ativos:{ativos}')
-    print(f'Lista de users gokopa:{gokopa}')
     print(f'Lista de users inativos:{inativos}')
+    print(f'Lista de users gokopa:{gokopa}')
+    print(f'Lista de users pagos:{pagos}')
+    print(f'Lista de users email:{sendemail}')
 
 @userCommands.cli.command("activeUser")
 @click.argument("user")

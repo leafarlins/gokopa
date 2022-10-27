@@ -8,11 +8,13 @@ from flask import Blueprint
 from app.routes.backend import get_aposta,get_users,get_games,make_score_board,get_bet_results,get_score_results
 
 configCommands = Blueprint('config',__name__)
+ANO=2022
 
 #@bolaoCommands.cli.command("getOrdered")
 #@click.argument("")
 def get_ordered(tipo):
-    collection = mongo.db.bolao21his
+    basehis = 'bolao' + str(ANO) + 'his'
+    collection = mongo.db[basehis]
     bolao_his = [u for u in collection.find().sort("Dia",pymongo.DESCENDING)]
     last_day = ""
     now = datetime.now()
@@ -61,21 +63,20 @@ def get_ordered(tipo):
             last_pos = i+1
         # Define tipo gk ou cp
         ordered_total[i]["tipo"] = tipo
-
-    #mongo.db.bolao21his.insert(ordered_total)
     
     return ordered_total
 
 @configCommands.cli.command("setHistory")
 def set_history():
+    basehis = 'bolao' + str(ANO) + 'his'
     # Em caso de duplo ranking, setar tipo 2x
     ordered_total_gk = get_ordered('gk')
     print(ordered_total_gk)
     ordered_total_cp = get_ordered('cp')
     print(ordered_total_cp)
     print("Escrevendo placar de hoje na base")
-    mongo.db.bolao21his.insert(ordered_total_gk)
-    mongo.db.bolao21his.insert(ordered_total_cp)
+    mongo.db[basehis].insert(ordered_total_gk)
+    mongo.db[basehis].insert(ordered_total_cp)
 
 @configCommands.cli.command("setRank")
 @click.argument("edition")

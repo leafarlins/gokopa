@@ -1,0 +1,6 @@
+flask user listUsers
+list_user=''
+for u in $list_user; do flask user activeUser $u pago false; done
+flask jogos loadCsv dataset/jogos_copa2022.csv
+flask jogos initApostas2022
+#flask user activeUser ze5 pago true

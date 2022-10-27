@@ -16,7 +16,7 @@ from ..extentions.database import mongo
 from flask import Blueprint
 
 SEPARADOR_CSV=","
-ANO=21
+ANO=2022
 RANKING='20-4'
 TELEGRAM_TOKEN=os.getenv('TELEGRAM_TKN')
 TELEGRAM_CHAT_ID=os.getenv('TELEGRAM_CHAT_ID')
@@ -279,7 +279,8 @@ def exec():
     #mongo.db.moedas.find_one_and_update({'nome': 'ze1'},{'$set': {'saldo': 0, 'bloqueado': 0, 'investido': 1000}})
     #mongo.db.patrocinio.find_one_and_update({'Time': 'Holanda'},{'$set': {"Patrocinador" : "-"}})
     #mongo.db.tentarpat.find_one_and_update({'valor':500},{'$set': {'valor':0}})
-    mongo.db.patrocinio.find_and_modify({'Time': 'Holanda'},{'$set': {'Patrocinador': "-"}})
+    #mongo.db.patrocinio.find_and_modify({'Time': 'Holanda'},{'$set': {'Patrocinador': "-"}})
+    mongo.db.jogos.find_one_and_update({'Ano': 21, 'Jogo': 64},{'$set': {'Data': '27/10/2022 14:30' }})
 
 #def processa_jogos():
 

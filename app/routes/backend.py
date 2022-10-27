@@ -9,15 +9,16 @@ from pymongo import collection
 from ..extentions.database import mongo
 from ..cache import cache
 
-ANO=21
+ANO=2022
+APOSTADB='apostas2022'
 
 # Para usar curl: WERKZEUG_DEBUG_PIN=off
 
 backend = Blueprint('backend',__name__)
 
 @cache.memoize(300)
-def get_games():
-    ano_jogos = [u for u in mongo.db.jogos.find({'Ano': ANO}).sort("Jogo",pymongo.ASCENDING)]
+def get_games(ano_jogos):
+    ano_jogos = [u for u in mongo.db.jogos.find({'Ano': ano_jogos}).sort("Jogo",pymongo.ASCENDING)]
     return ano_jogos
 
 @cache.memoize(3600*2)
@@ -41,7 +42,8 @@ def get_user_name(username):
 
 @cache.memoize(3600)
 def get_last_pos(user):
-    user_last = [u for u in mongo.db.bolao21his.find({"nome": user}).sort("Dia",pymongo.DESCENDING)]
+    basehis = 'bolao' + str(ANO) + 'his'
+    user_last = [u for u in mongo.db[basehis].find({"nome": user}).sort("Dia",pymongo.DESCENDING)]
     if user_last:
         last_day = user_last[0].get("posicao")
         if len(user_last) >= 7:
@@ -96,16 +98,17 @@ def get_score_results(users,resultados):
 
 #@backend.route('/api/score_board/<tipo>', methods=['GET'])
 @cache.memoize(600)
-def make_score_board(tipo):
+def make_score_board(tipo,ano_score=ANO):
+    db_apostas = 'apostas' + str(ano_score)
     now = datetime.now()
-    ano_jogos = get_games()
+    ano_jogos = get_games(ano_score)
     allUsers = get_users(tipo)
     resultados = []
         
     for jogo in ano_jogos:
         id_jogo = jogo["Jogo"]
         data_jogo = datetime.strptime(jogo["Data"],"%d/%m/%Y %H:%M")
-        aposta = get_aposta(id_jogo)
+        aposta = get_aposta(id_jogo,db_apostas)
         # If game is old and score not empty
         if data_jogo < now and jogo['p1'] != "":
             jogo_inc = get_bet_results(allUsers,aposta,jogo)
@@ -171,12 +174,12 @@ def get_users(tipo):
     if tipo == 'gk':
         allUsers = [u.get("name") for u in mongo.db.users.find({"active": True,"gokopa": True}).sort("name",pymongo.ASCENDING)]
     else:
-        allUsers = [u.get("name") for u in mongo.db.users.find({"active": True}).sort("name",pymongo.ASCENDING)]
+        allUsers = [u.get("name") for u in mongo.db.users.find({"active": True,"pago": True}).sort("name",pymongo.ASCENDING)]
     return allUsers
 
 @cache.memoize(10)
-def get_aposta(id_jogo):
-    apostas = mongo.db.apostas21
+def get_aposta(id_jogo,base):
+    apostas = mongo.db[base]
     return apostas.find_one_or_404({"Jogo": id_jogo})
 
 @cache.memoize(3600*24*7)
@@ -198,13 +201,13 @@ def get_score_game(p1,p2,b1,b2):
 #@cache.cached(timeout=3600*24)
 def frequency():
     # Setado para frequencia do ano 20
-    lista_jogos = mongo.db.jogos.find({'Ano': 20}).sort("Jogo",pymongo.ASCENDING)
+    lista_jogos = mongo.db.jogos.find({'Ano': 21}).sort("Jogo",pymongo.ASCENDING)
     # Array de frequencias de pontuações de 0 a 5
     freq = [0,0,0,0,0,0]
     totalb = 0
     for jogo in lista_jogos:
         idjogo = jogo["Jogo"]
-        aposta = mongo.db.apostas20.find_one_or_404({"Jogo": idjogo})
+        aposta = mongo.db.apostas21.find_one_or_404({"Jogo": idjogo})
         for user in get_all_users():
             b1 = aposta.get(str(user + "_p1"))
             b2 = aposta.get(str(user + "_p2"))
@@ -323,7 +326,7 @@ def bet_report():
         lista_jid = [progresso['current_game']]
     for l_game in lista_jid:
         l_jogo = mongo.db.jogos.find_one_or_404({"Ano": ANO, "Jogo": l_game})
-        bet_results = get_aposta(l_game)
+        bet_results = get_aposta(l_game,APOSTADB)
         apostas = []
         for user in get_users('cp'):
             placar1 = str(user) + "_p1"

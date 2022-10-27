@@ -9,17 +9,19 @@ from ..cache import cache
 
 bolao = Blueprint('bolao',__name__)
 
-ANO=21
+ANO=2022
+APOSTADB='apostas2022'
 
-@cache.memoize(3600*3)
+@cache.memoize(3600)
 def get_history_data(results,tipo):
+    basehis = 'bolao' + str(ANO) + 'his'
     gr_users = get_users(tipo)
     gr_data = []
-    dias = [u['Dia'] for u in mongo.db.bolao21his.find({"nome": gr_users[0],"tipo":tipo}).sort("Dia",pymongo.ASCENDING)]
+    dias = [u['Dia'] for u in mongo.db[basehis].find({"nome": gr_users[0],"tipo":tipo}).sort("Dia",pymongo.ASCENDING)]
     #print("Dias l",len(dias))
     dias.append('H')
     for usr in gr_users:
-        historia = [u['score'] for u in mongo.db.bolao21his.find({"nome": usr, "tipo": tipo}).sort("Dia",pymongo.ASCENDING)]
+        historia = [u['score'] for u in mongo.db[basehis].find({"nome": usr, "tipo": tipo}).sort("Dia",pymongo.ASCENDING)]
         #print(f'Historia para {usr} l{len(historia)}: {historia}')
         for item in results:
             if item["nome"] == usr:
@@ -38,13 +40,15 @@ def old_bolao(id,tipo):
     else:
         return redirect(url_for('bolao.apostas',tipo=tipo))
 
-
+#@bolao.route('/<tipo>/bolao', defaults={'idb': ANO})
 @bolao.route('/<tipo>/bolao')
-def apostas(tipo):
+def apostas(tipo,ano_bolao=ANO):
+    base_bolao = 'apostas' + str(ano_bolao)
+
     list_next_bet = []
     output = []
     now = datetime.now()
-    ano_jogos = get_games()
+    ano_jogos = get_games(ano_bolao)
     allUsers = get_users(tipo)
     resultados = []
     if session.get('username') == None:
@@ -63,7 +67,7 @@ def apostas(tipo):
 
         data_jogo = datetime.strptime(jogo["Data"],"%d/%m/%Y %H:%M")
         #aposta = apostas.find_one_or_404({"Jogo": id_jogo})
-        aposta = get_aposta(id_jogo)
+        aposta = get_aposta(id_jogo,base_bolao)
         # If game is old and score not empty -> and jogo['p1'] != ""
         if data_jogo < now:
             jogo_inc = get_bet_results(allUsers,aposta,jogo)
@@ -85,7 +89,7 @@ def apostas(tipo):
     #cache_timeout = 3600*24*7
     #cache.set('lista_bolao',ordered_total,cache_timeout)
     #cache.set('lista_date',lista_date,cache_timeout)
-    ordered_total = make_score_board(tipo)
+    ordered_total = make_score_board(tipo,ano_bolao)
     gr_labels,gr_data = get_history_data(ordered_total,tipo)
     #print(gr_labels,gr_data)
     #rendered=render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers,gr_labels=gr_labels,gr_data=gr_data)
@@ -116,7 +120,7 @@ def edit_aposta(tipo):
         #print("idjogo:",idjogo)
         if idjogo != 0:
             jogo = mongo.db.jogos.find_one_or_404({"Ano": ANO,"Jogo": idjogo})
-            aposta = mongo.db.apostas21.find_one_or_404({"Jogo": idjogo})
+            aposta = mongo.db[APOSTADB].find_one_or_404({"Jogo": idjogo})
             a1 = aposta.get(str(apostador + "_p1"))
             a2 = aposta.get(str(apostador + "_p2"))
             if a1 == None:
@@ -161,7 +165,7 @@ def edit_aposta(tipo):
                 flash("Data do jogo já passou!",'danger')
                 current_app.logger.info(f"Apostador {apostador} tentou apostar no jogo {idjogo} com data passada")
             else:
-                outdb = mongo.db.apostas21.find_one_and_update(
+                outdb = mongo.db[APOSTADB].find_one_and_update(
                     {"Jogo": idjogo},
                     {'$set': {
                         str(apostador + "_p1"): int(p1),

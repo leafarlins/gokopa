@@ -15,7 +15,7 @@ from ..cache import cache
 
 gokopa = Blueprint('gokopa',__name__)
 
-ANO=21
+ANO=2022
 
 @cache.memoize(600)
 def get_classificados():
@@ -66,7 +66,7 @@ def index(tipo):
     if tipo == 'cp':
         past_jogos = []
     else:
-        past_jogos = [u for u in mongo.db.jogos.find({'Ano': 20}).sort([('Jogo',pymongo.DESCENDING)])]
+        past_jogos = [u for u in mongo.db.jogos.find({'Ano': 21}).sort([('Jogo',pymongo.DESCENDING)])]
     #past_jogos=[]
     ano_jogos = mongo.db.jogos.find({'Ano': ANO}).sort([("Jogo",pymongo.ASCENDING)])
     next_jogos = []
@@ -122,14 +122,16 @@ def get_anoX_games(ano,indx):
 def old_tabela(id,tipo):
     if id == '20':
         return render_template('static/tabela20.html',menu="Tabela",tipo=tipo)
+    #elif id == 21:
+    #    return redirect(url_for('gokopa.tabela',tipo=tipo, anoc=21))
     else:
         return redirect(url_for('gokopa.tabela',tipo=tipo))
 
 
 @gokopa.route('/<tipo>/tabela')
 @cache.cached(timeout=180)
-def tabela(tipo):
-    ano_jogos = get_anoX_games(ANO,0)
+def tabela(tipo,anoc=ANO):
+    ano_jogos = get_anoX_games(anoc,0)
     tabelas_label = ['A','B','C','D','E','F','G','H']
     tabelas = []
     now = datetime.now()

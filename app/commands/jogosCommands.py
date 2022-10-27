@@ -1,5 +1,6 @@
 import json
 import os
+from xmlrpc.client import boolean
 import requests
 from app.commands.configCommands import get_ordered
 import click
@@ -12,12 +13,19 @@ from random import randrange
 #from twilio.rest import Client
 
 SEPARADOR_CSV=","
-ANO=21
+ANO=2022
+APOSTADB='apostas2022'
 #TWILIO_SID=''
 #TWILIO_TKN=''
 TELEGRAM_TOKEN=os.getenv('TELEGRAM_TKN')
 TELEGRAM_CHAT_ID=os.getenv('TELEGRAM_CHAT_ID')
+TELEGRAM=os.getenv('TELEGRAM')
 
+if TELEGRAM:
+    if TELEGRAM.lower() in ['yes','true','True']:
+        TELEGRAM=True
+    else:
+        TELEGRAM=False
 
 jogosCommands = Blueprint('jogos',__name__)
 
@@ -69,7 +77,7 @@ def get_jogos(ano,jogo):
 @jogosCommands.cli.command("getAposta")
 @click.argument("jogo")
 def get_aposta(jogo):
-    apostas = mongo.db.apostas21.find_one({'Jogo': int(jogo)})
+    apostas = mongo.db[APOSTADB].find_one({'Jogo': int(jogo)})
     if apostas:
         print(apostas)
     else:
@@ -141,7 +149,7 @@ def teste2(user,jogo):
     p1 = gera_random_score()
     p2 = gera_random_score()
 
-    outp = mongo.db.apostas21.find_one_and_update(
+    outp = mongo.db.apostas2022.find_one_and_update(
         {"Jogo": int(jogo)},
         {'$set': {
             str(user + "_p1"): int(p1),
@@ -177,10 +185,10 @@ def print_random_editgame(jogoi,jogof,tr):
         else:
             print(f'flask jogos editJogo {ANO} {jogo} placar {p1} {p2}')
 
-@jogosCommands.cli.command("initApostas20")
-def init_apostas20():
-    JOGOS=184
-    apostas = mongo.db.apostas20
+@jogosCommands.cli.command("initApostas21")
+def init_apostas21():
+    JOGOS=64
+    apostas = mongo.db.apostas21
     if apostas.count_documents({}) > 0:
         print("Base já existente.")
     else:
@@ -188,10 +196,10 @@ def init_apostas20():
             apostas.insert_one({"Jogo": i})
         print("Finalizado.")
 
-@jogosCommands.cli.command("initApostas21")
-def init_apostas21():
+@jogosCommands.cli.command("initApostas2022")
+def init_apostas2022():
     JOGOS=64
-    apostas = mongo.db.apostas21
+    apostas = mongo.db.apostas2022
     if apostas.count_documents({}) > 0:
         print("Base já existente.")
     else:
@@ -216,7 +224,7 @@ def delete_ano(ano):
 @click.argument("texto",required=False)
 def report(jogos,proximos,texto=""):
     emojis = mongo.db.emoji
-    apostas = mongo.db.apostas21
+    apostas = mongo.db.apostas2022
     lista_jogos = get_next_jogos()
     jogos_list = lista_jogos['past_jogos'][:int(jogos)]
     next_list = lista_jogos['next_jogos'][:int(proximos)]
@@ -273,17 +281,18 @@ def report(jogos,proximos,texto=""):
     mensagem+="\n\n➡️ Visite e acompanhe: https://gokopa.leafarlins.com"
     print("Preparando mensagem para envio")
     print(mensagem)
-    print("Enviando mensagem via telegram")
-    params = {
-        'chat_id': TELEGRAM_CHAT_ID,
-        'text': mensagem
-    }
-    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    r = requests.get(url, params=params)
-    if r.status_code == 200:
-        print(json.dumps(r.json(), indent=2))
-    else:
-        r.raise_for_status()
+    if TELEGRAM:
+        print("Enviando mensagem via telegram")
+        params = {
+            'chat_id': TELEGRAM_CHAT_ID,
+            'text': mensagem
+        }
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+        r = requests.get(url, params=params)
+        if r.status_code == 200:
+            print(json.dumps(r.json(), indent=2))
+        else:
+            r.raise_for_status()
     # client = Client(TWILIO_SID,TWILIO_TKN)
     # message = client.messages.create(
     #     to="+5561992728778",

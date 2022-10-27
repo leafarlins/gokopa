@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file. Based on [K
 
 ### Fixed
 - Bet report for last game
+- Year games for 2022 wc
 
 ## [1.3.3] - 2022-10-04
 
