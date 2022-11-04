@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
+## [1.3.4] - 2022-11-04
 
 ### Fixed
 - Bet report for last game
@@ -111,7 +112,8 @@ All notable changes to this project will be documented in this file. Based on [K
 - Table from games from first season year 20
 
 
-[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.3.3...HEAD
+[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.3.4...HEAD
+[1.3.4]: https://github.com/leafarlins/gokopa/compare/v1.3.3..1.3.4/
 [1.3.3]: https://github.com/leafarlins/gokopa/compare/v1.3.2..1.3.3/
 [1.3.2]: https://github.com/leafarlins/gokopa/compare/v1.3.1..1.3.2/
 [1.3.1]: https://github.com/leafarlins/gokopa/compare/v1.3.0..1.3.1/
