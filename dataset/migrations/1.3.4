@@ -4,3 +4,5 @@ for u in $list_user; do flask user activeUser $u pago false; done
 flask jogos loadCsv dataset/jogos_copa2022.csv
 flask jogos initApostas2022
 #flask user activeUser ze5 pago true
+flask time loadRanking dataset/rank_21-2.csv
+flask config setRank "21-2"

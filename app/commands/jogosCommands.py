@@ -228,7 +228,7 @@ def report(jogos,proximos,texto=""):
     lista_jogos = get_next_jogos()
     jogos_list = lista_jogos['past_jogos'][:int(jogos)]
     next_list = lista_jogos['next_jogos'][:int(proximos)]
-    mensagem="⚽ Gokopa 21"
+    mensagem="⚽ Copa 2022"
     #jogos_list[0] = int(jogos_list[0]) - 1
     #jogos_list[1] = int(jogos_list[1]) + 1
     #next_list[0] = int(next_list[0]) - 1
@@ -236,7 +236,7 @@ def report(jogos,proximos,texto=""):
     #recentes = [u for u in jogosdb.find({'Ano': ANO, "Jogo": {'$gt': jogos_list[0], '$lt': jogos_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
     #next_games = [u for u in jogosdb.find({'Ano': 20, "Jogo": {'$gt': next_list[0], '$lt': next_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
     if jogos_list:
-        mensagem="⚽ Gokopa 21 - Jogos recentes\n"
+        mensagem="⚽ Copa 2022 - Jogos recentes\n"
         for j in jogos_list:
             #mensagem+=" ".join([j['Competição'],"-",j['Fase']])+"\n"
             placar = str(j['p1']) + "x" + str(j['p2'])
@@ -266,6 +266,7 @@ def report(jogos,proximos,texto=""):
         if len(missing_users) > 0:
             mensagem+="\n❗ Lista de apostadores pendentes com os próximos jogos ❗\n"
             mensagem+=lista_users
+            mensagem+="\n"
 
     #ordered_total = get_ordered()
     ordered_total = make_score_board('gk')
@@ -278,7 +279,7 @@ def report(jogos,proximos,texto=""):
         string_placar += " ▪️ " + str(ordered_total[i]['score']) + " - " + str(ordered_total[i]['nome'])
     mensagem+=string_placar
         
-    mensagem+="\n\n➡️ Visite e acompanhe: https://gokopa.leafarlins.com"
+    mensagem+="\n\n➡️ Visite e acompanhe: https://copa.leafarlins.com"
     print("Preparando mensagem para envio")
     print(mensagem)
     if TELEGRAM:
