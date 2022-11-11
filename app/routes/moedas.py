@@ -10,6 +10,7 @@ from ..cache import cache
 moedas = Blueprint('moedas',__name__)
 
 ANO=2022
+MAX_LOG_PAGE=100
 
 @cache.memoize(10)
 def get_moedas_info():
@@ -18,7 +19,7 @@ def get_moedas_info():
     logs = [u for u in mongo.db.moedaslog.find().sort('lid',pymongo.DESCENDING)]
 
 
-    return {'moedas_board': board['moedas_board'], 'jogos': jogos['next_jogos'][:16], 'ultimos_jogos': jogos['past_jogos'][:16],'logs': logs,'logsindex': 0,'logspages': int(len(logs)/80)+1}
+    return {'moedas_board': board['moedas_board'], 'jogos': jogos['next_jogos'][:16], 'ultimos_jogos': jogos['past_jogos'][:16],'logs': logs,'logsindex': 0,'logspages': int(len(logs)/MAX_LOG_PAGE)+1}
 
 @moedas.route('/gk/moedas',methods=['GET','POST'])
 def gamemoedas():

@@ -86,11 +86,11 @@ def list_users():
             inativos += " " + u["name"]
         if u["sendEmail"]:
             sendemail += " " + u["name"]
-    print(f'Lista de users ativos:{ativos}')
-    print(f'Lista de users inativos:{inativos}')
+    print(f'Lista de users active ativos:{ativos}')
+    print(f'Lista de users active inativos:{inativos}')
     print(f'Lista de users gokopa:{gokopa}')
-    print(f'Lista de users pagos:{pagos}')
-    print(f'Lista de users email:{sendemail}')
+    print(f'Lista de users pago:{pagos}')
+    print(f'Lista de users sendEmail:{sendemail}')
 
 @userCommands.cli.command("activeUser")
 @click.argument("user")

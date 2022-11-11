@@ -13,7 +13,7 @@ from pymongo.collection import ReturnDocument
 
 from app.routes.backend import get_moedas_board, get_next_jogos, get_pat_teams, moedas_log
 from ..extentions.database import mongo
-from flask import Blueprint
+from flask import Blueprint,current_app
 
 SEPARADOR_CSV=","
 ANO=2022
@@ -305,6 +305,25 @@ def desclassifica(time):
     mongo.db.patrocinio.find_one_and_delete({'Time': time})
     print(f"Removido time {time}")
 
+@timeCommands.cli.command("verificaInvest")
+def verifica_invest():
+    moedas = [u for u in mongo.db.moedas.find()]
+    patrocinios = [u for u in mongo.db.patrocinio.find()]
+    for u in moedas:
+        valor_verificado = 0
+        for t in patrocinios:
+            if t['Patrocinador'] == u['nome']:
+                valor_verificado += t['Valor']
+            if t.get('Apoiadores'):
+                for a in t['Apoiadores']:
+                    if a['nome'] == u['nome']:
+                        valor_verificado += a['valor']
+        if valor_verificado == u['investido']:
+            print(f"Usuário {u['nome']} OK - tem investimento de {u['investido']}.")
+        else:
+            print(f"Usuário {u['nome']} XX - investimento incompatível, {u['investido']} x {valor_verificado} ({valor_verificado-u['investido']})")
+
+
 @timeCommands.cli.command("processaPat")
 @click.argument("jogos",required=False)
 @click.argument("leilao",required=False)
@@ -322,24 +341,73 @@ def processa_pat(jogos='0',leilao=False):
     #{"nome" : "ze8", "saldo" : 1000, "bloqueado" : 0, "investido" : 0 }
     moedas = mongo.db.moedas
 
+
+    # Emprestimo extra inicial
+    if leilao:
+        moedas.update_many({},{'$inc': {'saldo': 200}})
+        moedas_log('all',"+200","",0,"Empréstimo inicial")
+
     # Processamento dos últimos jogos
     if jogos > 0:
         past_jogos = get_next_jogos()['past_jogos'][:jogos]
+        verify_jogos = get_next_jogos()['next_jogos'][:4]
+
+        if past_jogos[0]['jid'] > 32:
+            moedas.update_many({},{'$inc': {'saldo': -150}})
+            moedas_log('all',"-150","",0,"Pagamento de empréstimo")
+
+        # Devolve apoios de jogos impedidos de apoiar
+        for j in (verify_jogos + past_jogos):
+            pat1 = patrocinios.find_one({'Time': j['time1']})
+            pat2 = patrocinios.find_one({'Time': j['time2']})
+            if pat1 and pat2:
+                if pat1['Patrocinador'] != '-' and pat2['Patrocinador'] != '-':
+                    lista_apoios_1 = pat1.get('Apoiadores')
+                    lista_apoios_2 = pat2.get('Apoiadores')
+                    if lista_apoios_1 and lista_apoios_2:
+                        remover_a = []
+                        for a1 in lista_apoios_1:
+                            apoiador = a1['nome']
+                            for a2 in lista_apoios_2:
+                                if a2['nome'] == apoiador:
+                                    remover_a.append(apoiador)
+                        if remover_a:
+                            print(f"Jogo {j['jid']} possui apoiadores a remover: {remover_a}")
+                            current_app.logger.info(f"Jogo {j['jid']} possui apoiadores a remover: {remover_a}")
+                            for apoiador in remover_a:
+                                for a in lista_apoios_1:
+                                    if a['nome'] == apoiador:
+                                        moedas.find_one_and_update({'nome': apoiador},{'$inc':{'saldo': a['valor'],'investido': -a['valor']}})
+                                        moedas_log(a['nome'],"x "+str(a['valor']),j['time1'],j['jid'],"Apoio duplicado impedido")
+                                        lista_apoios_1.remove(a)
+                                        break
+                                for a in lista_apoios_2:
+                                    if a['nome'] == apoiador:
+                                        moedas.find_one_and_update({'nome': apoiador},{'$inc':{'saldo': a['valor'],'investido': -a['valor']}})
+                                        moedas_log(a['nome'],"x "+str(a['valor']),j['time2'],j['jid'],"Apoio duplicado impedido")
+                                        lista_apoios_2.remove(a)
+                                        break
+                            outdb1 = patrocinios.find_one_and_update({'Time': j['time1']},{'$set': {"Apoiadores": lista_apoios_1}})
+                            outdb2 = patrocinios.find_one_and_update({'Time': j['time2']},{'$set': {"Apoiadores": lista_apoios_2}})
+                            if outdb1 and outdb2:
+                                current_app.logger.info(f"Apoios duplicados a {j['time1']} e {j['time2']} removidos")
+                            else:
+                                current_app.logger.error(f"Erro na remoção de apoios duplicados em {j['time1']} e {j['time2']} ")
 
         # Debito de saldo parado
-        if past_jogos[0]['jid'] > 16 and past_jogos[0]['jid'] < 61:
-            debito_parado = int(past_jogos[0]['jid']*2-30)
-        else:
-            debito_parado = 0
-        if debito_parado > 0:
-            lista_moedas = [u for u in moedas.find()]
-            for user in lista_moedas:
-                if user['saldo'] > 0:
-                    deb_saldo = debito_parado
-                    if deb_saldo > user['saldo']:
-                        deb_saldo = user['saldo']
-                    moedas.find_one_and_update({'nome': user['nome']},{'$inc': {'saldo': -deb_saldo}})
-                    moedas_log(user['nome'],"-"+str(deb_saldo),"",0,"Débido de saldo parado")
+        # if past_jogos[0]['jid'] > 16 and past_jogos[0]['jid'] < 61:
+        #     debito_parado = int(past_jogos[0]['jid']*2-30)
+        # else:
+        #     debito_parado = 0
+        # if debito_parado > 0:
+        #     lista_moedas = [u for u in moedas.find()]
+        #     for user in lista_moedas:
+        #         if user['saldo'] > 0:
+        #             deb_saldo = debito_parado
+        #             if deb_saldo > user['saldo']:
+        #                 deb_saldo = user['saldo']
+        #             moedas.find_one_and_update({'nome': user['nome']},{'$inc': {'saldo': -deb_saldo}})
+        #             moedas_log(user['nome'],"-"+str(deb_saldo),"",0,"Débido de saldo parado")
 
         # Processamento dos jogos
         for jogo in past_jogos:
@@ -360,16 +428,17 @@ def processa_pat(jogos='0',leilao=False):
                 lista_t = [(jogo['time1'],lista_m[0],jogo['time2']),(jogo['time2'],lista_m[1],jogo['time1'])]
                 for t,moeda_ganha,tadv in lista_t:
                     # Atualização do valor do time
-                    patDb = patrocinios.find_one_and_update({'Time': t},{'$inc': {'Valor': moeda_ganha}})
+                    inc_invest = int(moeda_ganha/2)
+                    patDb = patrocinios.find_one_and_update({'Time': t},{'$inc': {'Valor': inc_invest}})
                     # Atualizaçao nos valores de cada jogador
                     if patDb['Patrocinador'] != '-':
                         if moeda_ganha > 0:
-                            moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'investido': moeda_ganha,'saldo': moeda_ganha}})
+                            moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'investido': inc_invest,'saldo': moeda_ganha}})
                             moedas_log(patDb['Patrocinador'],"+"+str(moeda_ganha),t,jogo['jid'],"Jogo de time patrocinado")
-                            moedas_log(patDb['Patrocinador'],"i+"+str(moeda_ganha),t,jogo['jid'],"Ganho de valor patrocinado")
+                            moedas_log(patDb['Patrocinador'],"i+"+str(inc_invest),t,jogo['jid'],"Ganho de valor patrocinado")
                         else:
-                            moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'investido': moeda_ganha}})
-                            moedas_log(patDb['Patrocinador'],"i"+str(moeda_ganha),t,jogo['jid'],"Perda de valor patrocinado")
+                            moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'investido': inc_invest}})
+                            moedas_log(patDb['Patrocinador'],"i"+str(inc_invest),t,jogo['jid'],"Perda de valor patrocinado")
                         # Processamento da lista de apoios
                         lista_apoios = patDb.get('Apoiadores')
                         if lista_apoios:
@@ -380,27 +449,29 @@ def processa_pat(jogos='0',leilao=False):
                                     valor_max = a['valor']
                                 # Se perda, perda no valor do patrocinio
                                 if moeda_ganha < 0:
-                                    novo_valor_apoio = a['valor'] + moeda_ganha
+                                    moeda_perdida = int(moeda_ganha/2 - 1)
+                                    novo_valor_apoio = a['valor'] + moeda_perdida
                                     if novo_valor_apoio <=0:
                                         moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'investido': -a['valor']}})
                                         moedas_log(a['nome'],"x"+str(-a['valor']),t,jogo['jid'],"Perda de apoio ao time")
                                         lista_apoios.remove(a)
                                     else:
-                                        moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'investido': moeda_ganha}})
-                                        moedas_log(a['nome'],"i"+str(moeda_ganha),t,jogo['jid'],"Perda parcial do apoio ao time")
+                                        moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'investido': moeda_perdida}})
+                                        moedas_log(a['nome'],"i"+str(moeda_perdida),t,jogo['jid'],"Perda parcial do apoio ao time")
                                         a['valor'] = novo_valor_apoio
-                                # Se ganho, incrementa saldo apos debitar 10%
+                                # Se ganho, incrementa saldo e +10% ao patrocinador
                                 else:
                                     advDb = patrocinios.find_one({'Time': tadv})
                                     patadversario = advDb['Patrocinador']
                                     if a['nome'] != patadversario:
-                                        valor_apoio = int(valor_max*90/100)
-                                        apoios_taxa += valor_max - valor_apoio
+                                        valor_apoio = valor_max
+                                        apoios_taxa += int(valor_max/10 + 1)
                                         moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'saldo': valor_apoio}})
                                         moedas_log(a['nome'],"+"+str(valor_apoio),t,jogo['jid'],"Jogo de time apoiado")
                                     else:
                                         moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'saldo': a['valor'],'investido': -a['valor']}})
                                         moedas_log(a['nome'],"x "+str(a['valor']),t,jogo['jid'],"Impedido de apoiar jogo")
+                                        lista_apoios.remove(a)
                             # Adiciona taxa de apoios ao patrocinador e atualiza apoios
                             if apoios_taxa > 0:
                                 moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'saldo': apoios_taxa}})

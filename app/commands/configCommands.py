@@ -29,13 +29,13 @@ def get_ordered(tipo):
         last_day = bolao_his[0].get("Dia")
         last_date = bolao_his[0].get("Data")
         #print(f'Ultima dia: {last_day} - {last_date}')
-    ano_jogos = get_games()
+    ano_jogos = get_games(ANO)
     allUsers = get_users(tipo)
 
     for jogo in ano_jogos:
         id_jogo = jogo["Jogo"]
         data_jogo = datetime.strptime(jogo["Data"],"%d/%m/%Y %H:%M")
-        aposta = get_aposta(id_jogo)
+        aposta = get_aposta(id_jogo,'apostas'+str(ANO))
         # If game is old and score not empty
         if data_jogo < now and jogo['p1'] != "":
             jogo_inc = get_bet_results(allUsers,aposta,jogo)

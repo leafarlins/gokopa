@@ -192,7 +192,7 @@
                 <th style="min-width: 20px;">🪙</th>
                 <th style="min-width: 100px;">Descrição</th>
             </tr>
-            {% for l in info['logs'][info['logsindex']*80:info['logsindex']*80+80] %}
+            {% for l in info['logs'][info['logsindex']*100:info['logsindex']*100+100] %}
             <tr>
                 <td title="{{ l['lid'] }}">{{ l['data'] }}</td>
                 <td>{% if info['username'] == l['nome'] %}<b>{{ l['nome'] }}</b>{% else %}{{ l['nome'] }}{% endif %}</td>

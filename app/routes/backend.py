@@ -406,10 +406,10 @@ def get_next_jogos():
                 t2v = t2['Valor']
                 if proporcao < 1:
                     proporcao = t2['Valor'] / t1['Valor']
-                if proporcao > 3:
-                    percent = 60
+                if proporcao > 4:
+                    percent = 100
                 else:
-                    percent = int(20*proporcao)
+                    percent = int(20*proporcao+20)
                 if t2['Valor'] > t1['Valor']:
                     moedas_em_jogo = int(t1['Valor']*percent/100)
                 else:
