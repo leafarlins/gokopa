@@ -251,7 +251,7 @@ def report(jogos,proximos,texto=""):
     if texto:
         mensagem+="\n"+texto+"\n"
     if next_list:
-        allUsers = get_users('gk')
+        allUsers = get_users('cp')
         #print(allUsers)
         missing_users = set()
         for j in next_list:
@@ -269,7 +269,7 @@ def report(jogos,proximos,texto=""):
             mensagem+="\n"
 
     #ordered_total = get_ordered()
-    ordered_total = make_score_board('gk')
+    ordered_total = make_score_board('cp')
     range_print = 5
     if len(ordered_total) < 5:
         range_print = len(ordered_total)
@@ -279,7 +279,7 @@ def report(jogos,proximos,texto=""):
         string_placar += " ▪️ " + str(ordered_total[i]['score']) + " - " + str(ordered_total[i]['nome'])
     mensagem+=string_placar
         
-    mensagem+="\n\n➡️ Visite e acompanhe: https://copa.leafarlins.com"
+    mensagem+="\n\n➡️ Visite e acompanhe: https://copa.leafarlins.com\nMoedas: https://gokopa.leafarlins.com/gk/moedas"
     print("Preparando mensagem para envio")
     print(mensagem)
     if TELEGRAM:
