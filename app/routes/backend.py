@@ -41,9 +41,9 @@ def get_user_name(username):
     return validUser["name"]
 
 @cache.memoize(3600)
-def get_last_pos(user):
+def get_last_pos(tipo,user):
     basehis = 'bolao' + str(ANO) + 'his'
-    user_last = [u for u in mongo.db[basehis].find({"nome": user}).sort("Dia",pymongo.DESCENDING)]
+    user_last = [u for u in mongo.db[basehis].find({"nome": user, 'tipo': tipo}).sort("Dia",pymongo.DESCENDING)]
     if user_last:
         last_day = user_last[0].get("posicao")
         if len(user_last) >= 7:
@@ -76,14 +76,14 @@ def get_bet_results(users,aposta,jogo):
     return jogo
 
 @cache.memoize(300)
-def get_score_results(users,resultados):
+def get_score_results(tipo,users,resultados):
         list_total=[]
         for u in users:
             udict=dict()
             udict["nome"]=u
             udict["score"]=0
             udict["pc"]=0
-            last_position_day,last_position_week = get_last_pos(u)
+            last_position_day,last_position_week = get_last_pos(tipo,u)
             udict["last_day"] = last_position_day
             udict["last_week"] = last_position_week
             # sum score*peso foreach result
@@ -97,7 +97,7 @@ def get_score_results(users,resultados):
         return list_total
 
 #@backend.route('/api/score_board/<tipo>', methods=['GET'])
-@cache.memoize(600)
+@cache.memoize(120)
 def make_score_board(tipo,ano_score=ANO):
     db_apostas = 'apostas' + str(ano_score)
     now = datetime.now()
@@ -114,7 +114,7 @@ def make_score_board(tipo,ano_score=ANO):
             jogo_inc = get_bet_results(allUsers,aposta,jogo)
             resultados.append(jogo_inc)
     
-    list_total=get_score_results(allUsers,resultados)
+    list_total=get_score_results(tipo,allUsers,resultados)
 
     ordered_total = sorted(sorted(list_total, key=lambda k: k['pc'],reverse=True), key=lambda k: k['score'],reverse=True)
     last_score = 0
