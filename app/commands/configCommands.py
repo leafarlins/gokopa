@@ -41,7 +41,7 @@ def get_ordered(tipo):
             jogo_inc = get_bet_results(allUsers,aposta,jogo)
             resultados.append(jogo_inc)
 
-    list_total=get_score_results(allUsers,resultados)
+    list_total=get_score_results(tipo,allUsers,resultados)
 
     #print(allUsers)
     #print(list_total)
