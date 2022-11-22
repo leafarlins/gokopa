@@ -492,13 +492,15 @@ def get_pat_teams():
             t2 = "-"
             while busca:
                 jogo=jogos[j]
+                now = datetime.now()
                 if jogo['time1'] == t['Time'] or jogo['time2'] == t['Time']:
-                    apoio_liberado = True
+                    # Se o horario do jogo nao passou, libera apoio
+                    if now < datetime.strptime(jogo['data'],"%d/%m/%Y %H:%M"):
+                        apoio_liberado = True
                     # Busca em jogos recentes
                     for pastj in past_jogos:
                         if pastj['time1'] == t['Time'] or pastj['time2'] == t['Time']:
                             data = datetime.strptime(pastj['data'],"%d/%m/%Y %H:%M")
-                            now = datetime.now()
                             if datetime.strftime(now,"%d/%m") == datetime.strftime(data,"%d/%m") and now > data:
                                 apoio_liberado = False
                                 if pastj.get('processado'):
