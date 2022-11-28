@@ -64,7 +64,7 @@
                 {% if tipo == 'gk' %}
                 <li class="nav-item"><a {% if menu=='Moedas' %}class="active"{% endif %}href="/gk/moedas">Moedas</a></li>
                 {% endif %}
-                <li class="nav-item"><a {% if menu=='Contato' %}class="active"{% endif %}href="/{{ tipo }}/contato">Contato</a></li>
+                <li class="nav-item"><a {% if menu=='Sobre' %}class="active"{% endif %}href="/{{ tipo }}/sobre">Sobre</a></li>
                 
                 <li class="nav-item">
                     {% if session['username'] %}<a href="/{{ tipo }}/logout">Logout</a>
@@ -80,8 +80,8 @@
         
         <p>&nbsp;</p>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <div class="footer">
+        <!-- <div class="footer">
             Gokopa do Mundo v1.3.6
-        </div>
+        </div> -->
     
     </body>

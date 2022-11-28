@@ -10,7 +10,7 @@ edit_changelog() {
     sed -i "/^## \[unreleased/a ## \[$VERSAO\] - $HOJE" CHANGELOG.md
     #sed -n '/## \[unreleased/,/^## /p' CHANGELOG.md | sed '/^## \[/d' > /tmp/tagnotes
 
-    sed -i "s/Gokopa do Mundo v.*/Gokopa do Mundo v$VERSAO/" app/templates/base.html
+    sed -i "s/Gokopa do Mundo v.*/Gokopa do Mundo v$VERSAO/" app/templates/sobre.html
 }
 
 commit_tag() {

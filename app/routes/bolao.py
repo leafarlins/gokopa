@@ -107,9 +107,9 @@ def regras():
     return render_template("regras.html",menu="Regras",tipo='cp',premio=premio)
 
 
-@bolao.route('/<tipo>/contato')
-def contato(tipo):
-    return render_template("contato.html",menu="Contato",tipo=tipo)
+@bolao.route('/<tipo>/sobre')
+def sobre(tipo):
+    return render_template("sobre.html",menu="Sobre",tipo=tipo)
 
 @bolao.route('/<tipo>/editaposta',methods=["GET","POST"])
 def edit_aposta(tipo):
@@ -180,3 +180,47 @@ def edit_aposta(tipo):
             return redirect(url_for('bolao.edit_aposta',tipo=tipo,idjogo=next_bet))
     else:
         return redirect(url_for('usuario.login',tipo=tipo))
+
+# Funcao criada para cadastro na copa
+@bolao.route('/cp/placar',methods=["GET","POST"])
+def edit_placar():
+    if 'username' in session and session['username'] == 'leafarlins@gmail.com':
+        lista_jogos = get_games(ANO)
+        if request.method == "GET":
+            progresso = progress_data()
+            current_game = progresso['last_game']
+        else:
+            p1 = int(request.values.get("p1"))
+            p2 = int(request.values.get("p2"))
+            current_game = int(request.values.get("jids"))
+            tr1 = request.values.get("tr1")
+            tr2 = request.values.get("tr2")
+            pe1 = request.values.get("pe1")
+            pe2 = request.values.get("pe2")
+            if tr1:
+                tr1 = int(tr1)
+                tr2 = int(tr2)
+                if pe1:
+                    pe1 = int(pe1)
+                    pe2 = int(pe2)
+            outdb = mongo.db['jogos'].find_one_and_update(
+                    {"Jogo": current_game, "Ano": ANO},
+                    {'$set': {
+                        'p1': p1, 'p2': p2, 'tr1': tr1, 'tr2': tr2, 'pe1': pe1, 'pe2': pe2
+                    }})
+            if outdb:
+                flash(f'Placar adicionado no jogo {current_game}: {p1}x{p2}','success')
+                current_app.logger.info(f"Placar do jogo {current_game} cadastrado")
+            else:
+                flash(f'Erro no cadastro do jogo {current_game}','danger')
+                current_app.logger.error(f"Erro ao cadastrar placar do jogo {current_game}")
+
+        data = {
+            'jogos': lista_jogos,
+            'last_game': current_game
+        }
+
+        return render_template('placar.html',tipo='cp',data=data)
+    else:
+        return redirect(url_for('gokopa.home'))
+

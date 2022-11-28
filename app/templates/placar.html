@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row scoll-pane">
+    <div class="col-12 text-center">
+        <h1>Cadastro de Placar</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
+            <div class="alert alert-{{ category }} text-center" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %} {% endif %} {% endwith %}
+        {% set current = data['last_game'] %}
+        <div class="m-3 text-center">
+            <table class="tab_gokopa tab_jogos smallt">
+                {% set jogo = data['jogos'][current] %}
+                <tr>
+                <td>J:{{ jogo['Jogo'] }} {{ jogo['Data'] }}</td>
+                <td>{{ jogo['Competição'] }} {{ jogo['Fase'] }}</td>
+                </tr><tr>
+                <td colspan="2">{{ jogo['Time1'] }} <img class="flag" src="../static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+                    x <img class="flag" src="../static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ jogo['Time2'] }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <form action="{{ url_for('bolao.edit_placar') }}" method="post">
+            <div class="row mb-2">
+                <div class="col-sm-6 text-sm-end">
+                    <label for="time1">Id do jogo:</label>
+                </div>
+                <div class="col-sm-6 text-sm-start">
+                    <!-- <input type="hidden" name="jid" value="{{ current }}" id="jid"> -->
+                    <select list="jids" name="jids" id="jids">
+                        {% for i in data["jogos"] %}
+                            <option value="{{ i['Jogo'] }}" label="{{ i['Jogo'] }}" {% if i['Jogo']==current+1 %}selected{% endif %}>{{ i['Jogo'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div><div class="row mb-3">
+                <div class="col-sm-6 text-sm-end">
+                    <label for="valor_pat">Placar:</label>
+                </div>
+                <div class="col-sm-6 text-sm-start">
+                    <input style="max-width: 3rem" type="number" name="p1" id="p1" width="10px" value="0" min="0">x
+                    <input style="max-width: 3rem" type="number" name="p2" id="p2" width="10px" value="0" min="0">
+                </div>
+                <div class="col-sm-6 text-sm-end">
+                    <label for="valor_pat">TR:</label>
+                </div>
+                <div class="col-sm-6 text-sm-start">
+                    <input style="max-width: 3rem" type="number" name="tr1" id="tr1" width="10px" value="" min="0">x
+                    <input style="max-width: 3rem" type="number" name="tr2" id="tr2" width="10px" value="" min="0">
+                </div>
+                <div class="col-sm-6 text-sm-end">
+                    <label for="valor_pat">Pênalti:</label>
+                </div>
+                <div class="col-sm-6 text-sm-start">
+                    <input style="max-width: 3rem" type="number" name="pe1" id="pe1" width="10px" value="" min="0">x
+                    <input style="max-width: 3rem" type="number" name="pe2" id="pe2" width="10px" value="" min="0">
+                </div>
+                <div class="col-12 text-center m-3"><button type="submit" class="btn btn-outline-primary">Cadastrar placar</button></div>
+            </div>
+            
+        </form>
+
+    </div>
+</div>
+    <div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
+
+{% endblock %}
