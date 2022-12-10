@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
+
+### Added
+- Send warning email
+
+### Fixed
+- Moedas game (get_next_jogos)
+
 ## [1.3.7] - 2022-11-28
 
 ### Added

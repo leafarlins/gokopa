@@ -18,9 +18,9 @@ commit_tag() {
     git add CHANGELOG.md
     git add app/templates/base.html
     git commit -m "release v$VERSAO"
-    #git tag -a v$VERSAO -F /tmp/tagnotes
-    #git push --tags origin master
-    git push origin master
+    git tag -a v$VERSAO
+    git push --tags origin master
+    #git push origin master
 
 }
 

@@ -445,6 +445,11 @@ def get_next_jogos():
                     timevit = time2
                 else:
                     timevit = 'empate'
+                    if n.get("pe1"):
+                        if n['pe1'] > n['pe2']:
+                            timevit = time1
+                        else:
+                            timevit = time2
                 jogo['p1'] = n['p1']
                 jogo['p2'] = n['p2']
                 jogo['vitoria'] = timevit
