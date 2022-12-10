@@ -16,9 +16,9 @@ edit_changelog() {
 commit_tag() {
     echo "Commitando alteracoes"
     git add CHANGELOG.md
-    git add app/templates/base.html
+    git add app/templates/sobre.html
     git commit -m "release v$VERSAO"
-    git tag -a v$VERSAO
+    git tag v$VERSAO
     git push --tags origin master
     #git push origin master
 
