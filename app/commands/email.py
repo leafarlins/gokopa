@@ -155,6 +155,50 @@ def send_reset_email(username,password,test=False):
         recipient = username
     send_email(recipient,subject,BODY_TEXT,BODY_HTML)
 
+@emailCommands.cli.command("send_aviso")
+@click.argument("aviso")
+def send_aviso(aviso):
+    subject="Aviso"
+    corpo_text = "Aviso:\n"
+    corpo_html="<h1 style=\"text-align: center\">Aviso</h1><p style=\"text-align: center\">"
+    corpo_text += aviso
+    corpo_html += aviso
+    corpo_text+="\n\nAcompanhe em: https://copa.leafarlins.com"
+    corpo_html+="</p><p style=\"text-align: center\">Acompanhe em: <a href=\"https://copa.leafarlins.com\">copa.leafarlins.com</a></p>"
+    BODY_HTML = """<html>
+    <head></head>
+    <body style=\"font-family: \"Trebuchet MS\", Arial, Helvetica, sans-serif;\">
+    """ + corpo_html + """
+    </body>
+    </html>
+                """
+    # The email body for recipients with non-HTML email clients.
+    BODY_TEXT = (corpo_text)
+    #print(corpo_html)
+    print(corpo_text)
+    user_list = [ u for u in mongo.db.users.find({"active": True})]
+    for user in user_list:
+        print(f'Enviando email para usuário { user["username"] }')
+        recipient = user["username"]
+        #send_email(recipient,subject,BODY_TEXT,BODY_HTML)
+    # Para testes:
+    #send_email("leafarlins@gmail.com",subject,BODY_TEXT,BODY_HTML)
+
+    if TELEGRAM:
+        print("Enviando mensagem via telegram")
+        params = {
+            'chat_id': TELEGRAM_CHAT_ID,
+            'text': BODY_TEXT
+        }
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+        r = requests.get(url, params=params)
+        if r.status_code == 200:
+            print(json.dumps(r.json(), indent=2))
+        else:
+            r.raise_for_status()
+
+
+
 @emailCommands.cli.command("send_bet_report")
 @click.argument("test",required=False)
 def send_bet_report(test=False):
@@ -197,13 +241,12 @@ def send_bet_report(test=False):
     #print(corpo_html)
     print(corpo_text)
     user_list = [ u for u in mongo.db.users.find({"active": True,"sendEmail": True})]
-    print(user_list)
     for user in user_list:
         print(f'Enviando email para usuário { user["username"] }')
         recipient = user["username"]
         send_email(recipient,subject,BODY_TEXT,BODY_HTML)
-    if test:
-        send_email("leafarlins@gmail.com",subject,BODY_TEXT,BODY_HTML)
+    # Para testes:
+    send_email("leafarlins@gmail.com",subject,BODY_TEXT,BODY_HTML)
     
     if TELEGRAM:
         print("Enviando mensagem via telegram")
