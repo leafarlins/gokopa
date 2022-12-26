@@ -4,7 +4,7 @@
 
 <div class="sectionj">
   <h2>Bolão</h2>
-  <p>Bolão da Copa do Mundo 2022.</p>
+  <p>Bolão do ano {{ dados['Ano'] }}</p>
 </div>
 
 <div class="row scoll-pane">
@@ -17,14 +17,14 @@
       </div>
       {% endfor %} {% endif %} {% endwith %}
 
-    {% if userlogado %}
-      {% if lista_jogos %}
+    {% if dados['apostador'] %}
+      {% if dados['lista_jogos'] %}
         <table class="tab_gokopa meubolao">
             <tr>
               <th colspan="2">Jogo</th>
               <th>Aposta</th>
             </tr>
-          {% for jogo in lista_jogos %}
+          {% for jogo in dados['lista_jogos'] %}
             <tr>
               <td>J:{{ jogo['Jogo'] }} {{ jogo['Data'] }}</td>
               <td>{{ jogo['Competição'] }} {{ jogo['Fase'] }}</td>
@@ -32,8 +32,8 @@
             </tr><tr>
               <td colspan="2">{{ jogo['Time1'] }} <img class="flag" src="../static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
                 x <img class="flag" src="../static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ jogo['Time2'] }}</td>
-              <td>{% if jogo['bet1'] %}{{ jogo['bet1'] }}x{{ jogo['bet2'] }} <a target="_blank" href="{{ url_for('bolao.edit_aposta',idjogo=jogo['Jogo'],tipo=tipo) }}">Editar</a>
-                {% else %}<a target="_blank" href="{{ url_for('bolao.edit_aposta',idjogo=jogo['Jogo'],tipo=tipo) }}">Apostar</a>
+              <td>{% if jogo['bet1'] %}{{ jogo['bet1'] }}x{{ jogo['bet2'] }} <a target="_blank" href="{{ url_for('bolao.edit_aposta',idjogo=jogo['Jogo']) }}">Editar</a>
+                {% else %}<a target="_blank" href="{{ url_for('bolao.edit_aposta',idjogo=jogo['Jogo']) }}">Apostar</a>
               {% endif %}</td>
             </tr>
           {% endfor %}
@@ -47,7 +47,7 @@
 
   <div class="sectionj col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
       <h3>Resultado geral</h3>
-        {% if resultados %}
+        {% if dados['ranking'] %}
         <table class="tab_gokopa">
           <tr>
             <th title="Posição">#</th>
@@ -58,7 +58,7 @@
             <th title="Última semana" style="min-width: 50px;">1w</th>
           </tr>
           {% set ns = namespace(last_p=1,last_score=0,last_pc=0) %}
-          {% for p in total | sort(attribute='pc', reverse = True) | sort(attribute='score', reverse = True) %}
+          {% for p in dados['ranking'] | sort(attribute='pc', reverse = True) | sort(attribute='score', reverse = True) %}
           <tr>
             <td>{{ p['posicao'] }}</td>
             <td>{{ p['nome'] }}</td>
@@ -85,13 +85,13 @@
         </table>
 
         <div class="sectionj">
-          <p>Jogos disputados: {{ progress_data["last_game"] }}/{{ progress_data["total_games"] }}</p>
+          <p>Jogos disputados: {{ dados['progress_data']["last_game"] }}/{{ dados['progress_data']["total_games"] }}</p>
           <div class="progress">
-            <div class="progress-bar progress-bar-striped" role="progressbar" style="width: {{ progress_data['game_progress'] }}%;" aria-valuenow="{{ progress_data['game_progress'] }}" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress-bar progress-bar-striped" role="progressbar" style="width: {{ dados['progress_data']['game_progress'] }}%;" aria-valuenow="{{ dados['progress_data']['game_progress'] }}" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
-          <br> <p>Pontuação disputada: {{ progress_data['score_progress'] }}%</p>
+          <br> <p>Pontuação disputada: {{ dados['progress_data']['score_progress'] }}%</p>
           <div class="progress">
-            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ progress_data['score_progress'] }}%;" aria-valuenow="{{ progress_data['score_progress'] }}" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ dados['progress_data']['score_progress'] }}%;" aria-valuenow="{{ dados['progress_data']['score_progress'] }}" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
         </div>
 
@@ -100,13 +100,16 @@
   </div>
    
 </div>
-{% if resultados %}
+{% if dados['resultados'] %}
+{% set gr_labels = dados['grafico']['labels'] %}
+{% set gr_users = dados['users'] %}
+{% set gr_data = dados['grafico']['data'] %}
 <div class="graficopts">
   <h4>Resultado detalhado de pontos</h4>
   <canvas id="grafico" height="600"></canvas>
   <script>
     var labelsgr = {{ gr_labels | safe }};
-    let nomes = {{ users | safe }};
+    let nomes = {{ gr_users | safe }};
     //const colors = ['#3e95cd','#289964','#c8d457','#464099','#9c661f','#a01111','#eca335','#4eebc9','#24063b','#ca5fc5'];
     const colors = ['#3e95cd','#289964','#c8d457','#9c661f','#464099','#a01111','#eca335','#4eebc9','#24063b','#4aca83','#a83aa3','#a3a077','#e04747','#f07cb6','#20458a'];
     let datagr = {{ gr_data | safe }};
@@ -183,7 +186,8 @@ for(let i=0;i<nomes.length;i++){
       <p>&nbsp;</p><p class="center">Tabela de pontuação</p>
 </div>
 
-{% for jogo in resultados|sort(attribute='Jogo', reverse = True) %}
+{% set lista_jogos = dados['resultados'] %}
+{% for jogo in lista_jogos | sort(attribute='Jogo', reverse = True) %}
 <div class="row scoll-pane">
   <div class="col-12 col-sm-12 col-md-6 col-lg-4">
     <table class="tab_gokopa tab_jogos smallt">
@@ -197,7 +201,7 @@ for(let i=0;i<nomes.length;i++){
     </table>
   </div>
   <div class="col-12 col-sm-12 col-md-6 col-lg-8">
-    {% for u in users %}
+    {% for u in dados['users'] %}
     <div class="betcorner"><p>{{ u }}<br>{{ jogo[u][0] }} | {{ jogo[u][1] }} | {{ jogo[u][2] }}</p></div>
     {% endfor %}
   </div>
@@ -207,12 +211,11 @@ for(let i=0;i<nomes.length;i++){
 
 {% endif %}
 
-{% if tipo == 'gk' %}
-<div class="sectionj">
+<div class="text-center">
   <h3>Bolões antigos</h3>
-  <p class="center">Veja resultado de bolões antigos: <a href="bolao21">Bolão 21</a> <a href="bolao20">Bolão 20</a></p>
+  <p>Veja resultados dos bolões da Copa do Mundo: <a href="bolao2022">Bolão Copa 2022</a></p>
+  <p class="center">Veja resultado de bolões antigos da gokopa: <a href="bolao21">Bolão 21</a> <a href="bolao20">Bolão 20</a></p>
   <p>&nbsp;</p>
 </div>
-{% endif %}
 
 {% endblock %}

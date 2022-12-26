@@ -16,7 +16,7 @@ from ..extentions.database import mongo
 from flask import Blueprint,current_app
 
 SEPARADOR_CSV=","
-ANO=2022
+ANO=22
 RANKING='20-4'
 TELEGRAM_TOKEN=os.getenv('TELEGRAM_TKN')
 TELEGRAM_CHAT_ID=os.getenv('TELEGRAM_CHAT_ID')
@@ -85,6 +85,11 @@ def load_csv(csv_file):
             colunas = linha.strip().split(SEPARADOR_CSV)
             documento = zip(cabecalho,colunas)
             documento = dict(documento)
+            documento['p21'] = int(documento['p21'])
+            documento['p20'] = int(documento['p20'])
+            documento['p19'] = int(documento['p19'])
+            documento['p18'] = int(documento['p18'])
+            documento['ph'] = int(documento['ph'])
             data.append(documento)
 
         if not data:
@@ -97,11 +102,21 @@ def load_csv(csv_file):
     # question = input(f'Deseja inserir os dados impressos? (S/N) ')
     # if question.upper() == "S":
     timeCollection = mongo.db.timehistory
+    outdb = timeCollection.find()
+    if outdb:
+        print("Base já existe, reescrevendo.")
+        timeCollection.drop()
     timeCollection.insert(data)
     print("Dados inseridos")
     # else:
     #     exit()
 
+@timeCommands.cli.command("zera_rank_pts")
+@click.argument("ano")
+def zera_rank_pts(ano):
+    rank = "p" + ano
+    print(f"Zerando dados {rank}")
+    mongo.db.timehistory.update_many({},{'$set':{rank: 0}})
 
 @timeCommands.cli.command("loadEmojis")
 @click.argument("csv_file")
@@ -161,12 +176,12 @@ def edit_time(desc,time):
             novo_jogo = mongo.db.jogos.find_one_and_update(
                 {"_id": ObjectId(j['_id'])},
                 {'$set': {'Time1': time}},return_document=ReturnDocument.AFTER)
-            print(novo_jogo)
+            #print(novo_jogo)
         elif j['desc2'] == desc:
             novo_jogo = mongo.db.jogos.find_one_and_update(
                 {"_id": ObjectId(j['_id'])},
                 {'$set': {'Time2': time}},return_document=ReturnDocument.AFTER)
-            print(novo_jogo)
+            #print(novo_jogo)
     print("Finalizado.")
 
 # Para classificação da copa de acordo com confederação

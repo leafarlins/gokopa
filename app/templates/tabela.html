@@ -1,59 +1,61 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Tabela da Copa 2022</h2>
-<p class="center">Tabela da Copa do Mundo 2022 no Qatar.</p>
+<h2>Tabela do ano {{ dados['ano'] }}</h2>
+{% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
+        <div class="alert alert-{{ category }} text-center" role="alert">
+            {{ message }}
+        </div>
+{% endfor %} {% endif %} {% endwith %}
+<p class="center">{{ dados['desc'] }}</p>
 
 <div class=".container-fluid">
 
 
-<h2 id="Copa">Copa do Mundo</h2>
-<p class="center">Copa do Mundo será disputada com 32 times, no Qatar.</p>
+{% set torneios = ['Copa do Mundo','Taça Mundial','Taça América','Taça Europa','Taça Ásia-Oceania','Taça África'] %}
+{% for torneio in torneios %}
+{% if dados['competicao'][torneio] %}
+
+<h2 id="Copa">{{ torneio }}</h2>
     <!-- <a id="displayText" href="javascript:toggle();">mostrar mais</a></p> -->
 
 <!-- <div id="toggleText" style="display: none" class=".container-fluid"> -->
     <div class="row scoll-pane">
-        {% for i in range(0,8) %}
+        {% for i in dados['competicao'][torneio]['grupos'] %}
             <div class="sectionj col-12 col-sd-12 col-md-6 col-lg-6 col-xl-3">
                 <table class="tab_gokopa tabelas">
                     <tr>
-                        <th>Grupo {{ labels[i] }}</th>
+                        <th>Grupo {{ i }}</th>
                         <th title="Pontos">P</th>
                         <th title="Saldo">S</th>
                         <th title="Gols">G</th>
                     </tr>
-                    {% for team in tabelas[(i)*4:4+(i)*4] %}
+                    {% for team in dados['competicao'][torneio]['grupos'][i]['tabela']['times'] %}
                         <tr>
                             <td>
-                                <img class="flag" src="../static/img/flag/{{ team['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ team['nome'] }}</td>
-                            <td>{{ team['P'] }}</td>
-                            <td>{{ team['S'] }}</td>
-                            <td>{{ team['G'] }}</td>
+                                <img class="flag" src="../static/img/flag/{{ team }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ team }}</td>
+                            <td>{{ dados['competicao'][torneio]['grupos'][i]['tabela']['pontos'][team][0] }}</td>
+                            <td>{{ dados['competicao'][torneio]['grupos'][i]['tabela']['pontos'][team][1] }}</td>
+                            <td>{{ dados['competicao'][torneio]['grupos'][i]['tabela']['pontos'][team][2] }}</td>
                         </tr>
                     {% endfor %}
                 </table>
             </div>
         
             <div class="sectionj col-12 col-sd-12 col-md-6 col-lg-6 col-xl-3">
-                {% for j in jogos_id[i] %}
+                {% for j in dados['competicao'][torneio]['grupos'][i]['jogos'] %}
                 <table class="tab_gokopa tab_jogos">
                     <tr>
-                        <td title="{{ lista_jogos[j]['Jogo'] }}">{{ lista_jogos[j]['Data'] }}</td>
-                        <td>{{ lista_jogos[j]['Estadio'] }} 
-                            <img class="miniflag" src="../static/img/flag/{{ lista_jogos[j]['Pais'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+                        <td title="{{ j['Jogo'] }}">{{ j['Data'] }}</td>
+                        <td>{{ j['Estadio'] }} 
+                            <img class="miniflag" src="../static/img/flag/{{ j['Pais'] }}.png" onerror="this.src='../static/img/flag/default.png'">
                         </td>
                     </tr>
                     <tr>
                         <td colspan="2">
-                            {% if lista_jogos[j]['Time1'] %}
-                                {{ lista_jogos[j]['Time1'] }} <img class="flag" src="../static/img/flag/{{ lista_jogos[j]['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
-                            {% else %}{{ lista_jogos[j]['desc1'] }} <img class="flag" src='../static/img/flag/default.png'>
-                            {% endif %}
-                            {{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}
-                            {% if lista_jogos[j]['Time2'] %}
-                                <img class="flag" src="../static/img/flag/{{ lista_jogos[j]['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ lista_jogos[j]['Time2'] }}
-                            {% else %}<img class="flag" src='../static/img/flag/default.png'> {{ lista_jogos[j]['desc2'] }}
-                            {% endif %}
+                                {{ j['Time1'] }} <img class="flag" src="../static/img/flag/{{ j['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+                            {{ j['p1'] }}x{{ j['p2'] }}
+                                <img class="flag" src="../static/img/flag/{{ j['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ j['Time2'] }}
                         </td>
                     </tr>
                 </table>
@@ -62,168 +64,111 @@
         
         {% endfor %}
     </div>
-        
-    <div class="row scoll-pane">
-        <div class="tabelaspd col-12 col-sd-10 col-md-6 col-lg-4 col-xl-4">
-        <b><p class="center">Oitavas-de-final</p></b>
+    
+    {% if dados['competicao'][torneio]['eliminatorias']['outros'] %}
+    <div class="row justify-content-md-center">
+        <b><p class="center">Outros jogos</p></b>
+        {% for j in dados['competicao'][torneio]['eliminatorias']['outros']['jogos'] %}
+        <div class="col-12 col-sd-10 col-md-6 col-lg-4 col-xl-3">
+            <table class="tab_gokopa tab_jogos">
+                <tr>
+                    <td title="{{ j['Jogo'] }}">{{ j['Data'] }}</td>
+                    <td>{{ j['Estadio'] }} 
+                        <img class="miniflag" src="../static/img/flag/{{ j['Pais'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        {{ j['Time1'] }} <img class="flag" src="../static/img/flag/{{ j['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+                        {% if j['pe1'] or j['pe2'] == 0 %}
+                            <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }} pe: {{ j['pe1'] }}x{{ j['pe2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
+                        {% elif j['tr1'] or j['tr2'] == 0 %}
+                            <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
+                        {% else %}{{ j['p1'] }}x{{ j['p2'] }}
+                        {% endif %}
+                        <img class="flag" src="../static/img/flag/{{ j['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ j['Time2'] }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row justify-content-md-center">
+        {% set fases = ['16-avos-de-final','8vas-de-final','4as-de-final','Semi-final','D. 3º Lugar','Final'] %}
+        {% for fase in fases %}
+        {% if dados['competicao'][torneio]['eliminatorias'][fase] %}
+
+        <div class="tabelaspd col-12 col-sd-10 col-md-6 col-lg-4 col-xl-3">
+        <b><p class="center">{{ fase }}</p></b>
         <table class="tab_gokopa tab_jogos">
-            {% for j in (48,49,52,53,50,51,54,55) %}
+            {% for j in dados['competicao'][torneio]['eliminatorias'][fase]['jogos']  %}
             <tr>
-                <td title="{{ lista_jogos[j]['Jogo'] }}">{{ lista_jogos[j]['Data'] }}</td>
-                <td>{{ lista_jogos[j]['Estadio'] }} 
-                    <img class="miniflag" src="../static/img/flag/{{ lista_jogos[j]['Pais'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+                <td title="{{ j['Jogo'] }}">{{ j['Data'] }}</td>
+                <td>{{ j['Estadio'] }} 
+                    <img class="miniflag" src="../static/img/flag/{{ j['Pais'] }}.png" onerror="this.src='../static/img/flag/default.png'">
                 </td>
             </tr>
             <tr>
                 <td colspan="2">
-                    {% if lista_jogos[j]['Time1'] %}
-                        {{ lista_jogos[j]['Time1'] }} <img class="flag" src="../static/img/flag/{{ lista_jogos[j]['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
-                    {% else %}{{ lista_jogos[j]['desc1'] }} <img class="flag" src='../static/img/flag/default.png'>
+                    {{ j['Time1'] }} <img class="flag" src="../static/img/flag/{{ j['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+                    {% if j['pe1'] or j['pe2'] == 0 %}
+                        <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }} pe: {{ j['pe1'] }}x{{ j['pe2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
+                    {% elif j['tr1'] or j['tr2'] == 0 %}
+                        <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
+                    {% else %}{{ j['p1'] }}x{{ j['p2'] }}
                     {% endif %}
-                    {% if lista_jogos[j]['pe1'] or lista_jogos[j]['pe1'] == 0 %}
-                        <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }} pe: {{ lista_jogos[j]['pe1'] }}x{{ lista_jogos[j]['pe2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
-                    {% elif lista_jogos[j]['tr1'] or lista_jogos[j]['tr1'] == 0 %}
-                        <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
-                    {% else %}{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}
-                    {% endif %}
-                    {% if lista_jogos[j]['Time2'] %}
-                        <img class="flag" src="../static/img/flag/{{ lista_jogos[j]['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ lista_jogos[j]['Time2'] }}
-                    {% else %}<img class="flag" src='../static/img/flag/default.png'> {{ lista_jogos[j]['desc2'] }}
-                    {% endif %}
+                    <img class="flag" src="../static/img/flag/{{ j['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ j['Time2'] }}
                 </td>
             </tr>
             {% endfor %}
         </table>
         </div>
-        <div class="tabelaspd col-12 col-sd-10 col-md-6 col-lg-4 col-xl-4">
-        <b><p class="center">Quartas-de-final</p></b>
-        <table class="tab_gokopa tab_jogos">
-            {% for j in range(56,60) %}
-            <tr>
-                <td title="{{ lista_jogos[j]['Jogo'] }}">{{ lista_jogos[j]['Data'] }}</td>
-                <td>{{ lista_jogos[j]['Estadio'] }} 
-                    <img class="miniflag" src="../static/img/flag/{{ lista_jogos[j]['Pais'] }}.png" onerror="this.src='../static/img/flag/default.png'">
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    {% if lista_jogos[j]['Time1'] %}
-                        {{ lista_jogos[j]['Time1'] }} <img class="flag" src="../static/img/flag/{{ lista_jogos[j]['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
-                    {% else %}{{ lista_jogos[j]['desc1'] }} <img class="flag" src='../static/img/flag/default.png'>
-                    {% endif %}
-                    {% if lista_jogos[j]['pe1'] or lista_jogos[j]['pe1'] == 0 %}
-                        <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }} pe: {{ lista_jogos[j]['pe1'] }}x{{ lista_jogos[j]['pe2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
-                    {% elif lista_jogos[j]['tr1'] or lista_jogos[j]['tr1'] == 0 %}
-                        <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
-                    {% else %}{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}
-                    {% endif %}
-                    {% if lista_jogos[j]['Time2'] %}
-                        <img class="flag" src="../static/img/flag/{{ lista_jogos[j]['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ lista_jogos[j]['Time2'] }}
-                    {% else %}<img class="flag" src='../static/img/flag/default.png'> {{ lista_jogos[j]['desc2'] }}
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-        </div>
-    
-        <div class="tabelaspd col-12 col-sd-10 col-md-6 col-lg-4 col-xl-4">
-        <b><p class="center">Semi-final</p></b>
-        <table class="tab_gokopa tab_jogos">
-            {% for j in (60,61) %}
-            <tr>
-                <td title="{{ lista_jogos[j]['Jogo'] }}">{{ lista_jogos[j]['Data'] }}</td>
-                <td>{{ lista_jogos[j]['Estadio'] }} 
-                    <img class="miniflag" src="../static/img/flag/{{ lista_jogos[j]['Pais'] }}.png" onerror="this.src='../static/img/flag/default.png'">
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    {% if lista_jogos[j]['Time1'] %}
-                        {{ lista_jogos[j]['Time1'] }} <img class="flag" src="../static/img/flag/{{ lista_jogos[j]['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
-                    {% else %}{{ lista_jogos[j]['desc1'] }} <img class="flag" src='../static/img/flag/default.png'>
-                    {% endif %}
-                    {% if lista_jogos[j]['pe1'] or lista_jogos[j]['pe1'] == 0 %}
-                        <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }} pe: {{ lista_jogos[j]['pe1'] }}x{{ lista_jogos[j]['pe2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
-                    {% elif lista_jogos[j]['tr1'] or lista_jogos[j]['tr1'] == 0 %}
-                        <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
-                    {% else %}{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}
-                    {% endif %}
-                    {% if lista_jogos[j]['Time2'] %}
-                        <img class="flag" src="../static/img/flag/{{ lista_jogos[j]['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ lista_jogos[j]['Time2'] }}
-                    {% else %}<img class="flag" src='../static/img/flag/default.png'> {{ lista_jogos[j]['desc2'] }}
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    
-        <p>&nbsp;</p><b><p class="center">D.3º Lugar</p></b>
-        <table class="tab_gokopa tab_jogos">
-            {% set j = 62 %}
-            <tr>
-                <td title="{{ lista_jogos[j]['Jogo'] }}">{{ lista_jogos[j]['Data'] }}</td>
-                <td>{{ lista_jogos[j]['Estadio'] }} 
-                    <img class="miniflag" src="../static/img/flag/{{ lista_jogos[j]['Pais'] }}.png" onerror="this.src='../static/img/flag/default.png'">
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    {% if lista_jogos[j]['Time1'] %}
-                        {{ lista_jogos[j]['Time1'] }} <img class="flag" src="../static/img/flag/{{ lista_jogos[j]['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
-                    {% else %}{{ lista_jogos[j]['desc1'] }} <img class="flag" src='../static/img/flag/default.png'>
-                    {% endif %}
-                    {% if lista_jogos[j]['pe1'] or lista_jogos[j]['pe1'] == 0 %}
-                        <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }} pe: {{ lista_jogos[j]['pe1'] }}x{{ lista_jogos[j]['pe2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
-                    {% elif lista_jogos[j]['tr1'] or lista_jogos[j]['tr1'] == 0 %}
-                        <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
-                    {% else %}{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}
-                    {% endif %}
-                    {% if lista_jogos[j]['Time2'] %}
-                        <img class="flag" src="../static/img/flag/{{ lista_jogos[j]['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ lista_jogos[j]['Time2'] }}
-                    {% else %}<img class="flag" src='../static/img/flag/default.png'> {{ lista_jogos[j]['desc2'] }}
-                    {% endif %}
-                </td>
-            </tr>
-        </table>
-    
-        <p>&nbsp;</p><b><p class="center">Final</p></b>
-        <table class="tab_gokopa tab_jogos">
-            {% set j = 63 %}
-            <tr>
-                <td title="{{ lista_jogos[j]['Jogo'] }}">{{ lista_jogos[j]['Data'] }}</td>
-                <td>{{ lista_jogos[j]['Estadio'] }} 
-                    <img class="miniflag" src="../static/img/flag/{{ lista_jogos[j]['Pais'] }}.png" onerror="this.src='../static/img/flag/default.png'">
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    {% if lista_jogos[j]['Time1'] %}
-                        {{ lista_jogos[j]['Time1'] }} <img class="flag" src="../static/img/flag/{{ lista_jogos[j]['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
-                    {% else %}{{ lista_jogos[j]['desc1'] }} <img class="flag" src='../static/img/flag/default.png'>
-                    {% endif %}
-                    {% if lista_jogos[j]['pe1'] %}
-                        <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }} pe: {{ lista_jogos[j]['pe1'] }}x{{ lista_jogos[j]['pe2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
-                    {% elif lista_jogos[j]['tr1'] %}
-                        <b title="tr: {{ lista_jogos[j]['tr1'] }}x{{ lista_jogos[j]['tr2'] }}">{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}</b>
-                    {% else %}{{ lista_jogos[j]['p1'] }}x{{ lista_jogos[j]['p2'] }}
-                    {% endif %}
-                    {% if lista_jogos[j]['Time2'] %}
-                        <img class="flag" src="../static/img/flag/{{ lista_jogos[j]['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ lista_jogos[j]['Time2'] }}
-                    {% else %}<img class="flag" src='../static/img/flag/default.png'> {{ lista_jogos[j]['desc2'] }}
-                    {% endif %}
-                </td>
-            </tr>
-        </table>
-        </div>
+
+        {% endif %}{% endfor %}
     
     </div>
 
-{% if tipo == 'gk' %}
-<h2>Tabelas antigas</h2>
-<p class="center">Veja as tabelas de gokopas antigas: <a href="tabela20">Gokopa20</a></p>
-<p class="center">Veja o resumo das fases finais de <a href="tabelahis">todas as Gokopas</a></p>
+{% endif %}{% endfor %}
+
+{% if dados['outros'] %}
+<div class="row justify-content-md-center">
+    <h3>Outros jogos do ano</h3>
+    {% for j in dados['outros'] %}
+    <div class="col-12 col-sd-10 col-md-6 col-lg-4 col-xl-3">
+        <p class="m-0 text-center smallt">{{ j['Competição'] }} - {{ j['Fase'] }}</p>
+        <table class="tab_gokopa tab_jogos">
+            <tr>
+                <td title="{{ j['Jogo'] }}">{{ j['Data'] }}</td>
+                <td>{{ j['Estadio'] }} 
+                    <img class="miniflag" src="../static/img/flag/{{ j['Pais'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    {{ j['Time1'] }} <img class="flag" src="../static/img/flag/{{ j['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+                    {% if j['pe1'] or j['pe2'] == 0 %}
+                        <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }} pe: {{ j['pe1'] }}x{{ j['pe2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
+                    {% elif j['tr1'] or j['tr2'] == 0 %}
+                        <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
+                    {% else %}{{ j['p1'] }}x{{ j['p2'] }}
+                    {% endif %}
+                    <img class="flag" src="../static/img/flag/{{ j['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ j['Time2'] }}
+                </td>
+            </tr>
+        </table>
+    </div>
+    {% endfor %}
+</div>
 {% endif %}
+
+<h2 class="m-3">Tabelas antigas</h2>
+<p class="center">Veja as tabelas de gokopas antigas: <a href="tabela21">Gokopa21</a> <a href="tabela20">Gokopa20</a></p>
+<p class="center">Veja o resumo das fases finais de <a href="tabelahis">todas as Gokopas</a></p>
+<p class="center">Veja as tabelas das copas do mundo: <a href="tabela2022">Gokopa2022</a> <a href="tabela2022">Copa 2022</a></p>
+
+
 </div>
 
 {% endblock %}

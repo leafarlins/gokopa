@@ -1,0 +1,204 @@
+Ano,Jogo,Data,Time1,desc1,p1,p2,desc2,Time2,Pais,Estadio,Grupo,tr1,tr2,pe1,pe2,Competição,Fase,peso,p_acu,percent
+22,1,29/11/2022 10:00,,p1A-EUR,,,p2A-EUR,,Suécia,Estocolmo,A-EUR,,,,,Taça Europa,1ª rodada,1,1,0.17%
+22,2,29/11/2022 13:00,,p1B-EUR,,,p2B-EUR,,Suécia,Estocolmo,B-EUR,,,,,Taça Europa,1ª rodada,1,2,0.35%
+22,3,29/11/2022 13:00,,p1C-EUR,,,p2C-EUR,,Suécia,Malmo,C-EUR,,,,,Taça Europa,1ª rodada,1,3,0.52%
+22,4,29/11/2022 16:00,,p1D-EUR,,,p2D-EUR,,Suécia,Estocolmo,D-EUR,,,,,Taça Europa,1ª rodada,1,4,0.69%
+22,5,29/11/2022 16:00,,p1E-EUR,,,p2E-EUR,,Suécia,Malmo,E-EUR,,,,,Taça Europa,1ª rodada,1,5,0.86%
+22,6,30/11/2022 10:00,,p1F-EUR,,,p2F-EUR,,Suécia,Malmo,F-EUR,,,,,Taça Europa,1ª rodada,1,6,1.04%
+22,7,30/11/2022 13:00,,p1G-EUR,,,p2G-EUR,,Suécia,Estocolmo,G-EUR,,,,,Taça Europa,1ª rodada,1,7,1.21%
+22,8,30/11/2022 13:00,,p1H-EUR,,,p2H-EUR,,Suécia,Malmo,H-EUR,,,,,Taça Europa,1ª rodada,1,8,1.38%
+22,9,30/11/2022 16:00,,p1I-EUR,,,p2I-EUR,,Suécia,Estocolmo,,,,,,Taça Europa,1ª rodada,1,9,1.55%
+22,10,30/11/2022 16:00,,p3I-EUR,,,p4I-EUR,,Suécia,Malmo,,,,,,Taça Europa,1ª rodada,1,10,1.73%
+22,11,01/12/2022 14:00,,p1A-AME,,,p2A-AME,,Estados Unidos,New Jersey,A-AME,,,,,Taça América,1ª rodada,1,11,1.90%
+22,12,01/12/2022 14:00,,p1B-AME,,,p2B-AME,,Estados Unidos,Orlando,B-AME,,,,,Taça América,1ª rodada,1,12,2.07%
+22,13,01/12/2022 17:00,,p1C-AME,,,p2C-AME,,Estados Unidos,New Jersey,C-AME,,,,,Taça América,1ª rodada,1,13,2.25%
+22,14,01/12/2022 17:00,,p1D-AME,,,p2D-AME,,Estados Unidos,Orlando,D-AME,,,,,Taça América,1ª rodada,1,14,2.42%
+22,15,01/12/2022 20:00,,p1E-AME,,,p2E-AME,,Estados Unidos,New Jersey,E-AME,,,,,Taça América,1ª rodada,1,15,2.59%
+22,16,01/12/2022 20:00,,p1F-AME,,,p2F-AME,,Estados Unidos,Orlando,F-AME,,,,,Taça América,1ª rodada,1,16,2.76%
+22,17,02/12/2022 03:00,,p1A-ASO,,,p2A-ASO,,Austrália,Melbourne,A-ASO,,,,,Taça Ásia-Oceania,1ª rodada,1,17,2.94%
+22,18,02/12/2022 03:00,,p1B-ASO,,,p2B-ASO,,Austrália,Sydney,B-ASO,,,,,Taça Ásia-Oceania,1ª rodada,1,18,3.11%
+22,19,02/12/2022 06:00,,p1C-ASO,,,p2C-ASO,,Austrália,Melbourne,C-ASO,,,,,Taça Ásia-Oceania,1ª rodada,1,19,3.28%
+22,20,02/12/2022 06:00,,p1D-ASO,,,p2D-ASO,,Austrália,Sydney,D-ASO,,,,,Taça Ásia-Oceania,1ª rodada,1,20,3.45%
+22,21,02/12/2022 09:00,,p1A-AFR,,,p2A-AFR,,Nigéria,Lagos,A-AFR,,,,,Taça África,1ª rodada,1,21,3.63%
+22,22,02/12/2022 12:00,,p1B-AFR,,,p2B-AFR,,Nigéria,Abuja,B-AFR,,,,,Taça África,1ª rodada,1,22,3.80%
+22,23,02/12/2022 12:00,,p1C-AFR,,,p2C-AFR,,Nigéria,Lagos,C-AFR,,,,,Taça África,1ª rodada,1,23,3.97%
+22,24,02/12/2022 15:00,,p1D-AFR,,,p2D-AFR,,Nigéria,Abuja,D-AFR,,,,,Taça África,1ª rodada,1,24,4.15%
+22,25,02/12/2022 15:00,,p1E-AFR,,,p2E-AFR,,Nigéria,Lagos,,,,,,Taça África,1ª rodada,1,25,4.32%
+22,26,03/12/2022 10:00,,p1A-EUR,,,p3A-EUR,,Suécia,Estocolmo,A-EUR,,,,,Taça Europa,2ª rodada,1,26,4.49%
+22,27,03/12/2022 13:00,,p2B-EUR,,,p3B-EUR,,Suécia,Estocolmo,B-EUR,,,,,Taça Europa,2ª rodada,1,27,4.66%
+22,28,03/12/2022 13:00,,p1C-EUR,,,p3C-EUR,,Suécia,Malmo,C-EUR,,,,,Taça Europa,2ª rodada,1,28,4.84%
+22,29,03/12/2022 16:00,,p2D-EUR,,,p3D-EUR,,Suécia,Estocolmo,D-EUR,,,,,Taça Europa,2ª rodada,1,29,5.01%
+22,30,03/12/2022 16:00,,p1E-EUR,,,p3E-EUR,,Suécia,Malmo,E-EUR,,,,,Taça Europa,2ª rodada,1,30,5.18%
+22,31,04/12/2022 10:00,,p2F-EUR,,,p3F-EUR,,Suécia,Malmo,F-EUR,,,,,Taça Europa,2ª rodada,1,31,5.35%
+22,32,04/12/2022 13:00,,p1G-EUR,,,p3G-EUR,,Suécia,Estocolmo,G-EUR,,,,,Taça Europa,2ª rodada,1,32,5.53%
+22,33,04/12/2022 13:00,,p2H-EUR,,,p3H-EUR,,Suécia,Malmo,H-EUR,,,,,Taça Europa,2ª rodada,1,33,5.70%
+22,34,04/12/2022 16:00,,p1J-EUR,,,p2J-EUR,,Suécia,Estocolmo,,,,,,Taça Europa,2ª rodada,1,34,5.87%
+22,35,04/12/2022 16:00,,p3J-EUR,,,p4J-EUR,,Suécia,Malmo,,,,,,Taça Europa,2ª rodada,1,35,6.04%
+22,36,05/12/2022 14:00,,p1A-AME,,,p3A-AME,,Estados Unidos,New Jersey,A-AME,,,,,Taça América,2ª rodada,1,36,6.22%
+22,37,05/12/2022 14:00,,p2B-AME,,,p3B-AME,,Estados Unidos,Orlando,B-AME,,,,,Taça América,2ª rodada,1,37,6.39%
+22,38,05/12/2022 17:00,,p1C-AME,,,p3C-AME,,Estados Unidos,New Jersey,C-AME,,,,,Taça América,2ª rodada,1,38,6.56%
+22,39,05/12/2022 17:00,,p2D-AME,,,p3D-AME,,Estados Unidos,Orlando,D-AME,,,,,Taça América,2ª rodada,1,39,6.74%
+22,40,05/12/2022 20:00,,p1E-AME,,,p3E-AME,,Estados Unidos,New Jersey,E-AME,,,,,Taça América,2ª rodada,1,40,6.91%
+22,41,05/12/2022 20:00,,p2F-AME,,,p3F-AME,,Estados Unidos,Orlando,F-AME,,,,,Taça América,2ª rodada,1,41,7.08%
+22,42,06/12/2022 03:00,,p1A-ASO,,,p3A-ASO,,Austrália,Melbourne,A-ASO,,,,,Taça Ásia-Oceania,2ª rodada,1,42,7.25%
+22,43,06/12/2022 03:00,,p2B-ASO,,,p3B-ASO,,Austrália,Sydney,B-ASO,,,,,Taça Ásia-Oceania,2ª rodada,1,43,7.43%
+22,44,06/12/2022 06:00,,p1C-ASO,,,p3C-ASO,,Austrália,Melbourne,C-ASO,,,,,Taça Ásia-Oceania,2ª rodada,1,44,7.60%
+22,45,06/12/2022 06:00,,p2D-ASO,,,p3D-ASO,,Austrália,Sydney,D-ASO,,,,,Taça Ásia-Oceania,2ª rodada,1,45,7.77%
+22,46,06/12/2022 09:00,,p1A-AFR,,,p3A-AFR,,Nigéria,Lagos,A-AFR,,,,,Taça África,2ª rodada,1,46,7.94%
+22,47,06/12/2022 12:00,,p2B-AFR,,,p3B-AFR,,Nigéria,Abuja,B-AFR,,,,,Taça África,2ª rodada,1,47,8.12%
+22,48,06/12/2022 12:00,,p1C-AFR,,,p3C-AFR,,Nigéria,Lagos,C-AFR,,,,,Taça África,2ª rodada,1,48,8.29%
+22,49,06/12/2022 15:00,,p2D-AFR,,,p3D-AFR,,Nigéria,Abuja,D-AFR,,,,,Taça África,2ª rodada,1,49,8.46%
+22,50,06/12/2022 15:00,,p3E-AFR,,,p4E-AFR,,Nigéria,Lagos,,,,,,Taça África,2ª rodada,1,50,8.64%
+22,53,07/12/2022 10:00,,p2A-EUR,,,p3A-EUR,,Suécia,Estocolmo,A-EUR,,,,,Taça Europa,3ª rodada,1,51,8.81%
+22,54,07/12/2022 13:00,,p1B-EUR,,,p3B-EUR,,Suécia,Estocolmo,B-EUR,,,,,Taça Europa,3ª rodada,1,52,8.98%
+22,51,07/12/2022 13:00,,p2C-EUR,,,p3C-EUR,,Suécia,Malmo,C-EUR,,,,,Taça Europa,3ª rodada,1,53,9.15%
+22,52,07/12/2022 16:00,,p1D-EUR,,,p3D-EUR,,Suécia,Estocolmo,D-EUR,,,,,Taça Europa,3ª rodada,1,54,9.33%
+22,55,07/12/2022 16:00,,p2E-EUR,,,p3E-EUR,,Suécia,Malmo,E-EUR,,,,,Taça Europa,3ª rodada,1,55,9.50%
+22,56,08/12/2022 10:00,,p1F-EUR,,,p3F-EUR,,Suécia,Malmo,F-EUR,,,,,Taça Europa,3ª rodada,1,56,9.67%
+22,57,08/12/2022 13:00,,p2G-EUR,,,p3G-EUR,,Suécia,Estocolmo,G-EUR,,,,,Taça Europa,3ª rodada,1,57,9.84%
+22,58,08/12/2022 13:00,,p1H-EUR,,,p3H-EUR,,Suécia,Malmo,H-EUR,,,,,Taça Europa,3ª rodada,1,58,10.02%
+22,59,08/12/2022 16:00,,1I-EUR,,,2I-EUR,,Suécia,Estocolmo,,,,,,Taça Europa,3ª rodada,1,59,10.19%
+22,60,08/12/2022 16:00,,1J-EUR,,,2J-EUR,,Suécia,Malmo,,,,,,Taça Europa,3ª rodada,1,60,10.36%
+22,61,09/12/2022 14:00,,p2A-AME,,,p3A-AME,,Estados Unidos,New Jersey,A-AME,,,,,Taça América,3ª rodada,1,61,10.54%
+22,62,09/12/2022 14:00,,p1B-AME,,,p3B-AME,,Estados Unidos,Orlando,B-AME,,,,,Taça América,3ª rodada,1,62,10.71%
+22,63,09/12/2022 17:00,,p2C-AME,,,p3C-AME,,Estados Unidos,New Jersey,C-AME,,,,,Taça América,3ª rodada,1,63,10.88%
+22,64,09/12/2022 17:00,,p1D-AME,,,p3D-AME,,Estados Unidos,Orlando,D-AME,,,,,Taça América,3ª rodada,1,64,11.05%
+22,65,09/12/2022 20:00,,p2E-AME,,,p3E-AME,,Estados Unidos,New Jersey,E-AME,,,,,Taça América,3ª rodada,1,65,11.23%
+22,66,09/12/2022 20:00,,p1F-AME,,,p3F-AME,,Estados Unidos,Orlando,F-AME,,,,,Taça América,3ª rodada,1,66,11.40%
+22,67,10/12/2022 03:00,,p2A-ASO,,,p3A-ASO,,Austrália,Melbourne,A-ASO,,,,,Taça Ásia-Oceania,3ª rodada,1,67,11.57%
+22,68,10/12/2022 03:00,,p1B-ASO,,,p3B-ASO,,Austrália,Sydney,B-ASO,,,,,Taça Ásia-Oceania,3ª rodada,1,68,11.74%
+22,69,10/12/2022 06:00,,p2C-ASO,,,p3C-ASO,,Austrália,Melbourne,C-ASO,,,,,Taça Ásia-Oceania,3ª rodada,1,69,11.92%
+22,70,10/12/2022 06:00,,p1D-ASO,,,p3D-ASO,,Austrália,Sydney,D-ASO,,,,,Taça Ásia-Oceania,3ª rodada,1,70,12.09%
+22,71,10/12/2022 09:00,,p2A-AFR,,,p3A-AFR,,Nigéria,Lagos,A-AFR,,,,,Taça África,3ª rodada,1,71,12.26%
+22,72,10/12/2022 12:00,,p1B-AFR,,,p3B-AFR,,Nigéria,Abuja,B-AFR,,,,,Taça África,3ª rodada,1,72,12.44%
+22,73,10/12/2022 12:00,,p2C-AFR,,,p3C-AFR,,Nigéria,Lagos,C-AFR,,,,,Taça África,3ª rodada,1,73,12.61%
+22,74,10/12/2022 15:00,,p1D-AFR,,,p3D-AFR,,Nigéria,Abuja,D-AFR,,,,,Taça África,3ª rodada,1,74,12.78%
+22,75,10/12/2022 15:00,,1E-AFR,,,2E-AFR,,Nigéria,Lagos,,,,,,Taça África,3ª rodada,1,75,12.95%
+22,76,11/12/2022 13:00,,1A-EUR,,,1B-EUR,,Suécia,Estocolmo,,,,,,Taça Europa,4as-de-final,1,76,13.13%
+22,77,11/12/2022 13:00,,1C-EUR,,,1C-EUR,,Suécia,Malmo,,,,,,Taça Europa,4as-de-final,1,77,13.30%
+22,78,11/12/2022 16:00,,1E-EUR,,,1F-EUR,,Suécia,Estocolmo,,,,,,Taça Europa,4as-de-final,1,78,13.47%
+22,79,11/12/2022 16:00,,1G-EUR,,,1H-EUR,,Suécia,Malmo,,,,,,Taça Europa,4as-de-final,1,79,13.64%
+22,80,12/12/2022 17:00,,1A-AME,,,2DEF-AME,,Estados Unidos,New Jersey,,,,,,Taça América,4as-de-final,1,80,13.82%
+22,81,12/12/2022 17:00,,1B-AME,,,1C-AME,,Estados Unidos,Orlando,,,,,,Taça América,4as-de-final,1,81,13.99%
+22,82,12/12/2022 20:00,,1D-AME,,,2ABC-AME,,Estados Unidos,New Jersey,,,,,,Taça América,4as-de-final,1,82,14.16%
+22,83,12/12/2022 20:00,,1E-AME,,,1F-AME,,Estados Unidos,Orlando,,,,,,Taça América,4as-de-final,1,83,14.34%
+22,84,13/12/2022 03:00,,1A-ASO,,,1B-ASO,,Austrália,Melbourne,,,,,,Taça Ásia-Oceania,Semi-final,2,85,14.68%
+22,85,13/12/2022 06:00,,1C-ASO,,,1D-ASO,,Austrália,Sydney,,,,,,Taça Ásia-Oceania,Semi-final,2,87,15.03%
+22,86,13/12/2022 12:00,,1A-AFR,,,1B-AFR,,Nigéria,Abuja,,,,,,Taça África,Semi-final,2,89,15.37%
+22,87,13/12/2022 15:00,,1C-AFR,,,1D-AFR,,Nigéria,Lagos,,,,,,Taça África,Semi-final,2,91,15.72%
+22,88,14/12/2022 13:00,,q1-EUR,,,q2-EUR,,Suécia,Estocolmo,,,,,,Taça Europa,Semi-final,2,93,16.06%
+22,89,14/12/2022 16:00,,q3-EUR,,,q4-EUR,,Suécia,Malmo,,,,,,Taça Europa,Semi-final,2,95,16.41%
+22,90,15/12/2022 17:00,,q1-AME,,,q2-AME,,Estados Unidos,New Jersey,,,,,,Taça América,Semi-final,2,97,16.75%
+22,91,15/12/2022 20:00,,q3-AME,,,q4-AME,,Estados Unidos,Orlando,,,,,,Taça América,Semi-final,2,99,17.10%
+22,92,16/12/2022 06:00,,s1-AFR,,,s2-AFR,,Austrália,Melbourne,,,,,,Taça Ásia-Oceania,Final,5,104,17.96%
+22,93,16/12/2022 15:00,,s1-ASO,,,s2-ASO,,Nigéria,Abuja,,,,,,Taça África,Final,5,109,18.83%
+22,94,17/12/2022 16:00,,s1-AME,,,s2-AME,,Suécia,Estocolmo,,,,,,Taça Europa,Final,5,114,19.69%
+22,95,18/12/2022 20:00,,s1-EUR,,,s2-EUR,,Estados Unidos,New Jersey,,,,,,Taça América,Final,5,119,20.55%
+22,96,22/12/2022 16:00,,EUROPA,,,ÁFRICA,,Suécia,Estocolmo,,,,,,Taça Mundial,Semi-final,3,122,21.07%
+22,97,22/12/2022 19:00,,AMÉRICA,,,ASIA-OCE,,Suécia,Malmo,,,,,,Taça Mundial,Semi-final,3,125,21.59%
+22,98,25/12/2022 16:00,,ps1-TAC,,,ps2-TAC,,Suécia,Malmo,,,,,,Taça Mundial,D. 3º Lugar,3,128,22.11%
+22,99,25/12/2022 19:00,,s1-TAC,,,s2-TAC,,Suécia,Estocolmo,,,,,,Taça Mundial,Final,6,134,23.14%
+22,100,28/12/2022 10:00,,p1A,,,p2A,,Suécia,Estocolmo,A,,,,,Copa do Mundo,1ª rodada,3,137,23.66%
+22,101,28/12/2022 14:00,,p3A,,,p4A,,Suécia,Gotemburgo,A,,,,,Copa do Mundo,1ª rodada,3,140,24.18%
+22,102,29/12/2022 10:00,,p1B,,,p2B,,Dinamarca,Copenhague,B,,,,,Copa do Mundo,1ª rodada,3,143,24.70%
+22,103,29/12/2022 12:00,,p3B,,,p4B,,Suécia,Norrköping,B,,,,,Copa do Mundo,1ª rodada,3,146,25.22%
+22,104,29/12/2022 14:00,,p1C,,,p2C,,Dinamarca,Brøndbyvester,C,,,,,Copa do Mundo,1ª rodada,3,149,25.73%
+22,105,29/12/2022 16:00,,p3C,,,p4C,,Dinamarca,Esbjerg,C,,,,,Copa do Mundo,1ª rodada,3,152,26.25%
+22,106,30/12/2022 08:00,,p1D,,,p2D,,Suécia,Malmo,D,,,,,Copa do Mundo,1ª rodada,3,155,26.77%
+22,107,30/12/2022 10:00,,p3D,,,p4D,,Dinamarca,Aarhus,D,,,,,Copa do Mundo,1ª rodada,3,158,27.29%
+22,108,30/12/2022 12:00,,p1E,,,p2E,,Suécia,Estocolmo,E,,,,,Copa do Mundo,1ª rodada,3,161,27.81%
+22,109,30/12/2022 14:00,,p3E,,,p4E,,Dinamarca,Esbjerg,E,,,,,Copa do Mundo,1ª rodada,3,164,28.32%
+22,110,30/12/2022 16:00,,p1F,,,p2F,,Suécia,Malmo,F,,,,,Copa do Mundo,1ª rodada,3,167,28.84%
+22,111,30/12/2022 18:00,,p3F,,,p4F,,Suécia,Norrköping,F,,,,,Copa do Mundo,1ª rodada,3,170,29.36%
+22,112,31/12/2022 08:00,,p1G,,,p2G,,Dinamarca,Copenhague,G,,,,,Copa do Mundo,1ª rodada,3,173,29.88%
+22,113,31/12/2022 10:00,,p3G,,,p4G,,Dinamarca,Aarhus,G,,,,,Copa do Mundo,1ª rodada,3,176,30.40%
+22,114,31/12/2022 12:00,,p1H,,,p2H,,Suécia,Malmo,H,,,,,Copa do Mundo,1ª rodada,3,179,30.92%
+22,115,31/12/2022 14:00,,p3H,,,p4H,,Dinamarca,Esbjerg,H,,,,,Copa do Mundo,1ª rodada,3,182,31.43%
+22,116,31/12/2022 16:00,,p1I,,,p2I,,Dinamarca,Brøndbyvester,I,,,,,Copa do Mundo,1ª rodada,3,185,31.95%
+22,117,31/12/2022 18:00,,p3I,,,p4I,,Suécia,Gotemburgo,I,,,,,Copa do Mundo,1ª rodada,3,188,32.47%
+22,118,01/01/2023 08:00,,p1J,,,p2J,,Dinamarca,Brøndbyvester,J,,,,,Copa do Mundo,1ª rodada,3,191,32.99%
+22,119,01/01/2023 10:00,,p3J,,,p4J,,Suécia,Norrköping,J,,,,,Copa do Mundo,1ª rodada,3,194,33.51%
+22,120,01/01/2023 12:00,,p1K,,,p2K,,Suécia,Estocolmo,K,,,,,Copa do Mundo,1ª rodada,3,197,34.02%
+22,121,01/01/2023 14:00,,p3K,,,p4K,,Dinamarca,Aarhus,K,,,,,Copa do Mundo,1ª rodada,3,200,34.54%
+22,122,01/01/2023 16:00,,p1L,,,p2L,,Dinamarca,Copenhague,L,,,,,Copa do Mundo,1ª rodada,3,203,35.06%
+22,123,01/01/2023 18:00,,p3L,,,p4L,,Suécia,Gotemburgo,L,,,,,Copa do Mundo,1ª rodada,3,206,35.58%
+22,124,02/01/2023 08:00,,p1A,,,p3A,,Suécia,Estocolmo,A,,,,,Copa do Mundo,2ª rodada,3,209,36.10%
+22,125,02/01/2023 10:00,,p2A,,,p4A,,Suécia,Gotemburgo,A,,,,,Copa do Mundo,2ª rodada,3,212,36.61%
+22,126,02/01/2023 12:00,,p1B,,,p3B,,Dinamarca,Copenhague,B,,,,,Copa do Mundo,2ª rodada,3,215,37.13%
+22,127,02/01/2023 14:00,,p2B,,,p4B,,Suécia,Norrköping,B,,,,,Copa do Mundo,2ª rodada,3,218,37.65%
+22,128,02/01/2023 16:00,,p1C,,,p3C,,Dinamarca,Brøndbyvester,C,,,,,Copa do Mundo,2ª rodada,3,221,38.17%
+22,129,02/01/2023 18:00,,p2C,,,p4C,,Dinamarca,Esbjerg,C,,,,,Copa do Mundo,2ª rodada,3,224,38.69%
+22,130,03/01/2023 08:00,,p1D,,,p3D,,Suécia,Malmo,D,,,,,Copa do Mundo,2ª rodada,3,227,39.21%
+22,131,03/01/2023 10:00,,p2D,,,p4D,,Dinamarca,Aarhus,D,,,,,Copa do Mundo,2ª rodada,3,230,39.72%
+22,132,03/01/2023 12:00,,p1E,,,p3E,,Suécia,Estocolmo,E,,,,,Copa do Mundo,2ª rodada,3,233,40.24%
+22,133,03/01/2023 14:00,,p2E,,,p4E,,Dinamarca,Esbjerg,E,,,,,Copa do Mundo,2ª rodada,3,236,40.76%
+22,134,03/01/2023 16:00,,p1F,,,p3F,,Suécia,Malmo,F,,,,,Copa do Mundo,2ª rodada,3,239,41.28%
+22,135,03/01/2023 18:00,,p2F,,,p4F,,Suécia,Norrköping,F,,,,,Copa do Mundo,2ª rodada,3,242,41.80%
+22,136,04/01/2023 08:00,,p1G,,,p3G,,Dinamarca,Copenhague,G,,,,,Copa do Mundo,2ª rodada,3,245,42.31%
+22,137,04/01/2023 10:00,,p2G,,,p4G,,Dinamarca,Aarhus,G,,,,,Copa do Mundo,2ª rodada,3,248,42.83%
+22,138,04/01/2023 12:00,,p1H,,,p3H,,Suécia,Malmo,H,,,,,Copa do Mundo,2ª rodada,3,251,43.35%
+22,139,04/01/2023 14:00,,p2H,,,p4H,,Dinamarca,Esbjerg,H,,,,,Copa do Mundo,2ª rodada,3,254,43.87%
+22,140,04/01/2023 16:00,,p1I,,,p3I,,Dinamarca,Brøndbyvester,I,,,,,Copa do Mundo,2ª rodada,3,257,44.39%
+22,141,04/01/2023 18:00,,p2I,,,p4I,,Suécia,Gotemburgo,I,,,,,Copa do Mundo,2ª rodada,3,260,44.91%
+22,142,05/01/2023 08:00,,p1J,,,p3J,,Dinamarca,Brøndbyvester,J,,,,,Copa do Mundo,2ª rodada,3,263,45.42%
+22,143,05/01/2023 10:00,,p2J,,,p4J,,Suécia,Norrköping,J,,,,,Copa do Mundo,2ª rodada,3,266,45.94%
+22,144,05/01/2023 12:00,,p1K,,,p3K,,Suécia,Estocolmo,K,,,,,Copa do Mundo,2ª rodada,3,269,46.46%
+22,145,05/01/2023 14:00,,p2K,,,p4K,,Dinamarca,Aarhus,K,,,,,Copa do Mundo,2ª rodada,3,272,46.98%
+22,146,05/01/2023 16:00,,p1L,,,p3L,,Dinamarca,Copenhague,L,,,,,Copa do Mundo,2ª rodada,3,275,47.50%
+22,147,05/01/2023 18:00,,p2L,,,p4L,,Suécia,Gotemburgo,L,,,,,Copa do Mundo,2ª rodada,3,278,48.01%
+22,148,06/01/2023 10:00,,p1A,,,p4A,,Suécia,Estocolmo,A,,,,,Copa do Mundo,3ª rodada,4,282,48.70%
+22,149,06/01/2023 10:00,,p2A,,,p3A,,Suécia,Gotemburgo,A,,,,,Copa do Mundo,3ª rodada,4,286,49.40%
+22,150,06/01/2023 13:00,,p1B,,,p4B,,Dinamarca,Copenhague,B,,,,,Copa do Mundo,3ª rodada,4,290,50.09%
+22,151,06/01/2023 13:00,,p2B,,,p3B,,Suécia,Norrköping,B,,,,,Copa do Mundo,3ª rodada,4,294,50.78%
+22,152,06/01/2023 16:00,,p1C,,,p4C,,Dinamarca,Brøndbyvester,C,,,,,Copa do Mundo,3ª rodada,4,298,51.47%
+22,153,06/01/2023 16:00,,p2C,,,p3C,,Dinamarca,Esbjerg,C,,,,,Copa do Mundo,3ª rodada,4,302,52.16%
+22,154,07/01/2023 10:00,,p1D,,,p4D,,Suécia,Malmo,D,,,,,Copa do Mundo,3ª rodada,4,306,52.85%
+22,155,07/01/2023 10:00,,p2D,,,p3D,,Dinamarca,Aarhus,D,,,,,Copa do Mundo,3ª rodada,4,310,53.54%
+22,156,07/01/2023 13:00,,p1E,,,p4E,,Suécia,Estocolmo,E,,,,,Copa do Mundo,3ª rodada,4,314,54.23%
+22,157,07/01/2023 13:00,,p2E,,,p3E,,Dinamarca,Esbjerg,E,,,,,Copa do Mundo,3ª rodada,4,318,54.92%
+22,158,07/01/2023 16:00,,p1F,,,p4F,,Suécia,Malmo,F,,,,,Copa do Mundo,3ª rodada,4,322,55.61%
+22,159,07/01/2023 16:00,,p2F,,,p3F,,Suécia,Norrköping,F,,,,,Copa do Mundo,3ª rodada,4,326,56.30%
+22,160,08/01/2023 10:00,,p1G,,,p4G,,Dinamarca,Copenhague,G,,,,,Copa do Mundo,3ª rodada,4,330,56.99%
+22,161,08/01/2023 10:00,,p2G,,,p3G,,Dinamarca,Aarhus,G,,,,,Copa do Mundo,3ª rodada,4,334,57.69%
+22,162,08/01/2023 13:00,,p1H,,,p4H,,Suécia,Malmo,H,,,,,Copa do Mundo,3ª rodada,4,338,58.38%
+22,163,08/01/2023 13:00,,p2H,,,p3H,,Dinamarca,Esbjerg,H,,,,,Copa do Mundo,3ª rodada,4,342,59.07%
+22,164,08/01/2023 16:00,,p1I,,,p4I,,Dinamarca,Brøndbyvester,I,,,,,Copa do Mundo,3ª rodada,4,346,59.76%
+22,165,08/01/2023 16:00,,p2I,,,p3I,,Suécia,Gotemburgo,I,,,,,Copa do Mundo,3ª rodada,4,350,60.45%
+22,166,09/01/2023 10:00,,p1J,,,p4J,,Dinamarca,Brøndbyvester,J,,,,,Copa do Mundo,3ª rodada,4,354,61.14%
+22,167,09/01/2023 10:00,,p2J,,,p3J,,Suécia,Norrköping,J,,,,,Copa do Mundo,3ª rodada,4,358,61.83%
+22,168,09/01/2023 13:00,,p1K,,,p4K,,Suécia,Estocolmo,K,,,,,Copa do Mundo,3ª rodada,4,362,62.52%
+22,169,09/01/2023 13:00,,p2K,,,p3K,,Dinamarca,Aarhus,K,,,,,Copa do Mundo,3ª rodada,4,366,63.21%
+22,170,09/01/2023 16:00,,p1L,,,p4L,,Dinamarca,Copenhague,L,,,,,Copa do Mundo,3ª rodada,4,370,63.90%
+22,171,09/01/2023 16:00,,p2L,,,p3L,,Suécia,Gotemburgo,L,,,,,Copa do Mundo,3ª rodada,4,374,64.59%
+22,172,10/01/2023 08:00,,1A,,,3FBCDE,,Suécia,Estocolmo,,,,,,Copa do Mundo,16-avos-de-final,5,379,65.46%
+22,173,10/01/2023 11:00,,2D,,,2E,,Suécia,Norrköping,,,,,,Copa do Mundo,16-avos-de-final,5,384,66.32%
+22,174,10/01/2023 14:00,,1B,,,3EADCF,,Dinamarca,Esbjerg,,,,,,Copa do Mundo,16-avos-de-final,5,389,67.18%
+22,175,10/01/2023 17:00,,1C,,,2F,,Dinamarca,Copenhague,,,,,,Copa do Mundo,16-avos-de-final,5,394,68.05%
+22,176,11/01/2023 08:00,,1D,,,3CDEAB,,Dinamarca,Brøndbyvester,,,,,,Copa do Mundo,16-avos-de-final,5,399,68.91%
+22,177,11/01/2023 11:00,,2A,,,2B,,Suécia,Gotemburgo,,,,,,Copa do Mundo,16-avos-de-final,5,404,69.78%
+22,178,11/01/2023 14:00,,1E,,,3BADFC,,Dinamarca,Aarhus,,,,,,Copa do Mundo,16-avos-de-final,5,409,70.64%
+22,179,11/01/2023 17:00,,1F,,,2C,,Suécia,Malmo,,,,,,Copa do Mundo,16-avos-de-final,5,414,71.50%
+22,180,12/01/2023 08:00,,1G,,,3LHIJK,,Dinamarca,Copenhague,,,,,,Copa do Mundo,16-avos-de-final,5,419,72.37%
+22,181,12/01/2023 11:00,,2J,,,2K,,Suécia,Norrköping,,,,,,Copa do Mundo,16-avos-de-final,5,424,73.23%
+22,182,12/01/2023 14:00,,1H,,,3KJGIL,,Dinamarca,Esbjerg,,,,,,Copa do Mundo,16-avos-de-final,5,429,74.09%
+22,183,12/01/2023 17:00,,1I,,,2L,,Suécia,Estocolmo,,,,,,Copa do Mundo,16-avos-de-final,5,434,74.96%
+22,184,13/01/2023 08:00,,1J,,,3IKLGH,,Suécia,Gotemburgo,,,,,,Copa do Mundo,16-avos-de-final,5,439,75.82%
+22,185,13/01/2023 11:00,,2G,,,2H,,Dinamarca,Brøndbyvester,,,,,,Copa do Mundo,16-avos-de-final,5,444,76.68%
+22,186,13/01/2023 14:00,,1K,,,3HGJLI,,Dinamarca,Aarhus,,,,,,Copa do Mundo,16-avos-de-final,5,449,77.55%
+22,187,13/01/2023 17:00,,1L,,,2I,,Suécia,Malmo,,,,,,Copa do Mundo,16-avos-de-final,5,454,78.41%
+22,188,14/01/2023 11:00,,16a1,,,16a2,,Suécia,Estocolmo,,,,,,Copa do Mundo,8vas-de-final,6,460,79.45%
+22,189,14/01/2023 15:00,,16a3,,,16a4,,Dinamarca,Esbjerg,,,,,,Copa do Mundo,8vas-de-final,6,466,80.48%
+22,190,15/01/2023 11:00,,16a5,,,16a6,,Suécia,Gotemburgo,,,,,,Copa do Mundo,8vas-de-final,6,472,81.52%
+22,191,15/01/2023 15:00,,16a7,,,16a8,,Dinamarca,Brøndbyvester,,,,,,Copa do Mundo,8vas-de-final,6,478,82.56%
+22,192,16/01/2023 11:00,,16a9,,,16a10,,Dinamarca,Copenhague,,,,,,Copa do Mundo,8vas-de-final,6,484,83.59%
+22,193,16/01/2023 15:00,,16a11,,,16a12,,Suécia,Gotemburgo,,,,,,Copa do Mundo,8vas-de-final,6,490,84.63%
+22,194,17/01/2023 11:00,,16a13,,,16a14,,Dinamarca,Aarhus,,,,,,Copa do Mundo,8vas-de-final,6,496,85.66%
+22,195,17/01/2023 15:00,,16a15,,,16a16,,Suécia,Malmo,,,,,,Copa do Mundo,8vas-de-final,6,502,86.70%
+22,196,20/01/2023 11:00,,o1,,,o2,,Suécia,Estocolmo,,,,,,Copa do Mundo,4as-de-final,8,510,88.08%
+22,197,20/01/2023 15:00,,o3,,,o4,,Suécia,Malmo,,,,,,Copa do Mundo,4as-de-final,8,518,89.46%
+22,198,21/01/2023 11:00,,o5,,,o6,,Dinamarca,Copenhague,,,,,,Copa do Mundo,4as-de-final,8,526,90.85%
+22,199,21/01/2023 15:00,,o7,,,o8,,Dinamarca,Aarhus,,,,,,Copa do Mundo,4as-de-final,8,534,92.23%
+22,200,24/01/2023 15:00,,q1,,,q2,,Suécia,Estocolmo,,,,,,Copa do Mundo,Semi-final,10,544,93.96%
+22,201,25/01/2023 15:00,,q3,,,q4,,Dinamarca,Copenhague,,,,,,Copa do Mundo,Semi-final,10,554,95.68%
+22,202,28/01/2023 15:00,,ps1,,,ps2,,Dinamarca,Brøndbyvester,,,,,,Copa do Mundo,D. 3º Lugar,10,564,97.41%
+22,203,29/01/2023 15:00,,s1,,,s2,,Suécia,Estocolmo,,,,,,Copa do Mundo,Final,15,579,100.00%

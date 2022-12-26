@@ -2,7 +2,6 @@ import json
 import os
 from xmlrpc.client import boolean
 import requests
-from app.commands.configCommands import get_ordered
 import click
 import pymongo
 from ..extentions.database import mongo
@@ -13,8 +12,8 @@ from random import randrange
 #from twilio.rest import Client
 
 SEPARADOR_CSV=","
-ANO=2022
-APOSTADB='apostas2022'
+ANO=22
+APOSTADB='apostas22'
 #TWILIO_SID=''
 #TWILIO_TKN=''
 TELEGRAM_TOKEN=os.getenv('TELEGRAM_TKN')
@@ -54,7 +53,7 @@ def load_csv(csv_file):
         if not data:
             return None
         
-        print(data)
+        #print(data)
     
     
     jogosCollection = mongo.db.jogos
@@ -185,21 +184,10 @@ def print_random_editgame(jogoi,jogof,tr):
         else:
             print(f'flask jogos editJogo {ANO} {jogo} placar {p1} {p2}')
 
-@jogosCommands.cli.command("initApostas21")
-def init_apostas21():
-    JOGOS=64
-    apostas = mongo.db.apostas21
-    if apostas.count_documents({}) > 0:
-        print("Base já existente.")
-    else:
-        for i in range(1,JOGOS+1):
-            apostas.insert_one({"Jogo": i})
-        print("Finalizado.")
-
-@jogosCommands.cli.command("initApostas2022")
-def init_apostas2022():
-    JOGOS=64
-    apostas = mongo.db.apostas2022
+@jogosCommands.cli.command("initApostas22")
+def init_apostas22():
+    JOGOS=203
+    apostas = mongo.db.apostas22
     if apostas.count_documents({}) > 0:
         print("Base já existente.")
     else:
@@ -268,7 +256,6 @@ def report(jogos,proximos,texto=""):
             mensagem+=lista_users
             mensagem+="\n"
 
-    #ordered_total = get_ordered()
     ordered_total = make_score_board('cp')
     range_print = 5
     if len(ordered_total) < 5:

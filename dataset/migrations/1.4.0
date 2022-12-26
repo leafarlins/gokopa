@@ -1,0 +1,7 @@
+flask config set_bolao_users 2022 "putz ernani gillis andrei rlins alder anderson dane fels milena rina miojo leandro economist christiano"
+flask config set_bolao_users 21 "pupu jaimim zcaroli putz capote didi ernani"
+flask config set_bolao_users 20 "gillis andrei didi jaimim putz ernani capote baiano lukets zcaroli"
+flask config migrate
+flask time loadTimeHistory dataset/times_historia_1_21.csv
+flask jogos loadCsv dataset/jogos_ano22.csv
+flask jogos initApostas22

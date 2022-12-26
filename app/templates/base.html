@@ -49,28 +49,26 @@
               <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                   <li class="nav-item">
-                    <a {% if menu=='Home' %}class="active"{% endif %} href="/{{ tipo }}">Home</a>
+                    <a {% if menu=='Home' %}class="active"{% endif %} href="/">Home</a>
                   </li>
                   <li class="nav-item">
-                    <a {% if menu=='Tabela' %}class="active"{% endif %}href="/{{ tipo }}/tabela">Tabela</a>
+                    <a {% if menu=='Tabela' %}class="active"{% endif %}href="/tabela22">Tabela</a>
                   </li>
-                {% if tipo == 'gk' %}
-                <li class="nav-item"><a {% if menu=='Ranking' %}class="active"{% endif %}href="/gk/ranking">Ranking</a></li>
-                <li class="nav-item"><a {% if menu=='Historico' %}class="active"{% endif %}href="/gk/historico">Histórico</a></li>
-                {% else %}
-                <li class="nav-item"><a {% if menu=='Regras' %}class="active"{% endif %}href="/cp/regras">Regras</a></li>
-                {% endif %}
-                <li class="nav-item"><a {% if menu=='Bolao' %}class="active"{% endif %}href="/{{ tipo }}/bolao">Bolão</a></li>
-                {% if tipo == 'gk' %}
-                <li class="nav-item"><a {% if menu=='Moedas' %}class="active"{% endif %}href="/gk/moedas">Moedas</a></li>
-                {% endif %}
-                <li class="nav-item"><a {% if menu=='Sobre' %}class="active"{% endif %}href="/{{ tipo }}/sobre">Sobre</a></li>
-                
-                <li class="nav-item">
-                    {% if session['username'] %}<a href="/{{ tipo }}/logout">Logout</a>
-                    {% else %}<a {% if menu=='Login' %}class="active"{% endif %} href="/{{ tipo }}/login">Login</a>
-                {% endif %}</li>
+                  <li class="nav-item"><a {% if menu=='Ranking' %}class="active"{% endif %}href="/ranking">Ranking</a></li>
+                  <li class="nav-item"><a {% if menu=='Historico' %}class="active"{% endif %}href="/historico">Histórico</a></li>
+                  <li class="nav-item"><a {% if menu=='Regras' %}class="active"{% endif %}href="/regras">Regras</a></li>
+                  <li class="nav-item"><a {% if menu=='Bolao' %}class="active"{% endif %}href="/bolao22">Bolão</a></li>
+                  <li class="nav-item"><a {% if menu=='Moedas' %}class="active"{% endif %}href="/moedas">Moedas</a></li>
+                  <li class="nav-item"><a {% if menu=='Sobre' %}class="active"{% endif %}href="/sobre">Sobre</a></li>
                 </ul>
+                
+                <div class="offcanvas-body">
+                  <ul class="navbar-nav justify-content-end">
+                    <li class="nav-item text-right">
+                      {% if session['username'] %}<a href="/logout">Logout</a>
+                      {% else %}<a {% if menu=='Login' %}class="active"{% endif %} href="/login">Login</a>
+                    {% endif %}</li>
+                </div>
               </div>
             </div>
         </nav>     

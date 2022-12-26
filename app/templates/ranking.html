@@ -3,34 +3,31 @@
 <div class="row scoll-pane">
   <div class="sectionj col-12 col-sd-12 col-md-6 col-lg-6 col-xl-4">
     <h2>Ranking atual</h2>
-    <p>Ranking atual, edição {{ rank_ed }}.</p>
+    <p>Ranking atual do ano 22.</p>
         <table class="tab_gokopa ranking" width="95%">
           <tr>
             <th title="Posição">#</th>
             <th>País</th>
             <th>Pontos</th>
+            <th title="Mudança nos pontos">+/-p</th>
             <th title="Último Ranking">ur</th>
-            <th title="Último Ano">ua</th>
           </tr>
-          {% for linha in ranking %}
+          {% for t in ranking['ranking'] %}
             <tr>
-              <td>{{ linha['pos'] }}</td>
-              <td><img class="flag" src="../static/img/flag/{{ linha['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ linha['time'] }}</td>
-              <td>{{ linha['pontos'] }}
-                {% if linha['u_pts'] > 0 %}<img title="+{{ linha['u_pts'] }} pontos" class="flag updown" src="../static/img/up.png">
-                {% elif linha['u_pts'] == 0 %}<img class="flag updown" src="../static/img/steady.png">
-                {% else %}<img title="{{ linha['u_pts'] }} pontos" class="flag updown" src="../static/img/down.png">
-                {% endif %}
+              <td>{{ t['posicao'] }}</td>
+              <td><img class="flag" src="../static/img/flag/{{ t['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ t['time'] }}</td>
+              <td>{{ t['score'] }}</td>
+              <td>
+                {% if t['d_pts'] > 0 %}<img class="flag updown" src="../static/img/up.png">
+                {% elif t['d_pts'] == 0 %}<img class="flag updown" src="../static/img/steady.png">
+                {% else %}<img class="flag updown" src="../static/img/down.png">
+                {% endif %}{{ t['d_pts'] }}
               </td>
-              <td class="updown">{% if linha['u_rank'] > 0 %}<img class="flag updown" src="../static/img/up.png">
-                {% elif linha['u_rank'] == 0 %}<img class="flag updown" src="../static/img/steady.png">
+              <td class="updown">{% if t['d_r'] > 0 %}<img class="flag updown" src="../static/img/up.png">
+                {% elif t['d_r'] == 0 %}<img class="flag updown" src="../static/img/steady.png">
                 {% else %}<img class="flag updown" src="../static/img/down.png">
                 {% endif %}
-                {{ linha['u_rank'] }}</td>
-              <td class="updown">{% if linha['u_ano'] > 0 %}<img class="flag updown" src="../static/img/up.png">
-                {% elif linha['u_ano'] == 0 %}<img class="flag updown" src="../static/img/steady.png">
-                {% else %}<img class="flag updown" src="../static/img/down.png">
-                {% endif %} {{ linha['u_ano'] }}</td>
+                {{ t['d_r'] }}</td>
             </tr>
           {% endfor %}
         </table>

@@ -8,10 +8,10 @@ from ..extentions.database import mongo
 
 usuario = Blueprint('usuario',__name__)
 
-@usuario.route('/<tipo>/login', methods=['GET','POST'])
-def login(tipo):
+@usuario.route('/login', methods=['GET','POST'])
+def login():
     if "username" in session:
-        return redirect(url_for("bolao.apostas",tipo=tipo))
+        return redirect(url_for("bolao.apostas"))
     elif request.method == 'POST':
         username = request.form.get('usuario')
         password = request.form.get('senha')
@@ -42,27 +42,27 @@ def login(tipo):
                         session["username"] = validUser
                         flash(f'Bem vindo, {validName}!')
                         current_app.logger.info(f"Usuário {validName} logado com sucesso")
-                        return redirect(url_for('bolao.apostas',tipo=tipo))
+                        return redirect(url_for('bolao.apostas'))
                     else:
                         flash(f'Redefina sua senha, {validName}.')
-                        return render_template("usuarios/reset.html",user=validUser,menu="Login",tipo=tipo)
+                        return render_template("usuarios/reset.html",user=validUser,menu="Login")
 
                 else:
                     flash('Senha Incorreta!')
-                    return render_template("usuarios/login.html",menu="Login",tipo=tipo)
+                    return render_template("usuarios/login.html",menu="Login")
             else:
                 flash('Usuário inativo, contate o administrador.')
                 current_app.logger.info(f"Usuário {validName} inativado, login sem sucesso")
-                return render_template("usuarios/login.html",menu="Login",tipo=tipo)
+                return render_template("usuarios/login.html",menu="Login")
         else:
             flash("Usuário não encontrado.")
             current_app.logger.warn(f"Usuário {validName} não encontrado na base")
-            render_template("usuarios/login.html",menu="Login",tipo=tipo)
+            render_template("usuarios/login.html",menu="Login")
 
-    return render_template("usuarios/login.html",menu="Login",tipo=tipo)
+    return render_template("usuarios/login.html",menu="Login")
     
-@usuario.route('/<tipo>/reset', methods=['GET','POST'])
-def reset(tipo):
+@usuario.route('/reset', methods=['GET','POST'])
+def reset():
     if request.method == 'POST':
         username = request.form.get('usuario')
         password = request.form.get('senha')
@@ -77,22 +77,22 @@ def reset(tipo):
                     mongo.db.users.find_one_and_update({"username": username},{'$set': {"passwordActive": True, "password": generate_password_hash(password)}})
                     session["username"] = validUser
                     flash(f'Senha definida com sucesso, bem vindo, {validName}!')
-                    return redirect(url_for('bolao.apostas',tipo=tipo))
+                    return redirect(url_for('bolao.apostas'))
                 else:
                     flash('As senhas não são iguais!')
-                    return render_template("usuarios/reset.html",user=validUser,menu="Login",tipo=tipo)
+                    return render_template("usuarios/reset.html",user=validUser,menu="Login")
             else:
                 flash("Usuário inativo, contate o administrador.")
-                render_template("usuarios/login.html",menu="Login",tipo=tipo)
+                render_template("usuarios/login.html",menu="Login")
 
         else:
             flash("Usuário não encontrado.")
-            render_template("usuarios/login.html",menu="Login",tipo=tipo)
+            render_template("usuarios/login.html",menu="Login")
 
-    return redirect(url_for("usuario.login",tipo=tipo))
+    return redirect(url_for("usuario.login"))
 
-@usuario.route('/<tipo>/logout')
-def logout(tipo):
+@usuario.route('/logout')
+def logout():
     session.pop("username",None)
     flash('Logout efetuado.')
-    return redirect(url_for('usuario.login',tipo=tipo))
+    return redirect(url_for('usuario.login'))

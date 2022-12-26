@@ -9,7 +9,7 @@ from ..cache import cache
 
 moedas = Blueprint('moedas',__name__)
 
-ANO=2022
+ANO=22
 MAX_LOG_PAGE=100
 
 @cache.memoize(10)

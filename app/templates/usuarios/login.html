@@ -3,8 +3,8 @@
 <div class="sectionj">
 
 
-    <main class="form-signin">
-        <form action="/{{ tipo }}/login" method="POST">
+    <main class="form-signin text-center">
+        <form action="/login" method="POST">
             <h2>Login</h2>
 
             <p>Realize seu login no sistema de bolão da Gokopa.</p>
@@ -20,11 +20,11 @@
             {% endwith %}
 
             <label for="login" class="visually-hidden">Login</label>
-            <input type="text" name=usuario id="login" class="form-control" placeholder="Login" required autofocus>
-            <label for="senha" class="visually-hidden">Senha</label>
-            <input type="password" name=senha id="senha" class="form-control" placeholder="Senha" required>
+            <input type="text" name=usuario id="login" class="form-control m-3" placeholder="Login" required autofocus>
+            <label for="senha" class="visually-hidden m-3">Senha</label>
+            <input type="password" name=senha id="senha" class="form-control m-3" placeholder="Senha" required>
 
-            <button class="w-100 btn btn-lg btn-primary" type="submit">Login</button>
+            <button class="w-100 btn btn-lg btn-primary m-3" type="submit">Login</button>
         </form>
     </main>
 

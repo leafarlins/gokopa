@@ -1,5 +1,5 @@
 from flask import Blueprint, current_app, render_template, session, request, url_for, flash
-from app.routes.backend import progress_data,get_aposta,get_users,get_games,make_score_board,get_user_name,get_bet_results,get_rank
+from app.routes.backend import getBolaoUsers,progress_data,get_aposta,get_users,get_games,make_score_board,get_user_name,get_bet_results,get_rank
 import pymongo
 from werkzeug.utils import redirect
 from ..extentions.database import mongo
@@ -9,59 +9,49 @@ from ..cache import cache
 
 bolao = Blueprint('bolao',__name__)
 
-ANO=2022
+ANO=22
 APOSTADB='apostas2022'
 
 @cache.memoize(3600)
-def get_history_data(results,tipo):
-    basehis = 'bolao' + str(ANO) + 'his'
-    gr_users = get_users(tipo)
+def get_history_data(results,ano):
+    basehis = 'bolao' + str(ano) + 'his'
+    gr_users = getBolaoUsers(int(ano))
     gr_data = []
-    dias = [u['Dia'] for u in mongo.db[basehis].find({"nome": gr_users[0],"tipo":tipo}).sort("Dia",pymongo.ASCENDING)]
+    dias = [u['Dia'] for u in mongo.db[basehis].find({"nome": gr_users[0]}).sort("Dia",pymongo.ASCENDING)]
     #print("Dias l",len(dias))
     dias.append('H')
     for usr in gr_users:
-        historia = [u['score'] for u in mongo.db[basehis].find({"nome": usr, "tipo": tipo}).sort("Dia",pymongo.ASCENDING)]
+        historia = [u['score'] for u in mongo.db[basehis].find({"nome": usr}).sort("Dia",pymongo.ASCENDING)]
         #print(f'Historia para {usr} l{len(historia)}: {historia}')
         for item in results:
             if item["nome"] == usr:
                 historia.append(item["score"])
         gr_data.append(historia)
 
-
     return dias,gr_data
 
-
-
-@bolao.route('/<tipo>/bolao<id>')
-def old_bolao(id,tipo):
-    if id == '20':
-        return render_template('static/bolao20.html',menu='Bolao',tipo=tipo)
-    else:
-        return redirect(url_for('bolao.apostas',tipo=tipo))
-
-#@bolao.route('/<tipo>/bolao', defaults={'idb': ANO})
-@bolao.route('/<tipo>/bolao')
-def apostas(tipo,ano_bolao=ANO):
-    base_bolao = 'apostas' + str(ano_bolao)
+@bolao.route('/api/get_bolao<ano>')
+def get_bolao_data(ano,apostador=""):
+    ano_bolao = int(ano)
+    base_bolao = 'apostas' + ano
 
     list_next_bet = []
     output = []
     now = datetime.now()
     ano_jogos = get_games(ano_bolao)
-    allUsers = get_users(tipo)
+    allUsers = getBolaoUsers(ano)
     resultados = []
-    if session.get('username') == None:
-        userLogado=False
+
+    if int(ano) == ANO:
+        progresso = progress_data()
     else:
-        apostador = get_user_name(session["username"])
-        userLogado=True
+        progresso = ""
     
     for jogo in ano_jogos:
         id_jogo = jogo["Jogo"]
 
         # Temporario para Catar
-        if tipo == 'cp':
+        if ano == '2022':
             if id_jogo == 1 or id_jogo == 18 or id_jogo == 33:
                 jogo["Time1"] = "Qatar"
 
@@ -71,9 +61,10 @@ def apostas(tipo,ano_bolao=ANO):
         # If game is old and score not empty -> and jogo['p1'] != ""
         if data_jogo < now:
             jogo_inc = get_bet_results(allUsers,aposta,jogo)
+            jogo_inc.pop('_id', None)
             resultados.append(jogo_inc)
         # If game will happen, is definned and user is logged in
-        elif data_jogo > now and userLogado and jogo['Time1'] and jogo['Time2']:
+        elif data_jogo > now and apostador and jogo['Time1'] and jogo['Time2']:
             ap1 = apostador + "_p1"
             ap2 = apostador + "_p2"
             if aposta.get(ap1) != None:
@@ -84,35 +75,43 @@ def apostas(tipo,ano_bolao=ANO):
             output.append(jogo)
 
     #print(list_next_bet)
-    if userLogado:
+    if apostador:
         cache.set(apostador,list_next_bet,3600)
-    #cache_timeout = 3600*24*7
-    #cache.set('lista_bolao',ordered_total,cache_timeout)
-    #cache.set('lista_date',lista_date,cache_timeout)
-    ordered_total = make_score_board(tipo,ano_bolao)
-    gr_labels,gr_data = get_history_data(ordered_total,tipo)
-    #print(gr_labels,gr_data)
-    #rendered=render_template("bolao.html",menu="Bolao",userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers,gr_labels=gr_labels,gr_data=gr_data)
-    #print(rendered)
-    return render_template("bolao.html",menu="Bolao",tipo=tipo,userlogado=userLogado,lista_jogos=output,resultados=resultados,total=ordered_total,users=allUsers,gr_labels=gr_labels,gr_data=gr_data,progress_data=progress_data())
-    
+    ordered_total = make_score_board(ano_bolao)
+    gr_labels,gr_data = get_history_data(ordered_total,ano)
 
-@bolao.route('/cp/regras')
+    return {"Ano": ano, "apostador": apostador, "lista_jogos": output, 'users': allUsers, "grafico": {"labels": gr_labels, "data": gr_data}, 'ranking': ordered_total, 'progress_data':  progresso,'resultados': resultados}
+
+@bolao.route('/bolao<ano>')
+def apostas(ano):
+    #ano = '2022'
+    if ano not in ['22','2022','21','20']:
+        flash(f'Página do bolao {ano} não encontrada.','danger')
+        ano = '22'
+
+    if session.get('username') == None:
+        dados = get_bolao_data(ano)
+    else:
+        apostador = get_user_name(session["username"])
+        dados = get_bolao_data(ano,apostador)
+    return render_template("bolao.html",menu="Bolao",dados=dados)
+
+@bolao.route('/regras')
 def regras():
     allUsers = get_users('cp')
     qtd = len(allUsers)
     inscricao = 50
     bolao = qtd*inscricao
     premio = [qtd,"{:.2f}".format(bolao*0.6),"{:.2f}".format(bolao*0.3),"{:.2f}".format(bolao*0.1),"{:.2f}".format(bolao)]
-    return render_template("regras.html",menu="Regras",tipo='cp',premio=premio)
+    return render_template("regras.html",menu="Regras",premio=premio)
 
 
-@bolao.route('/<tipo>/sobre')
-def sobre(tipo):
-    return render_template("sobre.html",menu="Sobre",tipo=tipo)
+@bolao.route('/sobre')
+def sobre():
+    return render_template("sobre.html",menu="Sobre")
 
-@bolao.route('/<tipo>/editaposta',methods=["GET","POST"])
-def edit_aposta(tipo):
+@bolao.route('/editaposta',methods=["GET","POST"])
+def edit_aposta():
     if "username" in session:
         validUser = mongo.db.users.find_one({"username": session["username"]})
         apostador = validUser["name"]
@@ -129,10 +128,6 @@ def edit_aposta(tipo):
                 a2 = ""
             r1 = get_rank(jogo['Time1'])
             r2 = get_rank(jogo['Time2'])
-            # Temporario para Catar
-            if tipo == 'cp':
-                if idjogo == 1 or idjogo == 18 or idjogo == 33:
-                    jogo["Time1"] = "Qatar"
         else:
             jogo = ""
             a1=""
@@ -142,7 +137,7 @@ def edit_aposta(tipo):
 
         if request.method == "GET":
             #list_next_bet=request.values.get("list_next_bet")
-            return render_template('edit_aposta.html',menu='Bolao',tipo=tipo,jogo=jogo,a1=a1,a2=a2,idjogo=idjogo,r1=r1,r2=r2)
+            return render_template('edit_aposta.html',menu='Bolao',jogo=jogo,a1=a1,a2=a2,idjogo=idjogo,r1=r1,r2=r2)
         else:
             list_next_bet = cache.get(apostador)
             next_bet = 0
@@ -177,9 +172,9 @@ def edit_aposta(tipo):
                 else:
                     flash(f'Erro ao escrever na base placar do jogo {idjogo}','danger')
                     current_app.logger.error(f"Erro ao escrever na base: aposta de {apostador} do jogo {idjogo}")
-            return redirect(url_for('bolao.edit_aposta',tipo=tipo,idjogo=next_bet))
+            return redirect(url_for('bolao.edit_aposta',idjogo=next_bet))
     else:
-        return redirect(url_for('usuario.login',tipo=tipo))
+        return redirect(url_for('usuario.login'))
 
 # Funcao criada para cadastro na copa
 @bolao.route('/cp/placar',methods=["GET","POST"])
@@ -220,7 +215,7 @@ def edit_placar():
             'last_game': current_game
         }
 
-        return render_template('placar.html',tipo='cp',data=data)
+        return render_template('placar.html',data=data)
     else:
         return redirect(url_for('gokopa.home'))
 

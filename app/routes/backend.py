@@ -1,5 +1,4 @@
 #import re
-#from app.routes.bolao import get_rank, make_score_board, read_config_ranking
 #from array import array
 from datetime import datetime, time
 #from typing import Collection
@@ -9,7 +8,7 @@ from pymongo import collection
 from ..extentions.database import mongo
 from ..cache import cache
 
-ANO=2022
+ANO=22
 APOSTADB='apostas2022'
 
 # Para usar curl: WERKZEUG_DEBUG_PIN=off
@@ -17,8 +16,18 @@ APOSTADB='apostas2022'
 backend = Blueprint('backend',__name__)
 
 @cache.memoize(300)
-def get_games(ano_jogos):
-    ano_jogos = [u for u in mongo.db.jogos.find({'Ano': ano_jogos}).sort("Jogo",pymongo.ASCENDING)]
+def getBolaoUsers(ano):
+    if int(ano) == ANO:
+        b_users = get_users('gk')
+        #print(b_users)
+        return b_users
+    else:
+        b_users = mongo.db.settings.find_one({"config": "bolao_u","ano": int(ano)})
+        return b_users["users"]
+
+@cache.memoize(300)
+def get_games(ano):
+    ano_jogos = [u for u in mongo.db.jogos.find({'Ano': ano}).sort("Jogo",pymongo.ASCENDING)]
     return ano_jogos
 
 @cache.memoize(3600*2)
@@ -41,9 +50,9 @@ def get_user_name(username):
     return validUser["name"]
 
 @cache.memoize(3600)
-def get_last_pos(tipo,user):
-    basehis = 'bolao' + str(ANO) + 'his'
-    user_last = [u for u in mongo.db[basehis].find({"nome": user, 'tipo': tipo}).sort("Dia",pymongo.DESCENDING)]
+def get_last_pos(user,ano):
+    basehis = 'bolao' + str(ano) + 'his'
+    user_last = [u for u in mongo.db[basehis].find({"nome": user}).sort("Dia",pymongo.DESCENDING)]
     if user_last:
         last_day = user_last[0].get("posicao")
         if len(user_last) >= 7:
@@ -76,14 +85,14 @@ def get_bet_results(users,aposta,jogo):
     return jogo
 
 @cache.memoize(300)
-def get_score_results(tipo,users,resultados):
+def get_score_results(users,resultados,ano):
         list_total=[]
         for u in users:
             udict=dict()
             udict["nome"]=u
             udict["score"]=0
             udict["pc"]=0
-            last_position_day,last_position_week = get_last_pos(tipo,u)
+            last_position_day,last_position_week = get_last_pos(u,ano)
             udict["last_day"] = last_position_day
             udict["last_week"] = last_position_week
             # sum score*peso foreach result
@@ -96,40 +105,53 @@ def get_score_results(tipo,users,resultados):
             list_total.append(udict)
         return list_total
 
-#@backend.route('/api/score_board/<tipo>', methods=['GET'])
-@cache.memoize(120)
-def make_score_board(tipo,ano_score=ANO):
+@backend.route('/api/score_board', methods=['GET'])
+#@cache.memoize(120)
+def make_score_board(ano_score=ANO):
     db_apostas = 'apostas' + str(ano_score)
     now = datetime.now()
     ano_jogos = get_games(ano_score)
-    allUsers = get_users(tipo)
+    allUsers = getBolaoUsers(ano_score)
     resultados = []
         
-    for jogo in ano_jogos:
-        id_jogo = jogo["Jogo"]
-        data_jogo = datetime.strptime(jogo["Data"],"%d/%m/%Y %H:%M")
-        aposta = get_aposta(id_jogo,db_apostas)
-        # If game is old and score not empty
-        if data_jogo < now and jogo['p1'] != "":
-            jogo_inc = get_bet_results(allUsers,aposta,jogo)
-            resultados.append(jogo_inc)
-    
-    list_total=get_score_results(tipo,allUsers,resultados)
+    # Calcula caso ano atual
+    if ano_score == ANO:
+        for jogo in ano_jogos:
+            id_jogo = jogo["Jogo"]
+            data_jogo = datetime.strptime(jogo["Data"],"%d/%m/%Y %H:%M")
+            aposta = get_aposta(id_jogo,db_apostas)
+            # If game is old and score not empty
+            if data_jogo < now and jogo['p1'] != "":
+                jogo_inc = get_bet_results(allUsers,aposta,jogo)
+                jogo_inc.pop('_id',None)
+                resultados.append(jogo_inc)
+        list_total=get_score_results(allUsers,resultados,ano_score)
 
-    ordered_total = sorted(sorted(list_total, key=lambda k: k['pc'],reverse=True), key=lambda k: k['score'],reverse=True)
-    last_score = 0
-    last_pc = 0
-    last_pos = 1
-    #scoreboard = dict()
-    for i in range(len(ordered_total)):
-        if ordered_total[i]["score"] == last_score and ordered_total[i]["pc"] == last_pc:
-            ordered_total[i]["posicao"] = last_pos
+        ordered_total = sorted(sorted(list_total, key=lambda k: k['pc'],reverse=True), key=lambda k: k['score'],reverse=True)
+        last_score = 0
+        last_pc = 0
+        last_pos = 1
+        #scoreboard = dict()
+        for i in range(len(ordered_total)):
+            if ordered_total[i]["score"] == last_score and ordered_total[i]["pc"] == last_pc:
+                ordered_total[i]["posicao"] = last_pos
+            else:
+                ordered_total[i]["posicao"] = i+1
+                last_score = ordered_total[i]["score"]
+                last_pc = ordered_total[i]["pc"]
+                last_pos = i+1
+    else:
+        basedb = 'bolao' + str(ano_score) + 'his'
+        outdb = [u for u in mongo.db[basedb].find().sort('Dia',pymongo.DESCENDING)]
+        if outdb:
+            ultimo_dia = outdb[0]['Dia']
+            lista = [u for u in mongo.db[basedb].find({'Dia': ultimo_dia})]
+            ordered_total = sorted(lista, key=lambda k: k['posicao'])
+            for i in ordered_total:
+                i.pop('_id',None)
         else:
-            ordered_total[i]["posicao"] = i+1
-            last_score = ordered_total[i]["score"]
-            last_pc = ordered_total[i]["pc"]
-            last_pos = i+1
-    
+            current_app.logger.error(f"Erro no acesso a base {basedb}")
+
     return ordered_total
 
 @backend.route('/api/progress_data', methods=['GET'])
@@ -140,12 +162,12 @@ def progress_data():
     now = datetime.now()
     progress["last_game"]=0
     progress["current_game"]=0
-    progress["total_games"]=64
+    progress["total_games"]=ano_jogos[-1]['Jogo']
     progress["game_progress"]=0
     progress["score_progress"]=0
     progress["score_percent"]='0%'
     progress["last_weight"]=0
-    progress["total_weight"]=272
+    progress["total_weight"]=int(ano_jogos[-1]['p_acu'])
     for jogo in ano_jogos:
         data_jogo = datetime.strptime(jogo["Data"],"%d/%m/%Y %H:%M")
         if data_jogo < now:
@@ -250,15 +272,15 @@ def frequency():
     return freqs
 
 
-@backend.route('/api/probability/<tipo>', methods=['GET'])
+@backend.route('/api/probability', methods=['GET'])
 #@cache.cached(timeout=30*30)
-def probability(tipo):
+def probability():
     frequencias = dict(frequency())
     progress = dict(progress_data())
-    users = get_users(tipo)
+    users = getBolaoUsers(ANO)
     jogos_restantes = progress["total_games"] - progress["last_game"]
     pontos_restantes = (progress["total_weight"] - progress["last_weight"])*5
-    score_board = make_score_board(tipo)
+    score_board = make_score_board(ANO)
     
     if jogos_restantes > 3:
         freq_array_name = "Freq" + "4" + "j"
@@ -328,7 +350,7 @@ def bet_report():
         l_jogo = mongo.db.jogos.find_one_or_404({"Ano": ANO, "Jogo": l_game})
         bet_results = get_aposta(l_game,APOSTADB)
         apostas = []
-        for user in get_users('cp'):
+        for user in getBolaoUsers(ANO):
             placar1 = str(user) + "_p1"
             placar2 = str(user) + "_p2"
             if bet_results.get(placar1) != None:
