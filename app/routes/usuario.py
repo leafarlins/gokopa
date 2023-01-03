@@ -11,7 +11,7 @@ usuario = Blueprint('usuario',__name__)
 @usuario.route('/login', methods=['GET','POST'])
 def login():
     if "username" in session:
-        return redirect(url_for("bolao.apostas"))
+        return redirect(url_for('bolao.apostas',ano='22'))
     elif request.method == 'POST':
         username = request.form.get('usuario')
         password = request.form.get('senha')
@@ -42,7 +42,7 @@ def login():
                         session["username"] = validUser
                         flash(f'Bem vindo, {validName}!')
                         current_app.logger.info(f"Usuário {validName} logado com sucesso")
-                        return redirect(url_for('bolao.apostas'))
+                        return redirect(url_for('bolao.apostas',ano='22'))
                     else:
                         flash(f'Redefina sua senha, {validName}.')
                         return render_template("usuarios/reset.html",user=validUser,menu="Login")
@@ -77,7 +77,7 @@ def reset():
                     mongo.db.users.find_one_and_update({"username": username},{'$set': {"passwordActive": True, "password": generate_password_hash(password)}})
                     session["username"] = validUser
                     flash(f'Senha definida com sucesso, bem vindo, {validName}!')
-                    return redirect(url_for('bolao.apostas'))
+                    return redirect(url_for('bolao.apostas',ano='22'))
                 else:
                     flash('As senhas não são iguais!')
                     return render_template("usuarios/reset.html",user=validUser,menu="Login")

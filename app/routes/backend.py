@@ -35,14 +35,58 @@ def read_config_ranking():
     dbitem = mongo.db.settings.find_one({"config": "ranking"})
     return dbitem.get('edition')
 
-@cache.memoize(3600*24)
-def get_rank(time):
-    rank_ed = read_config_ranking()
-    ranking = mongo.db.ranking.find_one({"ed": rank_ed,"time": time})
-    if ranking:
-        return ranking['pos']
+
+
+@backend.route('/api/get_ranking')
+#@cache.cached(timeout=3600*24)
+def get_ranking():
+    historic = [u for u in mongo.db.timehistory.find() ]
+    ranking = []
+    last_game = progress_data()['last_game']
+    if last_game >= 75:
+        deb = (last_game-74)/129
     else:
-        return ""
+        deb = 0
+    for t in historic:
+        time = t['Time']
+        u_r = int(t['r21'])
+        wcr = int(t['wcr'])
+        pts_his = [t['p22'],t['p21'],t['p20'],t['p19'],t['p18'],t['ph']]
+        pts_bruto = 5*pts_his[0] + (5-deb)*pts_his[1] + (4-deb)*pts_his[2] + (3-deb)*pts_his[3] + (2-deb)*pts_his[4] + (1-deb/2)*pts_his[5]
+        wc_pts = int(250*(128-wcr)/127*(128-u_r)/127)
+        if pts_bruto > wc_pts:
+            pontos = int(pts_bruto+wc_pts)
+        else:
+            pontos = int(pts_bruto*2)
+        ranking.append({
+            'time': time,
+            'u_pts': int(t['u_pts']),
+            'u_r': u_r,
+            'd_pts': pontos - int(t['u_pts']),
+            'wcr': int(t['wcr']),
+            'wc_pts': wc_pts,
+            'pts': pts_his,
+            'score': pontos
+        })
+        sorted_ranking = sorted(sorted(ranking,key=lambda k: k['wcr']),key=lambda k: k['score'],reverse=True)
+        i = 1
+        for item in sorted_ranking:
+            item['posicao'] = i
+            item['d_r'] = int(item['u_r']) - i
+            i += 1
+        #lista_users = sorted(lista_users, key=lambda k: k['total'],reverse=True)
+    
+
+    return {'ranking': sorted_ranking }
+
+@cache.memoize(300)
+def get_rank(time):
+    #rank_ed = read_config_ranking()
+    ranking = get_ranking()
+    for t in ranking['ranking']:
+        if t['time'] == time:
+            return t
+    return ""
 
 @cache.memoize(3600)
 def get_user_name(username):
@@ -80,6 +124,32 @@ def get_bet_results(users,aposta,jogo):
                 score = 0
             else:
                 score = get_score_game(jogo['p1'],jogo['p2'],b1,b2)
+        # Score com valor de pontos e valor de pontos*peso
+        jogo[user]=[aposta_str,score,score*peso]
+    return jogo
+
+@cache.memoize(600)
+def get_bet_results2(users,aposta,jogo):
+    peso=int(jogo['peso'])
+    for user in users:
+        b1 = aposta.get(str(user + "_p1"))
+        b2 = aposta.get(str(user + "_p2"))
+        bv = aposta.get(str(user + "_vit"))
+        if b1 == None or b2 == None:
+            aposta_str="-"
+            score = 0
+        else:
+            aposta_str=str(b1)+"x"+str(b2)
+            if b1 == b2:
+                if bv == '0':
+                    aposta_str='v'+aposta_str
+                elif bv== '1':
+                    aposta_str=aposta_str+'v'
+            # Caso jogo esta sem resultado ainda
+            if jogo['p1'] == "" or jogo['p1'] == None:
+                score = 0
+            else:
+                score = get_score_game2(jogo,b1,b2,bv)
         # Score com valor de pontos e valor de pontos*peso
         jogo[user]=[aposta_str,score,score*peso]
     return jogo
@@ -122,7 +192,10 @@ def make_score_board(ano_score=ANO):
             aposta = get_aposta(id_jogo,db_apostas)
             # If game is old and score not empty
             if data_jogo < now and jogo['p1'] != "":
-                jogo_inc = get_bet_results(allUsers,aposta,jogo)
+                if int(ano_score) >= 22:
+                    jogo_inc = get_bet_results2(allUsers,aposta,jogo)
+                else:
+                    jogo_inc = get_bet_results(allUsers,aposta,jogo)
                 jogo_inc.pop('_id',None)
                 resultados.append(jogo_inc)
         list_total=get_score_results(allUsers,resultados,ano_score)
@@ -219,53 +292,111 @@ def get_score_game(p1,p2,b1,b2):
     #print(f'Calculando score para aposta {b1}x{b2} e placar {p1}x{p2}: {score}')
     return score
 
+@cache.memoize(3600*24*7)
+def get_score_game2(jogo,b1,b2,bv):
+    score=0
+    p1 = jogo['p1']
+    p2 = jogo['p2']
+    #print(p1,p2,b1,b2,bv)
+    
+    if (p1 > p2 and b1 > b2) or (p1 == p2 and b1 == b2) or (p1 < p2 and b1 < b2):
+        # Acertou vitoria/empate
+        score = 2
+        if jogo.get('Grupo'):
+            score += 2
+        else:
+            if p1 == p2:
+                if jogo['pe1'] > jogo['pe2'] and bv == '0':
+                    score += 2
+                elif jogo['pe1'] < jogo['pe2'] and bv == '1':
+                    score += 2
+            else:
+                score += 2
+        # Placar cheio
+        if p1 == b1 and p2 == b2:
+            score += 6
+        # +3 Ponto extra se saldo igual
+        if (p1-p2) == (b1-b2) and (abs(p1-b1) == 1):
+            score += 3
+        # +2 se placar vencedor
+        elif (p1 > p2 and b1 == p1 and (abs(p2-b2) == 1)) or (p1 < p2 and b2 == p2 and (abs(p1-b1) == 1)):
+            score += 2
+        # +1 se saldo igual ou placar derrotado
+        elif (p1-p2) == (b1-b2) and (abs(p1-b1) == 2):
+            score += 1
+        elif (p1 > p2 and b2 == p2 and (abs(p1-b1) == 1)) or (p1 < p2 and b1 == p1 and (abs(p2-b2) == 1)):
+            score += 1
+    elif not jogo.get('Grupo'):
+        if b1 == b2:
+            if p1 > p2 and bv == '0':
+                score += 2
+            elif p1 < p2 and bv == '1':
+                score += 2
+            elif p1 == p2:
+                if jogo['pe1'] > jogo['pe2'] and bv == '0':
+                    score += 2
+                elif jogo['pe1'] < jogo['pe2'] and bv == '1':
+                    score += 2
+        elif p1 == p2:
+            if jogo['pe1'] > jogo['pe2'] and b1 > b2:
+                score += 2
+            elif jogo['pe1'] < jogo['pe2'] and b1 < b2:
+                score += 2
+
+    #print(f'Calculando score para aposta {b1}x{b2} e placar {p1}x{p2}: {score}')
+    return score
+
 @backend.route('/api/frequency', methods=['GET'])
 #@cache.cached(timeout=3600*24)
 def frequency():
     # Setado para frequencia do ano 20
-    lista_jogos = mongo.db.jogos.find({'Ano': 21}).sort("Jogo",pymongo.ASCENDING)
-    # Array de frequencias de pontuações de 0 a 5
-    freq = [0,0,0,0,0,0]
+    lista_jogos = mongo.db.jogos.find({'Ano': 22}).sort("Jogo",pymongo.ASCENDING)
+    # Array de frequencias de pontuações de 0 a 10
+    freq = [0,0,0,0,0,0,0,0,0,0,0]
     totalb = 0
-    for jogo in lista_jogos:
-        idjogo = jogo["Jogo"]
-        aposta = mongo.db.apostas21.find_one_or_404({"Jogo": idjogo})
-        for user in get_all_users():
-            b1 = aposta.get(str(user + "_p1"))
-            b2 = aposta.get(str(user + "_p2"))
-            if b1 != None and b2 != None:
-                if jogo['p1'] != "" or jogo['p1'] != None:
-                    score = get_score_game(jogo['p1'],jogo['p2'],b1,b2)
-                    freq[score] += 1
-                    totalb += 1
+    # Comentar ate gk22
+    freq = [294,0,17,0,57,48,17,34,0,0,28]
+    totalb = 495
+    # for jogo in lista_jogos:
+    #     idjogo = jogo["Jogo"]
+    #     aposta = mongo.db.apostas22.find_one_or_404({"Jogo": idjogo})
+    #     for user in get_all_users():
+    #         b1 = aposta.get(str(user + "_p1"))
+    #         b2 = aposta.get(str(user + "_p2"))
+    #         vit = aposta.get(str(user + "_vit"))
+    #         if b1 != None and b2 != None:
+    #             if jogo['p1'] != "" or jogo['p1'] != None:
+    #                 score = get_score_game2(jogo,b1,b2,vit)
+    #                 freq[score] += 1
+    #                 totalb += 1
     freq1j = [u/totalb for u in freq]
-    freq2j = [0 for i in range(11)]
-    for i in range(6):
-        for j in range(6):
-            freq2j[i+j] += freq1j[i]*freq1j[j]
-    freq3j = [0 for i in range(16)]
+    freq2j = [0 for i in range(21)]
     for i in range(11):
-        for j in range(6):
-            freq3j[i+j] += freq2j[i]*freq1j[j]
-    freq4j = [0 for i in range(21)]
-    for i in range(16):
-        for j in range(6):
-            freq4j[i+j] += freq3j[i]*freq1j[j]
-    freq5j = [0 for i in range(26)]
+        for j in range(11):
+            freq2j[i+j] += freq1j[i]*freq1j[j]
+    freq3j = [0 for i in range(31)]
     for i in range(21):
-        for j in range(6):
-            freq5j[i+j] += freq4j[i]*freq1j[j]
-    freq6j = [0 for i in range(31)]
-    for i in range(26):
-        for j in range(6):
-            freq6j[i+j] += freq5j[i]*freq1j[j]
-    freq7j = [0 for i in range(36)]
+        for j in range(11):
+            freq3j[i+j] += freq2j[i]*freq1j[j]
+    freq4j = [0 for i in range(41)]
     for i in range(31):
-        for j in range(6):
+        for j in range(11):
+            freq4j[i+j] += freq3j[i]*freq1j[j]
+    freq5j = [0 for i in range(51)]
+    for i in range(41):
+        for j in range(11):
+            freq5j[i+j] += freq4j[i]*freq1j[j]
+    freq6j = [0 for i in range(61)]
+    for i in range(51):
+        for j in range(11):
+            freq6j[i+j] += freq5j[i]*freq1j[j]
+    freq7j = [0 for i in range(71)]
+    for i in range(61):
+        for j in range(11):
             freq7j[i+j] += freq6j[i]*freq1j[j]
-    freq8j = [0 for i in range(41)]
-    for i in range(36):
-        for j in range(6):
+    freq8j = [0 for i in range(81)]
+    for i in range(71):
+        for j in range(11):
             freq8j[i+j] += freq7j[i]*freq1j[j]
 
     freqs = {"Frequencias": freq,"Total": totalb, "Freq1j": freq1j, "Freq2j": freq2j, "Freq3j": freq3j, "Freq4j": freq4j, "Freq5j": freq5j, "Freq6j": freq6j, "Freq7j": freq7j, "Freq8j": freq8j}

@@ -1,5 +1,5 @@
 from flask import Blueprint, current_app, render_template, session, request, url_for, flash
-from app.routes.backend import getBolaoUsers,progress_data,get_aposta,get_users,get_games,make_score_board,get_user_name,get_bet_results,get_rank
+from app.routes.backend import getBolaoUsers,progress_data,get_aposta,get_users,get_games,make_score_board,get_user_name,get_bet_results,get_bet_results2,get_rank
 import pymongo
 from werkzeug.utils import redirect
 from ..extentions.database import mongo
@@ -10,7 +10,7 @@ from ..cache import cache
 bolao = Blueprint('bolao',__name__)
 
 ANO=22
-APOSTADB='apostas2022'
+APOSTADB='apostas22'
 
 @cache.memoize(3600)
 def get_history_data(results,ano):
@@ -60,7 +60,10 @@ def get_bolao_data(ano,apostador=""):
         aposta = get_aposta(id_jogo,base_bolao)
         # If game is old and score not empty -> and jogo['p1'] != ""
         if data_jogo < now:
-            jogo_inc = get_bet_results(allUsers,aposta,jogo)
+            if ano_bolao >= 22 and ano_bolao < 2000:
+                jogo_inc = get_bet_results2(allUsers,aposta,jogo)
+            else:
+                jogo_inc = get_bet_results(allUsers,aposta,jogo)
             jogo_inc.pop('_id', None)
             resultados.append(jogo_inc)
         # If game will happen, is definned and user is logged in
@@ -116,6 +119,14 @@ def edit_aposta():
         validUser = mongo.db.users.find_one({"username": session["username"]})
         apostador = validUser["name"]
         idjogo = int(request.values.get("idjogo"))
+        # Faixa no ano22 de jogos que precisa indicar vencedor
+        faixa_j = [9,10,34,35,59,60,25,50]
+        faixa_j = faixa_j + [u for u in range(75,100)]
+        faixa_j = faixa_j + [u for u in range(172,204)]
+        if idjogo in faixa_j:
+            faixavit = True
+        else:
+            faixavit = False
         #print("idjogo:",idjogo)
         if idjogo != 0:
             jogo = mongo.db.jogos.find_one_or_404({"Ano": ANO,"Jogo": idjogo})
@@ -126,8 +137,8 @@ def edit_aposta():
                 a1 = ""
             if a2 == None:
                 a2 = ""
-            r1 = get_rank(jogo['Time1'])
-            r2 = get_rank(jogo['Time2'])
+            r1 = get_rank(jogo['Time1'])['posicao']
+            r2 = get_rank(jogo['Time2'])['posicao']
         else:
             jogo = ""
             a1=""
@@ -137,7 +148,7 @@ def edit_aposta():
 
         if request.method == "GET":
             #list_next_bet=request.values.get("list_next_bet")
-            return render_template('edit_aposta.html',menu='Bolao',jogo=jogo,a1=a1,a2=a2,idjogo=idjogo,r1=r1,r2=r2)
+            return render_template('edit_aposta.html',menu='Bolao',jogo=jogo,a1=a1,a2=a2,idjogo=idjogo,r1=r1,r2=r2,faixavit=faixavit)
         else:
             list_next_bet = cache.get(apostador)
             next_bet = 0
@@ -152,6 +163,7 @@ def edit_aposta():
 
             p1 = request.values.get("p1")
             p2 = request.values.get("p2")
+            vit = request.values.get("vitradio")
             data_jogo = datetime.strptime(request.values.get("data"),"%d/%m/%Y %H:%M")
             now = datetime.now()
             if not p1.isdigit() or not p2.isdigit():
@@ -159,13 +171,24 @@ def edit_aposta():
             elif now > data_jogo:
                 flash("Data do jogo já passou!",'danger')
                 current_app.logger.info(f"Apostador {apostador} tentou apostar no jogo {idjogo} com data passada")
+            elif idjogo in faixa_j and not vit and p1 == p2:
+                flash("Deve-se indicar vitorioso em caso de empate!",'danger')
             else:
-                outdb = mongo.db[APOSTADB].find_one_and_update(
-                    {"Jogo": idjogo},
-                    {'$set': {
-                        str(apostador + "_p1"): int(p1),
-                        str(apostador + "_p2"): int(p2)
-                        }})
+                if idjogo in faixa_j and p1 == p2:
+                    outdb = mongo.db[APOSTADB].find_one_and_update(
+                        {"Jogo": idjogo},
+                        {'$set': {
+                            str(apostador + "_p1"): int(p1),
+                            str(apostador + "_p2"): int(p2),
+                            str(apostador + "_vit"): vit
+                            }})
+                else:
+                    outdb = mongo.db[APOSTADB].find_one_and_update(
+                        {"Jogo": idjogo},
+                        {'$set': {
+                            str(apostador + "_p1"): int(p1),
+                            str(apostador + "_p2"): int(p2)
+                            }})
                 if outdb:
                     flash(f'Placar adicionado com sucesso no jogo {idjogo}!','success')
                     current_app.logger.info(f"Usuário {apostador} apostou no jogo {idjogo}")
@@ -177,7 +200,7 @@ def edit_aposta():
         return redirect(url_for('usuario.login'))
 
 # Funcao criada para cadastro na copa
-@bolao.route('/cp/placar',methods=["GET","POST"])
+@bolao.route('/placar',methods=["GET","POST"])
 def edit_placar():
     if 'username' in session and session['username'] == 'leafarlins@gmail.com':
         lista_jogos = get_games(ANO)

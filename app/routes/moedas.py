@@ -21,7 +21,7 @@ def get_moedas_info():
 
     return {'moedas_board': board['moedas_board'], 'jogos': jogos['next_jogos'][:16], 'ultimos_jogos': jogos['past_jogos'][:16],'logs': logs,'logsindex': 0,'logspages': int(len(logs)/MAX_LOG_PAGE)+1}
 
-@moedas.route('/gk/moedas',methods=['GET','POST'])
+@moedas.route('/moedas',methods=['GET','POST'])
 def gamemoedas():
     user_info = {}
     info = get_moedas_info()
@@ -50,7 +50,7 @@ def gamemoedas():
         info['username'] = 'false'
     info['patrocinados'] = lista_pat['patrocinados']
 
-    return render_template('moedas.html',menu='Moedas',tipo='gk',info=info,user_info=user_info)
+    return render_template('moedas.html',menu='Moedas',info=info,user_info=user_info)
 
 @cache.memoize(60)
 def get_apoio_liberado(time):

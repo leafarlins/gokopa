@@ -1,5 +1,5 @@
 import re
-from app.routes.backend import progress_data,get_aposta,get_score_game,get_rank, make_score_board,read_config_ranking,probability
+from app.routes.backend import progress_data,get_aposta,get_score_game,get_rank, make_score_board,read_config_ranking,probability,get_ranking
 from array import array
 from datetime import datetime, time
 from typing import Collection
@@ -98,7 +98,7 @@ def get_jogos_tab(ano,r1):
 def get_team_table(descx,desc,timex):
     return mongo.db.jogos.find_one({"Ano": ANO, descx: desc}).get(timex)
 
-@cache.memoize(300)
+@cache.memoize(20)
 def get_anoX_games(ano,indx):
     anoX_games = [u for u in mongo.db.jogos.find({'Ano': ano, "Jogo": {'$gt': indx }}).sort("Jogo",pymongo.ASCENDING)]
     now = datetime.now()
@@ -125,10 +125,13 @@ def gerar_tabela(ano):
         '22': 'O ano 22 terá taças regionais, classificando para as finais das taças e para a gokopa de 48 times. A maior gokopa de todos os tempos até aqui, com 104 jogos em 12 grupos de 4.',
         '21': 'O ano 21 é a Gokopa simulada em homenagem à Copa do Mundo de 2022, com a mesma tabela.',
         '20': 'Ano 20 com taças regionais e Copa do Mundo versão 32 times.',
-        '19': 'Gokopa do Mundo com versão 48 times em 16 grupos de 3.'
+        '19': 'Gokopa do Mundo com versão 48 times na América Central, 4 países, maior número de sedes até então.',
+        '18': 'Primeira Gokopa do Mundo com versão 48 times em 16 grupos de 3, na Alemanha.',
+        '17': 'Edição especial na Rússia, com a tabela da Copa do Mundo 2018.',
+        '16': 'Gokopa do Mundo 16, no Japão.'
     }
     # Lista de competições válidas para montar grupos
-    comp_valida = ['Copa do Mundo','Taça Mundial','Taça Ásia-Oceania','Taça América','Taça Europa','Taça África']
+    comp_valida = ['Copa do Mundo','Taça Mundial','Taça Ásia-Oceania','Taça América','Taça Europa','Taça África','Confederações']
     fase_valida = ['16-avos-de-final','8vas-de-final','4as-de-final','Semi-final','D. 3º Lugar','Final']
     # Lista inicial de competição para formar grupos
     competicao = {
@@ -201,9 +204,9 @@ def gerar_tabela(ano):
     }            
 
 @gokopa.route('/tabela<ano>')
-@cache.cached(timeout=60*0)
+#@cache.cached(timeout=60*2)
 def tabelaano(ano):
-    if ano not in ['2022'] and int(ano) not in range(19,23):
+    if ano not in ['2022'] and int(ano) not in range(16,23):
         flash(f'Tabela do ano {ano} não disponível.','danger')
         ano = '22'
     dados = gerar_tabela(ano)
@@ -213,8 +216,8 @@ def tabelaano(ano):
 @cache.memoize(3600*720)
 def tabela_his():
     fase_final = []
-    for i in range(20):
-        jogos = [u for u in mongo.db.jogos.find({"Ano": i+1, "Competição": "Copa", '$or': [{"Fase": "8vas-de-final"},{"Fase": "4as-de-final"},{"Fase": "Semi-final"},{"Fase": "D. 3º Lugar"},{"Fase": "Final"}]}).sort('Jogo',pymongo.ASCENDING)]
+    for i in range(21):
+        jogos = [u for u in mongo.db.jogos.find({"Ano": i+1, "Competição": "Copa do Mundo", '$or': [{"Fase": "8vas-de-final"},{"Fase": "4as-de-final"},{"Fase": "Semi-final"},{"Fase": "D. 3º Lugar"},{"Fase": "Final"}]}).sort('Jogo',pymongo.ASCENDING)]
         if i == 0:
             jogos = [0,0,0,0,0,0,0,0] + jogos
         fase_final.append(jogos)
@@ -233,6 +236,8 @@ def get_historic_copa(comp):
         times.add(h['ouro'])
         times.add(h['prata'])
         times.add(h['bronze'])
+        if comp == 'tacas':
+            times.add(h['quarto'])
     for t in times:
         time = dict()
         time['nome'] = t
@@ -246,57 +251,17 @@ def get_historic_copa(comp):
                 time['prata'] += 1
             if t == l['bronze']:
                 time['bronze'] += 1
+            if comp == 'tacas':
+                if t == l['quarto']:
+                    time['bronze'] += 1
         time['total'] = time['ouro'] + time['prata'] + time['bronze']
         medal_count.append(time)
 
     #print(medal_count)
     return historia,medal_count
 
-@gokopa.route('/api/get_ranking')
-#@cache.cached(timeout=3600*24)
-def get_ranking():
-    historic = [u for u in mongo.db.timehistory.find() ]
-    ranking = []
-    last_game = progress_data()['last_game']
-    if last_game >= 75:
-        deb = (last_game-74)/129
-    else:
-        deb = 0
-    for t in historic:
-        time = t['Time']
-        u_r = int(t['r21'])
-        wcr = int(t['wcr'])
-        pts_his = [t['p22'],t['p21'],t['p20'],t['p19'],t['p18'],t['ph']]
-        pts_bruto = 5*pts_his[0] + 5*pts_his[1] + 4*pts_his[2] + 3*pts_his[3] + 2*pts_his[4] + pts_his[5]
-        wc_pts = int(250*(128-wcr)/127*(128-u_r)/127)
-        if pts_bruto > wc_pts:
-            pontos = pts_bruto+wc_pts
-        else:
-            pontos = pts_bruto*2
-        ranking.append({
-            'time': time,
-            'u_pts': int(t['u_pts']),
-            'u_r': u_r,
-            'd_pts': pontos - int(t['u_pts']),
-            'wcr': int(t['wcr']),
-            'wc_pts': wc_pts,
-            'pts': pts_his,
-            'score': pontos
-        })
-        sorted_ranking = sorted(sorted(ranking,key=lambda k: k['wcr']),key=lambda k: k['score'],reverse=True)
-        i = 1
-        for item in sorted_ranking:
-            item['posicao'] = i
-            item['d_r'] = int(item['u_r']) - i
-            i += 1
-        #lista_users = sorted(lista_users, key=lambda k: k['total'],reverse=True)
-    
-
-    return {'ranking': sorted_ranking }
-
-
 @gokopa.route('/ranking')
-@cache.cached(timeout=3600)
+#@cache.cached(timeout=600)
 def ranking():
     #rank_ed = read_config_ranking()
     #ranking = [u for u in mongo.db.ranking.find({"ed": rank_ed}).sort('pos',pymongo.ASCENDING)]
@@ -354,7 +319,7 @@ def return_team_history(team1):
             pos_rank.append(int(historia[rank]))
     # Add current rank
     pos_copa.append('?')
-    pos_rank.append(get_rank(team1))
+    pos_rank.append(get_rank(team1)['posicao'])
     print(pos_copa,pos_rank)
     return pos_copa,pos_rank
 
@@ -369,8 +334,6 @@ def historico():
         lista_jogos,vev = return_historic_duels(time_1["nome"],time_2["nome"])
         time_1["hc"],time_1["hr"] = return_team_history(time_1["nome"])
         time_2["hc"],time_2["hr"] = return_team_history(time_2["nome"])
-        print(time_1)
-        print(time_2)
     else:
         lista_jogos = []
         vev=[]
@@ -399,48 +362,3 @@ def get_tabela_pot():
                 time['rank'] = get_rank(time['nome'])
                 pot_trans[i][j] = time
     return pot_trans
-
-def get_tabelas_copa():
-    tabelas_label = ['A','B','C','D','E','F','G','H']
-    tabelas = []
-    for i in range(8):
-        desc1 = "p" + str(1) + tabelas_label[i]
-        desc2 = "p" + str(2) + tabelas_label[i]
-        desc3 = "p" + str(3) + tabelas_label[i]
-        time1 = get_team_table('desc1',desc1,'Time1')
-        time2 = get_team_table('desc1',desc2,'Time1')
-        time3 = get_team_table('desc2',desc3,'Time2')
-        desc4 = "p" + str(4) + tabelas_label[i]
-        time4 = get_team_table('desc2',desc4,'Time2')
-        times = [time1,time2,time3,time4]
-        descs = [desc1,desc2,desc3,desc4]
-        for j in range(len(times)):
-            linha = dict()
-            if times[j]:
-                linha['nome'] = times[j]
-                linha['rank'] = get_rank(times[j])
-            else:
-                linha['nome'] = descs[j]
-                #tab.update({'nome': desc})
-            tabelas.append(linha)
-
-    return tabelas
-
-
-@gokopa.route('/sorteio')
-@cache.cached(timeout=3600*24*30)
-def sorteio_page():
-    tabelas_label = ['A','B','C','D','E','F','G','H']
-    tabelas = get_tabelas_copa()
-    
-    # Tabela de pots
-    pot_table = get_tabela_pot()
-    #print(pot_trans)
-
-    highlightdb = mongo.db.settings.find_one({"config":"highlight"})
-    if highlightdb:
-        highlight = highlightdb['time']
-    else:
-        highlight = "nenhum"
-
-    return render_template('sorteio.html',menu='Home',labels=tabelas_label,tabelas=tabelas,tabela_pot=pot_table,hlt=highlight)

@@ -11,7 +11,7 @@ from flask_pymongo import BSONObjectIdConverter
 import pymongo
 from pymongo.collection import ReturnDocument
 
-from app.routes.backend import get_moedas_board, get_next_jogos, get_pat_teams, moedas_log
+from app.routes.backend import get_moedas_board, get_next_jogos, get_pat_teams, moedas_log, get_ranking
 from ..extentions.database import mongo
 from flask import Blueprint,current_app
 
@@ -117,6 +117,54 @@ def zera_rank_pts(ano):
     rank = "p" + ano
     print(f"Zerando dados {rank}")
     mongo.db.timehistory.update_many({},{'$set':{rank: 0}})
+
+@timeCommands.cli.command("calc_ranking")
+@click.argument("j_i")
+@click.argument("j_f")
+def calc_ranking(j_i,j_f):
+    ft1 = 1
+    ft2 = 4
+    ranking = get_ranking()
+    times = {}
+    for t in ranking['ranking']:
+        times[t['time']] = {
+            'pts': 0,
+            'posicao': t['posicao']
+        }
+    print(f'Avaliando jogos de {j_i} a {j_f}')
+    for i in range(int(j_i),int(j_f)+1):
+        jogo = mongo.db.jogos.find_one({'Ano': ANO, 'Jogo': i})
+        ptsg1 = 0
+        ptsg2 = 0
+        if jogo['p1'] > jogo['p2']:
+            pts = 3
+            ptsg1 = int( (ft1 + ft2*(127-times[jogo['Time2']]['posicao'])/126) * pts * int(jogo['peso']) ) + 1
+        elif jogo['p2'] > jogo['p1']:
+            pts = 3
+            ptsg2 = int( (ft1 + ft2*(127-times[jogo['Time1']]['posicao'])/126) * pts * int(jogo['peso']) ) + 1
+        else:
+            if jogo.get('Grupo'):
+                pts1 = 1
+                pts2 = 1
+            elif jogo['pe1'] > jogo['pe2']:
+                pts1 = 2
+                pts2 = 1
+            else:
+                pts1 = 1
+                pts2 = 2
+            ptsg1 = int( (ft1 + ft2*(127-times[jogo['Time2']]['posicao'])/126) * pts1 * int(jogo['peso']) ) + 1
+            ptsg2 = int( (ft1 + ft2*(127-times[jogo['Time1']]['posicao'])/126) * pts2 * int(jogo['peso']) ) + 1
+        times[jogo['Time1']]['pts'] += ptsg1
+        times[jogo['Time2']]['pts'] += ptsg2
+            
+    for t in times:
+        pts = times[t]['pts']
+        if pts > 0:
+            print(f'Time {t} = +{pts}')
+            mongo.db.timehistory.find_one_and_update({'Time': t},{'$inc': {'p22': pts}})
+    
+
+
 
 @timeCommands.cli.command("loadEmojis")
 @click.argument("csv_file")
@@ -295,7 +343,11 @@ def exec():
     #mongo.db.patrocinio.find_one_and_update({'Time': 'Holanda'},{'$set': {"Patrocinador" : "-"}})
     #mongo.db.tentarpat.find_one_and_update({'valor':500},{'$set': {'valor':0}})
     #mongo.db.patrocinio.find_and_modify({'Time': 'Holanda'},{'$set': {'Patrocinador': "-"}})
-    mongo.db.jogos.find_one_and_update({'Ano': 21, 'Jogo': 64},{'$set': {'Data': '27/10/2022 14:30' }})
+    mongo.db.jogos.find_one_and_update({'Ano': 22, 'Jogo': 94},{'$set': {'desc1':'s1-EUR','desc2':'s2-EUR'}})
+    mongo.db.jogos.find_one_and_update({'Ano': 22, 'Jogo': 95},{'$set': {'desc1':'s1-AME','desc2':'s2-AME'}})
+    #for t in [u for u in mongo.db.patrocinio.find()]:
+    #    print(t['Time'])
+
 
 #def processa_jogos():
 
@@ -367,7 +419,7 @@ def processa_pat(jogos='0',leilao=False):
         past_jogos = get_next_jogos()['past_jogos'][:jogos]
         verify_jogos = get_next_jogos()['next_jogos'][:4]
 
-        if past_jogos[0]['jid'] > 32:
+        if past_jogos[0]['jid'] > 150:
             moedas.update_many({},{'$inc': {'saldo': -150}})
             moedas_log('all',"-150","",0,"Pagamento de empréstimo")
 

@@ -12,7 +12,7 @@
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     {% for message in messages %}
-                        <div class="alert alert-danger" role="alert">
+                        <div class="alert alert-danger m-2" role="alert">
                           {{ message }}
                         </div>
                     {% endfor %}
@@ -20,13 +20,13 @@
             {% endwith %}
 
             <label for="login" class="visually-hidden">Login</label>
-            <input type="text" name=usuario id="login" class="form-control" placeholder="Login" value="{{ user }}" readonly>
+            <input type="text" name=usuario id="login" class="form-control m-2" placeholder="Login" value="{{ user }}" readonly>
             <label for="senha" class="visually-hidden">Senha</label>
-            <input type="password" name=senha id="senha" class="form-control" placeholder="Senha" required>
+            <input type="password" name=senha id="senha" class="form-control m-2" placeholder="Senha" required>
             <label for="senha2" class="visually-hidden">Repita a senha</label>
-            <input type="password" name=senha2 id="senha2" class="form-control" placeholder="Senha2" required>
+            <input type="password" name=senha2 id="senha2" class="form-control m-2" placeholder="Senha2" required>
 
-            <button class="w-100 btn btn-lg btn-primary" type="submit">Redefinir senha</button>
+            <button class="w-100 btn btn-lg btn-primary m-2" type="submit">Redefinir senha</button>
         </form>
     </main>
 

@@ -147,15 +147,24 @@ def gera_random_penalti():
 def teste2(user,jogo):
     p1 = gera_random_score()
     p2 = gera_random_score()
-
-    outp = mongo.db.apostas2022.find_one_and_update(
-        {"Jogo": int(jogo)},
-        {'$set': {
-            str(user + "_p1"): int(p1),
-            str(user + "_p2"): int(p2)
-            }})
+    if p1 == p2 and jogo in range(172,204):
+        r = randrange(2)
+        outp = mongo.db.apostas22.find_one_and_update(
+            {"Jogo": int(jogo)},
+            {'$set': {
+                str(user + "_p1"): int(p1),
+                str(user + "_p2"): int(p2),
+                str(user + "_vit"): str(r)
+                }})
+    else:
+        outp = mongo.db.apostas22.find_one_and_update(
+            {"Jogo": int(jogo)},
+            {'$set': {
+                str(user + "_p1"): int(p1),
+                str(user + "_p2"): int(p2)
+                }})
     print(f'jid {jogo} Aposta de {user}: {p1}x{p2}')
-    print(outp)
+    #print(outp)
 
 # Print random commando to edit game
 @jogosCommands.cli.command("printRandom")
@@ -212,7 +221,7 @@ def delete_ano(ano):
 @click.argument("texto",required=False)
 def report(jogos,proximos,texto=""):
     emojis = mongo.db.emoji
-    apostas = mongo.db.apostas2022
+    apostas = mongo.db.apostas22
     lista_jogos = get_next_jogos()
     jogos_list = lista_jogos['past_jogos'][:int(jogos)]
     next_list = lista_jogos['next_jogos'][:int(proximos)]
@@ -266,7 +275,7 @@ def report(jogos,proximos,texto=""):
         string_placar += " ▪️ " + str(ordered_total[i]['score']) + " - " + str(ordered_total[i]['nome'])
     mensagem+=string_placar
         
-    mensagem+="\n\n➡️ Visite e acompanhe: https://copa.leafarlins.com\nMoedas: https://gokopa.leafarlins.com/gk/moedas"
+    mensagem+="\n\n➡️ Visite e acompanhe: https://gokopa.leafarlins.com"
     print("Preparando mensagem para envio")
     print(mensagem)
     if TELEGRAM:

@@ -12,7 +12,7 @@
 <div class=".container-fluid">
 
 
-{% set torneios = ['Copa do Mundo','Taça Mundial','Taça América','Taça Europa','Taça Ásia-Oceania','Taça África'] %}
+{% set torneios = ['Copa do Mundo','Taça Mundial','Taça América','Taça Europa','Taça Ásia-Oceania','Taça África','Confederações'] %}
 {% for torneio in torneios %}
 {% if dados['competicao'][torneio] %}
 
@@ -141,9 +141,9 @@
         <table class="tab_gokopa tab_jogos">
             <tr>
                 <td title="{{ j['Jogo'] }}">{{ j['Data'] }}</td>
-                <td>{{ j['Estadio'] }} 
+                <td>{% if j['Estadio'] %}{{ j['Estadio'] }} 
                     <img class="miniflag" src="../static/img/flag/{{ j['Pais'] }}.png" onerror="this.src='../static/img/flag/default.png'">
-                </td>
+                {% else %}-{% endif %}</td>
             </tr>
             <tr>
                 <td colspan="2">
@@ -164,9 +164,9 @@
 {% endif %}
 
 <h2 class="m-3">Tabelas antigas</h2>
-<p class="center">Veja as tabelas de gokopas antigas: <a href="tabela21">Gokopa21</a> <a href="tabela20">Gokopa20</a></p>
+<p class="center">Veja as tabelas de gokopas antigas: <a href="tabela21">Gokopa21</a> <a href="tabela20">Gokopa20</a> <a href="tabela19">Gokopa19</a></p>
 <p class="center">Veja o resumo das fases finais de <a href="tabelahis">todas as Gokopas</a></p>
-<p class="center">Veja as tabelas das copas do mundo: <a href="tabela2022">Gokopa2022</a> <a href="tabela2022">Copa 2022</a></p>
+<p class="center">Veja as tabelas das copas do mundo: <a href="tabela2022">Copa 2022</a></p>
 
 
 </div>

@@ -3,5 +3,8 @@ flask config set_bolao_users 21 "pupu jaimim zcaroli putz capote didi ernani"
 flask config set_bolao_users 20 "gillis andrei didi jaimim putz ernani capote baiano lukets zcaroli"
 flask config migrate
 flask time loadTimeHistory dataset/times_historia_1_21.csv
+flask time zera_rank_pts 22
 flask jogos loadCsv dataset/jogos_ano22.csv
 flask jogos initApostas22
+flask time loadPatrocinio dataset/patrocinio22.csv
+#flask user initMoedas
