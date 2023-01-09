@@ -25,7 +25,7 @@ def login():
 
             # Data limite para ativar users automaticamente no acesso
             now = datetime.now()
-            data_limite = datetime.strptime("02/10/2022 06:00","%d/%m/%Y %H:%M")
+            data_limite = datetime.strptime("28/02/2023 02:00","%d/%m/%Y %H:%M")
             if now < data_limite and validActiveU == False:
                 ativarUser = True
                 validActiveU = True

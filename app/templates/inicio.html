@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 <p>&nbsp;</p>
-<div class="row scoll-pane">
+<div class="row">
 
-<div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4">
+<div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-4">
 
     <h2>Resultado do Bolão</h2>
     {% if total %}
@@ -81,39 +81,58 @@
   
 </div>
 
-<div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
-  <h2>Últimos Jogos</h2>
-
-  <table class="tab_gokopa tab_jogos">
-
-    {% for jogo in past_jogos %}
-      <tr>
-        <td title="{{ jogo['Jogo'] }}">{{ jogo['Data'] }}</td>
-        <td>{{ jogo['Competição'] }} {{ jogo['Fase'] }}</td>
-      </tr>
-      <tr>
-          <!-- <td>{{ jogo['Data'] }}</td>
-          <td>{{ jogo['Time1'] }} <img class="flag" src="../static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'"></td>
-          <td>{{ jogo['p1'] }}x{{ jogo['p2'] }}</td>
-          <td><img class="flag" src="../static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ jogo['Time2'] }}</td>
-          <td>{{ jogo['Competição'] }} {{ jogo['Fase'] }}</td> -->
-        <td colspan="2">
-            {{ jogo['Time1'] }} <img class="flag" src="../static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
-            {% if jogo['pe1'] or jogo['pe1'] == 0  %}
-              <b title="tr: {{ jogo['tr1'] }}x{{ jogo['tr2'] }} pe: {{ jogo['pe1'] }}x{{ jogo['pe2'] }}">{{ jogo['p1'] }}x{{ jogo['p2'] }}</b>
-            {% elif jogo['tr1'] or jogo['tr1'] == 0 %}
-              <b title="tr: {{ jogo['tr1'] }}x{{ jogo['tr2'] }}">{{ jogo['p1'] }}x{{ jogo['p2'] }}</b>
-            {% else %}{{ jogo['p1'] }}x{{ jogo['p2'] }}
-            {% endif %}
-             <img class="flag" src="../static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ jogo['Time2'] }}
-        </td>
-      </tr>
+<div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-8">
+  <h2>Gokopa News</h2>
+  <div class="row">
+    {% for n in news %}
+    <div class="col-12 col-sm-6 col-md-4 col-lg-6 col-xl-4">
+      <div class="card">
+        {% if n['img'] %}<img src="../static/img/news/{{ n['img'] }}" onerror="this.src='../static/img/flag/default.png'" class="card-img-top">{% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ n['titulo'] }}</h5>
+          <h8 class="card-subtitle m-2 text-muted smallt">{{ n['data'] }}</h8>
+          <p class="card-text">{% autoescape false %}{{ n['texto'] }}{% endautoescape %}</p>
+          {% if n['link'] %}<a href="{{ n['link'] }}" class="card-link">{{ n['linkname'] }}</a>{% endif %}
+        </div>
+      </div>
+    </div>
     {% endfor %}
-  </table>
-  <p>&nbsp;</p>
+    <p class="text-center m3">Veja <a href="/noticias">todas as notícias</a> do ano22</p>
+  </div>
 </div>
 
-<div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
+</div>
+
+<div class="row">
+
+<div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-8 col-xxl-9">
+  <h2>Últimos Jogos</h2>
+
+    <div class="row">{% for j in past_jogos %}
+    <div class="col-12 col-sd-12 col-md-12 col-lg-12 col-xl-6 col-xxl-4">
+        <table class="tab_gokopa tab_jogos">
+            <tr>
+                <td title="{{ j['Jogo'] }}">{{ j['Data'] }}</td>
+                <td>{{ j['Competição'] }} - {{ j['Fase'] }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    {{ j['Time1'] }} <img class="flag" src="../static/img/flag/{{ j['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+                    {% if j['pe1'] or j['pe2'] == 0 %}
+                        <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }} pe: {{ j['pe1'] }}x{{ j['pe2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
+                    {% elif j['tr1'] or j['tr2'] == 0 %}
+                        <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
+                    {% else %}{{ j['p1'] }}x{{ j['p2'] }}
+                    {% endif %}
+                    <img class="flag" src="../static/img/flag/{{ j['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ j['Time2'] }}
+                </td>
+            </tr>
+        </table>
+    </div>
+    {% endfor %}</div>
+</div>
+
+<div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 col-xxl-3">
   <h2>Próximos Jogos  </h2>
   {% if next_jogos %}
   <table class="tab_gokopa tab_jogos">

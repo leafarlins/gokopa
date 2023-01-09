@@ -4,7 +4,7 @@ import getpass
 
 import pymongo
 from ..extentions.database import mongo
-from flask import Blueprint
+from flask import Blueprint,current_app
 from app.routes.backend import get_aposta,get_users,get_games,make_score_board,get_bet_results2,get_score_results,getBolaoUsers
 
 configCommands = Blueprint('config',__name__)
@@ -215,6 +215,33 @@ def migrate():
         mongo.db.jogos.find_one_and_update({'Ano': 16, 'Jogo': i},{'$set': {'Grupo': g}})
         i += 1
     
+    print("gk15")
+    datas15 = ["05/04/2014 16:00","06/04/2014 16:00","06/04/2014 19:00","07/04/2014 16:00","09/04/2014 16:00","09/04/2014 19:00","10/04/2014 16:00","10/04/2014 19:00","12/04/2014 16:00","12/04/2014 16:00","13/04/2014 16:00","13/04/2014 16:00","16/04/2014 16:00","17/04/2014 16:00","20/04/2014 13:00","20/04/2014 19:00","24/04/2014 17:00","25/04/2014 13:00","25/04/2014 16:00","25/04/2014 19:00","26/04/2014 13:00","26/04/2014 16:00","26/04/2014 19:00","26/04/2014 22:00","27/04/2014 13:00","27/04/2014 16:00","27/04/2014 19:00","28/04/2014 13:00","28/04/2014 16:00","28/04/2014 19:00","29/04/2014 13:00","29/04/2014 16:00","29/04/2014 19:00","30/04/2014 13:00","30/04/2014 16:00","30/04/2014 19:00","01/05/2014 13:00","01/05/2014 16:00","01/05/2014 19:00","02/05/2014 13:00","02/05/2014 16:00","02/05/2014 19:00","03/05/2014 13:00","03/05/2014 16:00","03/05/2014 19:00","04/05/2014 13:00","04/05/2014 16:00","04/05/2014 19:00","05/05/2014 13:00","05/05/2014 13:00","05/05/2014 17:00","05/05/2014 17:00","06/05/2014 13:00","06/05/2014 13:00","06/05/2014 17:00","06/05/2014 17:00","07/05/2014 13:00","07/05/2014 13:00","07/05/2014 17:00","07/05/2014 17:00","08/05/2014 13:00","08/05/2014 13:00","08/05/2014 17:00","08/05/2014 17:00","10/05/2014 13:00","10/05/2014 17:00","11/05/2014 13:00","11/05/2014 17:00","12/05/2014 13:00","12/05/2014 17:00","13/05/2014 13:00","13/05/2014 17:00","16/05/2014 13:00","16/05/2014 17:00","17/05/2014 13:00","17/05/2014 17:00","20/05/2014 17:00","21/05/2014 17:00","24/05/2014 17:00","25/05/2014 17:00"]
+    est15 = ["Brasília","Rio de Janeiro","Recife","Brasília","Fortaleza","Recife","Rio de Janeiro","Salvador","Salvador","Belo Horizonte","Fortaleza","Recife","Belo Horizonte","Fortaleza","Salvador","Rio de Janeiro","São Paulo","Natal","Salvador","Cuiabá","Belo Horizonte","Fortaleza","Recife","Manaus","Brasília","Porto Alegre","Rio de Janeiro","Salvador","Curitiba","Natal","Belo Horizonte","Fortaleza","Cuiabá","Porto Alegre","Rio de Janeiro","Manaus","Brasília","São Paulo","Natal","Recife","Salvador","Curitiba","Belo Horizonte","Fortaleza","Cuiabá","Porto Alegre","Manaus","Rio de Janeiro","Curitiba","São Paulo","Brasília","Recife","Natal","Belo Horizonte","Cuiabá","Fortaleza","Porto Alegre","Salvador","Manaus","Rio de Janeiro","Recife","Brasília","São Paulo","Curitiba","Belo Horizonte","Rio de Janeiro","Fortaleza","Recife","Brasília","Porto Alegre","São Paulo","Salvador","Rio de Janeiro","Fortaleza","Brasília","Salvador","Belo Horizonte","São Paulo","Brasília","Rio de Janeiro"]
+    gr15c = ["A-CONF","A-CONF","B-CONF","B-CONF","A-CONF","A-CONF","B-CONF","B-CONF","A-CONF","A-CONF","B-CONF","B-CONF"]
+    gr15wc = ["A","A","B","B","C","D","C","D","E","E","F","G","F","G","H","A","H","B","B","A","C","D","C","D","E","E","F","G","F","H","G","H","B","B","A","A","D","D","C","C","F","F","E","E","G","G","H","H"]
+    for i in range(1,81):
+        mongo.db.jogos.find_one_and_update({'Ano': 15, 'Jogo': i},{'$set': {'Data': datas15[i-1],'Estadio': est15[i-1],'Pais': 'Brasil'}})
+    for i in range(1,13):
+        mongo.db.jogos.find_one_and_update({'Ano': 15, 'Jogo': i},{'$set': {'Grupo': gr15c[i-1]}})
+    for i in range(17,65):
+        mongo.db.jogos.find_one_and_update({'Ano': 15, 'Jogo': i},{'$set': {'Grupo': gr15wc[i-17]}})
+    print("gk14")
+    datas14 = ["04/12/2013 15:00","04/12/2013 15:00","04/12/2013 15:00","04/12/2013 23:00","04/12/2013 23:00","08/12/2013 15:00","08/12/2013 15:00","08/12/2013 15:00","08/12/2013 15:00","08/12/2013 15:00","08/12/2013 15:00","08/12/2013 15:00","08/12/2013 15:00","08/12/2013 15:00","08/12/2013 15:00","08/12/2013 15:00","08/12/2013 15:00","08/12/2013 15:00","08/12/2013 15:00","11/12/2013 15:00","11/12/2013 15:00","11/12/2013 15:00","11/12/2013 15:00","12/12/2013 15:00","12/12/2013 15:00","12/12/2013 15:00","12/12/2013 15:00","14/12/2013 15:00","14/12/2013 15:00","14/12/2013 15:00","14/12/2013 15:00","15/12/2013 23:00","15/12/2013 23:00","15/12/2013 23:00","15/12/2013 23:00","18/12/2013 15:00","18/12/2013 15:00","18/12/2013 15:00","18/12/2013 15:00","18/12/2013 15:00","18/12/2013 15:00","18/12/2013 15:00","18/12/2013 15:00","18/12/2013 15:00","18/12/2013 15:00","18/12/2013 15:00","18/12/2013 15:00","18/12/2013 15:00","18/12/2013 15:00","21/12/2013 15:00","21/12/2013 15:00","21/12/2013 15:00","21/12/2013 15:00","21/12/2013 15:00","21/12/2013 15:00","21/12/2013 15:00","21/12/2013 15:00","22/12/2013 15:00","22/12/2013 15:00","22/12/2013 15:00","22/12/2013 15:00","22/12/2013 23:00","22/12/2013 23:00","22/12/2013 23:00","22/12/2013 23:00","22/12/2013 23:00","22/12/2013 23:00","22/12/2013 23:00","22/12/2013 23:00","10/01/2014 15:00","10/01/2014 15:00","10/01/2014 15:00","10/01/2014 15:00","11/01/2014 15:00","11/01/2014 15:00","11/01/2014 15:00","11/01/2014 15:00","11/01/2014 15:00","11/01/2014 15:00","11/01/2014 15:00","11/01/2014 15:00","11/01/2014 15:00","11/01/2014 15:00","11/01/2014 15:00","11/01/2014 15:00","11/01/2014 15:00","11/01/2014 15:00","12/01/2014 15:00","12/01/2014 15:00","12/01/2014 15:00","12/01/2014 15:00","12/01/2014 15:00","12/01/2014 15:00","12/01/2014 15:00","12/01/2014 15:00","13/01/2014 15:00","13/01/2014 15:00","13/01/2014 15:00","25/12/2013 12:00","25/12/2013 16:00","26/12/2013 12:00","26/12/2013 16:00","29/12/2013 12:00","29/12/2013 16:00","30/12/2013 12:00","30/12/2013 16:00","02/01/2014 12:00","02/01/2014 12:00","02/01/2014 16:00","02/01/2014 16:00","05/01/2014 12:00","05/01/2014 16:00","08/01/2014 12:00","08/01/2014 16:00","16/01/2014 12:00","16/01/2014 16:00","16/01/2014 19:00","16/01/2014 22:00","17/01/2014 01:00","17/01/2014 16:00","17/01/2014 19:00","17/01/2014 22:00","18/01/2014 16:00","18/01/2014 19:00","18/01/2014 22:00","19/01/2014 16:00","19/01/2014 19:00","19/01/2014 22:00","20/01/2014 16:00","20/01/2014 19:00","20/01/2014 22:00","21/01/2014 16:00","21/01/2014 19:00","21/01/2014 22:00","22/01/2014 16:00","22/01/2014 19:00","22/01/2014 22:00","23/01/2014 16:00","23/01/2014 19:00","23/01/2014 22:00","24/01/2014 16:00","24/01/2014 19:00","24/01/2014 22:00","25/01/2014 16:00","25/01/2014 19:00","25/01/2014 22:00","02/02/2014 16:00","02/02/2014 16:00","02/02/2014 20:00","02/02/2014 20:00","03/02/2014 16:00","03/02/2014 16:00","03/02/2014 20:00","03/02/2014 20:00","04/02/2014 16:00","04/02/2014 16:00","04/02/2014 20:00","04/02/2014 20:00","05/02/2014 16:00","05/02/2014 16:00","05/02/2014 20:00","05/02/2014 20:00","06/02/2014 16:00","06/02/2014 20:00","07/02/2014 16:00","07/02/2014 20:00","08/02/2014 16:00","08/02/2014 20:00","09/02/2014 16:00","09/02/2014 20:00","12/02/2014 16:00","12/02/2014 20:00","13/02/2014 16:00","13/02/2014 20:00","16/02/2014 20:00","17/02/2014 20:00","20/02/2014 20:00","21/02/2014 20:00"]
+    for i in range(1,179):
+        mongo.db.jogos.find_one_and_update({'Ano': 14, 'Jogo': i},{'$set': {'Data': datas14[i-1]}})
+    est14 = ["Portugal","Portugal","Espanha","Espanha","Portugal","Portugal","Espanha","Espanha","Portugal","Portugal","Espanha","Espanha","Portugal","Espanha","Portugal","Espanha","Portugal","Portugal","Espanha","Portugal","Portugal","Espanha","Espanha","Portugal","Espanha","Espanha","Portugal","Espanha","Espanha","Portugal","Portugal","Espanha","Portugal","Portugal","Espanha","Portugal","Portugal","Espanha","Espanha","Portugal","Espanha","Espanha","Portugal","Espanha","Espanha","Portugal","Portugal","Espanha","Portugal","Portugal","Espanha","Portugal","Portugal","Espanha","Espanha","Portugal","Espanha","Espanha","Portugal","Espanha","Espanha","Portugal","Portugal","Espanha","Portugal","Portugal","Portugal","Portugal","Espanha","Espanha","Espanha","Espanha","Portugal","Portugal","Espanha","Espanha","Portugal","Espanha","Portugal","Espanha"]
+    for i in range(99,179):
+        mongo.db.jogos.find_one_and_update({'Ano': 14, 'Jogo': i},{'$set': {'Estadio': est14[i-99],'Pais': est14[i-99]}})
+    for i in [99,100,103,104,107,108]:
+        mongo.db.jogos.find_one_and_update({'Ano': 14, 'Jogo': i},{'$set': {'Grupo': 'A-CONF'}})
+    for i in [101,102,105,106,109,110]:
+        mongo.db.jogos.find_one_and_update({'Ano': 14, 'Jogo': i},{'$set': {'Grupo': 'B-CONF'}})
+    i = 115
+    for g in grupos+grupos+grupos:
+        mongo.db.jogos.find_one_and_update({'Ano': 14, 'Jogo': i},{'$set': {'Grupo': g}})
+        i += 1
+
     print("- Limpando base de moedas")
     mongo.db.moedas.drop()
     mongo.db.moedaslog.drop()
@@ -224,7 +251,37 @@ def migrate():
 
 @configCommands.cli.command("migratet")
 def migratet():
-
+    
 
 
     print("Finalizado.")
+
+@configCommands.cli.command("news")
+@click.argument("titulo")
+@click.argument("noticia")
+@click.argument("img",required=False)
+@click.argument("link",required=False)
+@click.argument("linkname",required=False)
+def add_news(titulo,noticia,img="",link="",linkname=""):
+    new = {
+        'titulo': titulo,
+        'texto': noticia,
+        'ano': ANO
+    }
+    if img:
+        new['img'] = img
+    if link:
+        new['link'] = link
+        new['linkname'] = linkname
+    data = datetime.strftime(datetime.now(),"%d/%m/%Y")
+    new['data'] = data
+    new_id = mongo.db.settings.find_one_and_update({'config':'newsid'},{'$inc': {'nid': 1}})
+    if new_id:
+        nid = new_id['nid']+1
+    else:
+        print("Sem noticias na base, iniciando")
+        nid = 1
+        mongo.db.settings.insert_one({'config':'newsid','nid': 1})
+    new['nid'] = nid
+    mongo.db.news.insert_one(new)
+    current_app.logger.info(f"Adicionando noticia: {new}")

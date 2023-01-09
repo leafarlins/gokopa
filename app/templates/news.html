@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Gokopa News</h2>
+<div class="row">
+
+  {% for n in news['news'] %}
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 col-xxl-2">
+    <div class="card">
+      {% if n['img'] %}<img src="../static/img/news/{{ n['img'] }}" onerror="this.src='../static/img/flag/default.png'" class="card-img-top">{% endif %}
+      <div class="card-body">
+        <h5 class="card-title">{{ n['titulo'] }}</h5>
+        <h8 class="card-subtitle mb-3 text-muted smallt">{{ n['data'] }}</h8>
+        <p class="card-text">{% autoescape false %}{{ n['texto'] }}{% endautoescape %}</p>
+        {% if n['link'] %}<a href="{{ n['link'] }}" class="card-link">{{ n['linkname'] }}</a>{% endif %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+</div>
+
+{% endblock %}

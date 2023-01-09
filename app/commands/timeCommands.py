@@ -137,23 +137,30 @@ def calc_ranking(j_i,j_f):
         ptsg1 = 0
         ptsg2 = 0
         if jogo['p1'] > jogo['p2']:
-            pts = 3
-            ptsg1 = int( (ft1 + ft2*(127-times[jogo['Time2']]['posicao'])/126) * pts * int(jogo['peso']) ) + 1
+            if jogo.get('Grupo'):
+                pts1 = 3
+            elif jogo.get('tr1'):
+                pts1 = 2,5
+                pts2 = 0,5
         elif jogo['p2'] > jogo['p1']:
-            pts = 3
-            ptsg2 = int( (ft1 + ft2*(127-times[jogo['Time1']]['posicao'])/126) * pts * int(jogo['peso']) ) + 1
+            if jogo.get('Grupo'):
+                pts2 = 3
+            elif jogo.get('tr1'):
+                pts2 = 2,5
+                pts1 = 0,5
         else:
             if jogo.get('Grupo'):
-                pts1 = 1
-                pts2 = 1
+                pts1 = 1,5
+                pts2 = 1,5
             elif jogo['pe1'] > jogo['pe2']:
                 pts1 = 2
                 pts2 = 1
             else:
                 pts1 = 1
                 pts2 = 2
-            ptsg1 = int( (ft1 + ft2*(127-times[jogo['Time2']]['posicao'])/126) * pts1 * int(jogo['peso']) ) + 1
-            ptsg2 = int( (ft1 + ft2*(127-times[jogo['Time1']]['posicao'])/126) * pts2 * int(jogo['peso']) ) + 1
+
+        ptsg1 = int( (ft1 + ft2*(127-times[jogo['Time2']]['posicao'])/126) * pts1 * int(jogo['peso']) ) + 1
+        ptsg2 = int( (ft1 + ft2*(127-times[jogo['Time1']]['posicao'])/126) * pts2 * int(jogo['peso']) ) + 1
         times[jogo['Time1']]['pts'] += ptsg1
         times[jogo['Time2']]['pts'] += ptsg2
             

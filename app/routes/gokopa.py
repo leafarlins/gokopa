@@ -60,6 +60,18 @@ def get_classificados():
 #         return redirect(url_for('gokopa.index',tipo='cp'))
 
 # Rota / associada a função index
+
+
+@gokopa.route('/api/get_news')
+#@cache.cached(timeout=2*60)
+def getNews():
+    news = [u for u in mongo.db.news.find().sort('nid',pymongo.DESCENDING)]
+    for u in news:
+        u.pop('_id',None)
+        u['texto'] = u['texto'].replace('\\n','<br/>')
+    print(news)
+    return {'news': news}
+
 @gokopa.route('/')
 @cache.cached(timeout=2*60)
 def index():
@@ -86,8 +98,12 @@ def index():
 
     #tabelas_label = ['A','B','C','D','E','F','G','H']
     #tabelas = get_tabelas_copa()
-    return render_template("inicio.html",menu="Home",past_jogos=past_jogos[:20],next_jogos=next_jogos[:20],classificados=classificados,total=lista_bolao,progress_data=progress_data(),probabilidade=probability())
+    return render_template("inicio.html",menu="Home",past_jogos=past_jogos[:21],next_jogos=next_jogos[:15],classificados=classificados,total=lista_bolao,progress_data=progress_data(),probabilidade=probability(),news=getNews()['news'][:6])
 
+@gokopa.route('/noticias')
+@cache.cached(timeout=2*60)
+def noticias():
+    return render_template("news.html",menu="Home",news=getNews())
 
 @cache.memoize(300)
 def get_jogos_tab(ano,r1):
@@ -128,7 +144,9 @@ def gerar_tabela(ano):
         '19': 'Gokopa do Mundo com versão 48 times na América Central, 4 países, maior número de sedes até então.',
         '18': 'Primeira Gokopa do Mundo com versão 48 times em 16 grupos de 3, na Alemanha.',
         '17': 'Edição especial na Rússia, com a tabela da Copa do Mundo 2018.',
-        '16': 'Gokopa do Mundo 16, no Japão.'
+        '16': 'Gokopa do Mundo 16, no Japão.',
+        '15': 'Edição especial no Brasil, com a tabela da Copa do Mundo de 2014.',
+        '14': 'Gokopa 14 na península ibérica, Portugal e Espanha.'
     }
     # Lista de competições válidas para montar grupos
     comp_valida = ['Copa do Mundo','Taça Mundial','Taça Ásia-Oceania','Taça América','Taça Europa','Taça África','Confederações']
@@ -206,7 +224,7 @@ def gerar_tabela(ano):
 @gokopa.route('/tabela<ano>')
 #@cache.cached(timeout=60*2)
 def tabelaano(ano):
-    if ano not in ['2022'] and int(ano) not in range(16,23):
+    if ano not in ['2022'] and int(ano) not in range(14,23):
         flash(f'Tabela do ano {ano} não disponível.','danger')
         ano = '22'
     dados = gerar_tabela(ano)
