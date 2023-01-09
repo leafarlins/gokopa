@@ -14,8 +14,6 @@ from random import randrange
 SEPARADOR_CSV=","
 ANO=22
 APOSTADB='apostas22'
-#TWILIO_SID=''
-#TWILIO_TKN=''
 TELEGRAM_TOKEN=os.getenv('TELEGRAM_TKN')
 TELEGRAM_CHAT_ID=os.getenv('TELEGRAM_CHAT_ID')
 TELEGRAM=os.getenv('TELEGRAM')

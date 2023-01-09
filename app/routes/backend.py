@@ -499,13 +499,16 @@ def get_free_teams():
     return {"Livres": lista_livres}
 
 @backend.route('/api/moedas_board')
+#@cache.cached(timeout=3*60)
 def get_moedas_board():
     moedasDb = [u for u in mongo.db.moedas.find()]
     lista_users = []
     for item in moedasDb:
         saldo = item['saldo']+item['bloqueado']
         total = saldo + item['investido']
-        lista_users.append({'nome': item['nome'],'saldo': saldo, 'investido': item['investido'],'total': total})
+        getdb = mongo.db.users.find_one({'name': item['nome']})
+        if getdb and getdb['active']:
+            lista_users.append({'nome': item['nome'],'saldo': saldo, 'investido': item['investido'],'total': total})
     lista_users = sorted(lista_users, key=lambda k: k['total'],reverse=True)
     p = 1
     last_total = lista_users[0]['total']

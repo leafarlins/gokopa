@@ -1,14 +1,20 @@
 from datetime import datetime
+import json
+import os
 import click
 import getpass
 
 import pymongo
+import requests
 from ..extentions.database import mongo
 from flask import Blueprint,current_app
 from app.routes.backend import get_aposta,get_users,get_games,make_score_board,get_bet_results2,get_score_results,getBolaoUsers
 
 configCommands = Blueprint('config',__name__)
 ANO=22
+TELEGRAM_TOKEN=os.getenv('TELEGRAM_TKN')
+TELEGRAM_CHAT_ID=os.getenv('TELEGRAM_CHAT_ID')
+TELEGRAM=os.getenv('TELEGRAM')
 
 #@bolaoCommands.cli.command("getOrdered")
 #@click.argument("")
@@ -256,12 +262,6 @@ def migratet():
 
     print("Finalizado.")
 
-@configCommands.cli.command("news")
-@click.argument("titulo")
-@click.argument("noticia")
-@click.argument("img",required=False)
-@click.argument("link",required=False)
-@click.argument("linkname",required=False)
 def add_news(titulo,noticia,img="",link="",linkname=""):
     new = {
         'titulo': titulo,
@@ -285,3 +285,29 @@ def add_news(titulo,noticia,img="",link="",linkname=""):
     new['nid'] = nid
     mongo.db.news.insert_one(new)
     current_app.logger.info(f"Adicionando noticia: {new}")
+
+    mensagem = new.replace('\\n','\n')
+    mensagem+="\n\n➡️ Todas as notícias em: https://gokopa.leafarlins.com/noticias"
+    print("Preparando mensagem para envio")
+    print(mensagem)
+    if TELEGRAM:
+        print("Enviando mensagem via telegram")
+        params = {
+            'chat_id': TELEGRAM_CHAT_ID,
+            'text': mensagem
+        }
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+        r = requests.get(url, params=params)
+        if r.status_code == 200:
+            print(json.dumps(r.json(), indent=2))
+        else:
+            r.raise_for_status()
+
+@configCommands.cli.command("news")
+@click.argument("titulo")
+@click.argument("noticia")
+@click.argument("img",required=False)
+@click.argument("link",required=False)
+@click.argument("linkname",required=False)
+def addNews(titulo,noticia,img="",link="",linkname=""):
+    add_news(titulo,noticia,img,link,linkname)

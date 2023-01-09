@@ -26,6 +26,7 @@ def gamemoedas():
     user_info = {}
     info = get_moedas_info()
     lista_pat = get_pat_teams()
+    print(lista_pat)
     #print(request.values.get("pageind"))
     if request.values.get("pageind"):
         info['logsindex'] = int(request.values.get("pageind"))
@@ -36,8 +37,8 @@ def gamemoedas():
         if validUser["gokopa"]:
             userLogado = True
             info['username'] = validUser['name']
-            user_info['lista_leilao'] = lista_pat['lista_leilao']
-            user_info["lista_livre"] = lista_pat['livres']
+            user_info['lista_leilao'] = lista_pat.get('lista_leilao')
+            user_info["lista_livre"] = lista_pat.get('livres')
             user_info["nome"] = validUser['name']
             moedas_user = mongo.db.moedas.find_one({'nome': validUser['name']})
             user_info['saldo'] = moedas_user['saldo']
@@ -48,7 +49,9 @@ def gamemoedas():
     info['userlogado'] = userLogado
     if not userLogado:
         info['username'] = 'false'
-    info['patrocinados'] = lista_pat['patrocinados']
+    info['patrocinados'] = lista_pat.get('patrocinados')
+
+    print(info,user_info)
 
     return render_template('moedas.html',menu='Moedas',info=info,user_info=user_info)
 
