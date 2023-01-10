@@ -3,7 +3,7 @@ from app.routes.backend import progress_data,get_aposta,get_score_game,get_rank,
 from array import array
 from datetime import datetime, time
 from typing import Collection
-from flask import Blueprint, app, render_template, session, request, url_for, flash
+from flask import Blueprint, app, current_app, render_template, session, request, url_for, flash
 import pymongo
 from pymongo import collection
 from werkzeug.utils import redirect
@@ -121,10 +121,14 @@ def get_anoX_games(ano,indx):
 
     # Zera placares caso seja futuro
     for j in anoX_games:
-        data_jogo = datetime.strptime(j.get("Data"),"%d/%m/%Y %H:%M")
-        if data_jogo > now:
-            j['p1'] = ""
-            j['p2'] = ""
+        try:
+            data_jogo = datetime.strptime(j.get("Data"),"%d/%m/%Y %H:%M")
+        except:
+            current_app.logger.error(f"Erro na leitura do jogo {j}")
+        else:
+            if data_jogo > now:
+                j['p1'] = ""
+                j['p2'] = ""
     
     return anoX_games
 
@@ -146,10 +150,23 @@ def gerar_tabela(ano):
         '17': 'Edição especial na Rússia, com a tabela da Copa do Mundo 2018.',
         '16': 'Gokopa do Mundo 16, no Japão.',
         '15': 'Edição especial no Brasil, com a tabela da Copa do Mundo de 2014.',
-        '14': 'Gokopa 14 na península ibérica, Portugal e Espanha.'
+        '14': 'Gokopa 14 na península ibérica, Portugal e Espanha.',
+        '13': 'Gokopa no México, com primeiro evento de Taças Regionais e Taça Mundial em seguida.',
+        '12': '12ª edição da copa na Italia',
+        '11': 'Gokopa 11 na Venezuela, com Copa dos Reis. A partir dessa copa, é utilizado o jogo Fifa Copa do Mundo 2006 como simulador.',
+        '10': 'Gokopa 10 na Noruega. Primeiro ano de Taça Mundial.',
+        '9': 'Gokopa 9',
+        '8': 'Gokopa 8',
+        '7': 'Gokopa 7',
+        '6': 'Gokopa 6',
+        '5': 'Gokopa 5',
+        '4': 'Gokopa 4',
+        '3': 'Gokopa 3',
+        '2': 'Gokopa 2',
+        '1': 'Gokopa 1 no Chile, a primeira de todas, com 16 times.'
     }
     # Lista de competições válidas para montar grupos
-    comp_valida = ['Copa do Mundo','Taça Mundial','Taça Ásia-Oceania','Taça América','Taça Europa','Taça África','Confederações']
+    comp_valida = ['Copa do Mundo','Taça Mundial','Taça Ásia-Oceania','Taça América','Taça Europa','Taça África','Confederações','Reis']
     fase_valida = ['16-avos-de-final','8vas-de-final','4as-de-final','Semi-final','D. 3º Lugar','Final']
     # Lista inicial de competição para formar grupos
     competicao = {
@@ -224,7 +241,7 @@ def gerar_tabela(ano):
 @gokopa.route('/tabela<ano>')
 #@cache.cached(timeout=60*2)
 def tabelaano(ano):
-    if ano not in ['2022'] and int(ano) not in range(14,23):
+    if ano not in ['2022'] and int(ano) not in range(1,23):
         flash(f'Tabela do ano {ano} não disponível.','danger')
         ano = '22'
     dados = gerar_tabela(ano)

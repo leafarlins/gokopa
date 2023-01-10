@@ -7,4 +7,10 @@ flask time zera_rank_pts 22
 flask jogos loadCsv dataset/jogos_ano22.csv
 flask jogos initApostas22
 flask time loadPatrocinio dataset/patrocinio22.csv
+flask time defHist tacaeur 13 'Rep Tcheca' Bulgária França Sérvia  México
+flask time defHist tacaafr 13 Nigéria Congo Tunísia Gana  México
+flask time defHist tacaaso 13 Japão 'Coréia do Sul' Austrália 'Ilhas Salomão' México
+flask time defHist tacaame 13 'Trinidad e Tobago' Guatemala México 'Estados Unidos' México
+flask time defHist tacaame 13 Chile Uruguai Brasil Bolívia México
+
 #flask user initMoedas
