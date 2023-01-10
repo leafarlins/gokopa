@@ -4,6 +4,8 @@ from xmlrpc.client import boolean
 import requests
 import click
 import pymongo
+
+from app.commands.configCommands import add_news
 from ..extentions.database import mongo
 from flask import Blueprint
 from ..routes.backend import get_next_jogos, get_users, make_score_board
@@ -223,7 +225,8 @@ def report(jogos,proximos,texto=""):
     lista_jogos = get_next_jogos()
     jogos_list = lista_jogos['past_jogos'][:int(jogos)]
     next_list = lista_jogos['next_jogos'][:int(proximos)]
-    mensagem="⚽ Copa 2022"
+    mensagem="⚽ Gokopa 22"
+    newsm = ""
     #jogos_list[0] = int(jogos_list[0]) - 1
     #jogos_list[1] = int(jogos_list[1]) + 1
     #next_list[0] = int(next_list[0]) - 1
@@ -231,7 +234,7 @@ def report(jogos,proximos,texto=""):
     #recentes = [u for u in jogosdb.find({'Ano': ANO, "Jogo": {'$gt': jogos_list[0], '$lt': jogos_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
     #next_games = [u for u in jogosdb.find({'Ano': 20, "Jogo": {'$gt': next_list[0], '$lt': next_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
     if jogos_list:
-        mensagem="⚽ Copa 2022 - Jogos recentes\n"
+        mensagem="⚽ Gokopa 22 - Jogos recentes\n"
         for j in jogos_list:
             #mensagem+=" ".join([j['Competição'],"-",j['Fase']])+"\n"
             placar = str(j['p1']) + "x" + str(j['p2'])
@@ -242,11 +245,17 @@ def report(jogos,proximos,texto=""):
             else:
                 tr = ""
             mensagem+=" ".join([j['time1'],e1['flag'],placar,e2['flag'],j['time2'],tr])+"\n"
+            newsm += " ".join([j['time1'],e1['flag'],placar,e2['flag'],j['time2'],tr])+"\\n"
 
     if texto:
         mensagem+="\n"+texto+"\n"
+        newsm+="\\n"+texto+"\\n"
+
+    print("Publicando mensagem como notícia")
+    add_news("Jogos recentes",newsm)
+
     if next_list:
-        allUsers = get_users('cp')
+        allUsers = get_users('gk')
         #print(allUsers)
         missing_users = set()
         for j in next_list:
@@ -263,7 +272,7 @@ def report(jogos,proximos,texto=""):
             mensagem+=lista_users
             mensagem+="\n"
 
-    ordered_total = make_score_board('cp')
+    ordered_total = make_score_board(ANO)
     range_print = 5
     if len(ordered_total) < 5:
         range_print = len(ordered_total)
@@ -274,8 +283,8 @@ def report(jogos,proximos,texto=""):
     mensagem+=string_placar
         
     mensagem+="\n\n➡️ Visite e acompanhe: https://gokopa.leafarlins.com"
-    print("Preparando mensagem para envio")
-    print(mensagem)
+    #print("Preparando mensagem para envio")
+    #print(mensagem)
     if TELEGRAM:
         print("Enviando mensagem via telegram")
         params = {

@@ -354,7 +354,7 @@ def add_news(titulo,noticia,img="",link="",linkname=""):
     mongo.db.news.insert_one(new)
     current_app.logger.info(f"Adicionando noticia: {new}")
 
-    mensagem = new.replace('\\n','\n')
+    mensagem = "⚽ Gokopa News: " + new['titulo'] + "\n\n" + new['texto'].replace('\\n','\n')
     mensagem+="\n\n➡️ Todas as notícias em: https://gokopa.leafarlins.com/noticias"
     print("Preparando mensagem para envio")
     print(mensagem)
