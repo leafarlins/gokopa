@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
+
+### Added
+- Tables for all past years
+- Bet pages for all past betting champs
+- Gokopa News
+
+### Changed
+- Ranking behavior automated
+- Scoring for each game
+- Layouts and automations for generating pages
+
 ## [1.3.8] - 2022-12-10
 
 ### Added

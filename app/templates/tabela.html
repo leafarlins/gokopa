@@ -164,9 +164,12 @@
 {% endif %}
 
 <h2 class="m-3">Tabelas antigas</h2>
-<p class="center">Veja as tabelas de gokopas antigas: <a href="tabela21"> 21 </a> <a href="tabela20"> 20 </a> <a href="tabela19"> 19 </a> <a href="tabela18"> 18 </a> <a href="tabela17"> 17 </a> <a href="tabela16"> 16 </a> <a href="tabela15"> 15 </a> <a href="tabela14"> 14 </a></p>
-<p class="center">Veja o resumo das fases finais de <a href="tabelahis">todas as Gokopas</a></p>
 <p class="center">Veja as tabelas das copas do mundo: <a href="tabela2022">Copa 2022</a></p>
+<p class="center">Veja o resumo das fases finais de <a href="tabelahis">todas as Gokopas</a></p>
+<p class="center">Veja as tabelas de gokopas antigas:</p>
+<div class="text-center"><div class="btn-group" role="group">{% for i in range(1,23) %}
+    <a href="tabela{{ i }}"><button type="button" class="btn btn-light m-1">{{ i }}</button></a>
+{% endfor %}</div></div>
 
 
 </div>
