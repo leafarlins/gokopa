@@ -167,7 +167,8 @@
 <p class="center">Veja as tabelas das copas do mundo: <a href="tabela2022">Copa 2022</a></p>
 <p class="center">Veja o resumo das fases finais de <a href="tabelahis">todas as Gokopas</a></p>
 <p class="center">Veja as tabelas de gokopas antigas:</p>
-<div class="text-center"><div class="btn-group" role="group">{% for i in range(1,23) %}
+<div class="text-center"><div class="btn-group flex-wrap" role="group">
+{% for i in range(1,23) %}
     <a href="tabela{{ i }}"><button type="button" class="btn btn-light m-1">{{ i }}</button></a>
 {% endfor %}</div></div>
 
