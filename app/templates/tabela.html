@@ -65,6 +65,27 @@
         {% endfor %}
     </div>
     
+    {% if dados['competicao'][torneio]['classificados'] %}
+    <div class="row justify-content-md-center">
+    <b><p class="center">Classificando</p></b>
+    {% for grupo in dados['competicao'][torneio]['classificados']['grupos'] %}
+    <div class="sectionj col-12 col-sd-6 col-md-4 col-lg-3 col-xl-2 col-xxl-1">
+        <table class="tab_gokopa tabelas">
+            <tr>
+                <th>{{ grupo['nome'] }}</th>
+            </tr>
+            {% for team in grupo['times'] %}
+            <tr>
+                <td><img class="flag" src="../static/img/flag/{{ team['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ team['time'] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endfor %}
+    <p class="center mb-3">x Taça x Copa</p>
+    </div>
+    {% endif %}
+
     {% if dados['competicao'][torneio]['eliminatorias']['outros'] %}
     <div class="row justify-content-md-center">
         <b><p class="center">Outros jogos</p></b>
