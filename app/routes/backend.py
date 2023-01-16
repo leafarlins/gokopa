@@ -157,6 +157,10 @@ def get_bet_results2(users,aposta,jogo):
 @cache.memoize(300)
 def get_score_results(users,resultados,ano):
         list_total=[]
+        if ano >= 22:
+            score_full = 10
+        else:
+            score_full = 5
         for u in users:
             udict=dict()
             udict["nome"]=u
@@ -170,7 +174,7 @@ def get_score_results(users,resultados,ano):
                 scores_user = r.get(u)
                 if scores_user:
                     udict["score"]+=int(scores_user[2])
-                    if scores_user[1] == 5:
+                    if scores_user[1] == score_full:
                         udict["pc"] += 1 
             list_total.append(udict)
         return list_total
@@ -410,7 +414,7 @@ def probability():
     progress = dict(progress_data())
     users = getBolaoUsers(ANO)
     jogos_restantes = progress["total_games"] - progress["last_game"]
-    pontos_restantes = (progress["total_weight"] - progress["last_weight"])*5
+    pontos_restantes = (progress["total_weight"] - progress["last_weight"])*10
     score_board = make_score_board(ANO)
     
     if jogos_restantes > 3:

@@ -229,12 +229,35 @@ def gerar_tabela(ano):
                 competicao[torneio]['eliminatorias'][fase]['jogos'].append(j)
         else:
             outros.append(j)
+    if ano == '22':
+        torneio = 'Taça Europa'
+        classificados = {
+            'grupos': []
+        }
+        for g in competicao[torneio]['grupos']:
+            #sorted(g, key=lambda k: k['pc'],reverse=True))
+            times = []
+            for i in range(len(competicao[torneio]['grupos'][g]['tabela']['times'])):
+                time = competicao[torneio]['grupos'][g]['tabela']['times'][i]
+                newt = {
+                    'time': time,
+                    'pts': competicao[torneio]['grupos'][g]['tabela']['pontos'][time][0],
+                    'sal': competicao[torneio]['grupos'][g]['tabela']['pontos'][time][1],
+                    'gol': competicao[torneio]['grupos'][g]['tabela']['pontos'][time][2],
+                    'rnk': get_rank(time)['posicao']
+                }
+                times.append(newt)
+            grupo = {
+                'nome': g,
+                'times': sorted(sorted(sorted(sorted(times, key=lambda k: k['rnk']), key=lambda k: k['gol'],reverse=True), key=lambda k: k['sal'],reverse=True), key=lambda k: k['pts'],reverse=True)
+            }
+            classificados['grupos'].append(grupo)
+        competicao[torneio]['classificados'] = classificados
 
     return {
         'ano': ano,
         'desc':  descs[ano],
         'competicao': competicao,
-        'tacas': "",
         'outros': outros
     }            
 

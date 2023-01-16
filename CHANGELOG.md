@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
+
+### Fixed
+- Score and probability computation
+- Small layout issues
+
 ## [1.4.0] - 2023-01-11
 
 ### Added

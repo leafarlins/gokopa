@@ -129,40 +129,45 @@ def calc_ranking(j_i,j_f):
     for t in ranking['ranking']:
         times[t['time']] = {
             'pts': 0,
-            'posicao': t['posicao']
+            'posicao': float(t['posicao'])
         }
     print(f'Avaliando jogos de {j_i} a {j_f}')
     for i in range(int(j_i),int(j_f)+1):
         jogo = mongo.db.jogos.find_one({'Ano': ANO, 'Jogo': i})
         ptsg1 = 0
         ptsg2 = 0
+        pts1 = 0
+        pts2 = 0
         if jogo['p1'] > jogo['p2']:
             if jogo.get('Grupo'):
                 pts1 = 3
             elif jogo.get('tr1'):
-                pts1 = 2,5
-                pts2 = 0,5
+                pts1 = 2.5
+                pts2 = 0.5
         elif jogo['p2'] > jogo['p1']:
             if jogo.get('Grupo'):
                 pts2 = 3
             elif jogo.get('tr1'):
-                pts2 = 2,5
-                pts1 = 0,5
+                pts2 = 2.5
+                pts1 = 0.5
         else:
             if jogo.get('Grupo'):
-                pts1 = 1,5
-                pts2 = 1,5
+                pts1 = 1.5
+                pts2 = 1.5
             elif jogo['pe1'] > jogo['pe2']:
                 pts1 = 2
                 pts2 = 1
             else:
                 pts1 = 1
                 pts2 = 2
-
-        ptsg1 = int( (ft1 + ft2*(127-times[jogo['Time2']]['posicao'])/126) * pts1 * int(jogo['peso']) ) + 1
-        ptsg2 = int( (ft1 + ft2*(127-times[jogo['Time1']]['posicao'])/126) * pts2 * int(jogo['peso']) ) + 1
+        #print(f'Jogo: {jogo}')
+        if pts1 > 0:
+            ptsg1 = int( (ft1 + ft2*(127-times[jogo['Time2']]['posicao'])/126) * pts1 * float(jogo['peso']) ) + 1
+        if pts2 > 0:
+            ptsg2 = int( (ft1 + ft2*(127-times[jogo['Time1']]['posicao'])/126) * pts2 * float(jogo['peso']) ) + 1
         times[jogo['Time1']]['pts'] += ptsg1
         times[jogo['Time2']]['pts'] += ptsg2
+        #print(f'ptsg1: {ptsg1} ptsg2: {ptsg2}')
             
     for t in times:
         pts = times[t]['pts']
@@ -426,8 +431,8 @@ def processa_pat(jogos='0',leilao=False):
         past_jogos = get_next_jogos()['past_jogos'][:jogos]
         verify_jogos = get_next_jogos()['next_jogos'][:4]
 
-        if past_jogos[0]['jid'] > 150:
-            moedas.update_many({},{'$inc': {'saldo': -150}})
+        if past_jogos[0]['jid'] > 146:
+            moedas.update_many({},{'$inc': {'saldo': -100}})
             moedas_log('all',"-150","",0,"Pagamento de empréstimo")
 
         # Devolve apoios de jogos impedidos de apoiar
