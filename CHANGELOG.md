@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. Based on [K
 ## [unreleased]
 ## [1.4.1] - 2023-01-20
 ## [1.4.1] - 2023-01-20
+## [1.4.1] - 2023-01-20
 
 ### Added
 - Survey page for voting
@@ -160,6 +161,7 @@ All notable changes to this project will be documented in this file. Based on [K
 
 
 [unreleased]: https://github.com/leafarlins/gokopa/compare/v1.4.1...HEAD
+[1.4.1]: https://github.com/leafarlins/gokopa/compare/v1.4.1..1.4.1/
 [1.4.1]: https://github.com/leafarlins/gokopa/compare/v1.4.1..1.4.1/
 [1.4.1]: https://github.com/leafarlins/gokopa/compare/v1.4.0..1.4.1/
 [1.4.0]: https://github.com/leafarlins/gokopa/compare/v1.3.8..1.4.0/
