@@ -108,7 +108,6 @@ def regras():
     premio = [qtd,"{:.2f}".format(bolao*0.6),"{:.2f}".format(bolao*0.3),"{:.2f}".format(bolao*0.1),"{:.2f}".format(bolao)]
     return render_template("regras.html",menu="Regras",premio=premio)
 
-
 @bolao.route('/sobre')
 def sobre():
     return render_template("sobre.html",menu="Sobre")

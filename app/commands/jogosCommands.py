@@ -147,7 +147,7 @@ def gera_random_penalti():
 def teste2(user,jogo):
     p1 = gera_random_score()
     p2 = gera_random_score()
-    if p1 == p2 and jogo in range(172,204):
+    if p1 == p2 and jogo in list(range(172,204))+[9,10,25,34,35,50,59,60,75]:
         r = randrange(2)
         outp = mongo.db.apostas22.find_one_and_update(
             {"Jogo": int(jogo)},

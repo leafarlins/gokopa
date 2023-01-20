@@ -22,7 +22,7 @@
 <!-- <div id="toggleText" style="display: none" class=".container-fluid"> -->
     <div class="row scoll-pane">
         {% for i in dados['competicao'][torneio]['grupos'] %}
-            <div class="sectionj col-12 col-sd-12 col-md-6 col-lg-6 col-xl-3">
+            <div class="sectionj col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3">
                 <table class="tab_gokopa tabelas">
                     <tr>
                         <th>Grupo {{ i }}</th>
@@ -42,7 +42,7 @@
                 </table>
             </div>
         
-            <div class="sectionj col-12 col-sd-12 col-md-6 col-lg-6 col-xl-3">
+            <div class="sectionj col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3">
                 {% for j in dados['competicao'][torneio]['grupos'][i]['jogos'] %}
                 <table class="tab_gokopa tab_jogos">
                     <tr>
@@ -69,20 +69,28 @@
     <div class="row justify-content-md-center">
     <b><p class="center">Classificando</p></b>
     {% for grupo in dados['competicao'][torneio]['classificados']['grupos'] %}
-    <div class="sectionj col-12 col-sd-6 col-md-4 col-lg-3 col-xl-2 col-xxl-1">
-        <table class="tab_gokopa tabelas">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+        <table class="tab_gokopa tabelas m-3">
             <tr>
                 <th>{{ grupo['nome'] }}</th>
+                <th title="Pontos/Saldo/Gols/Ranking">PSGR</th>
             </tr>
             {% for team in grupo['times'] %}
             <tr>
-                <td><img class="flag" src="../static/img/flag/{{ team['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ team['time'] }}</td>
+                <td class="{{ team['cor'] }}"><img class="flag" src="../static/img/flag/{{ team['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ team['time'] }}</td>
+                <td class="{{ team['cor'] }} smallt">{{ team['pts'] }}/{{ team['sal'] }}/{{ team['gol'] }}/{{ team['rnk'] }}</td>
             </tr>
             {% endfor %}
         </table>
     </div>
     {% endfor %}
-    <p class="center mb-3">x Taça x Copa</p>
+    <!-- <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2"><table class="tab_gokopa tabelas m-3" style="max-width: max-content;">
+        <tr><th>Legenda</th></tr>
+        <tr><td class="taca text-center">Class. Taça e Copa</td></tr>
+        <tr><td class="copa text-center">Class. Copa</td></tr>
+        <tr><td class="des text-center">Desclassificado</td></tr>
+    </table>
+    </div> -->
     </div>
     {% endif %}
 
@@ -90,7 +98,7 @@
     <div class="row justify-content-md-center">
         <b><p class="center">Outros jogos</p></b>
         {% for j in dados['competicao'][torneio]['eliminatorias']['outros']['jogos'] %}
-        <div class="col-12 col-sd-10 col-md-6 col-lg-4 col-xl-3">
+        <div class="col-12 col-sm-10 col-md-6 col-lg-4 col-xl-3">
             <table class="tab_gokopa tab_jogos">
                 <tr>
                     <td title="{{ j['Jogo'] }}">{{ j['Data'] }}</td>
@@ -121,7 +129,7 @@
         {% for fase in fases %}
         {% if dados['competicao'][torneio]['eliminatorias'][fase] %}
 
-        <div class="tabelaspd col-12 col-sd-10 col-md-6 col-lg-4 col-xl-3">
+        <div class="tabelaspd col-12 col-sm-10 col-md-6 col-lg-4 col-xl-3">
         <b><p class="center">{{ fase }}</p></b>
         <table class="tab_gokopa tab_jogos">
             {% for j in dados['competicao'][torneio]['eliminatorias'][fase]['jogos']  %}
@@ -157,7 +165,7 @@
 <div class="row justify-content-md-center">
     <h3>Outros jogos do ano</h3>
     {% for j in dados['outros'] %}
-    <div class="col-12 col-sd-10 col-md-6 col-lg-4 col-xl-3">
+    <div class="col-12 col-sm-10 col-md-6 col-lg-4 col-xl-3">
         <p class="m-0 text-center smallt">{{ j['Competição'] }} - {{ j['Fase'] }}</p>
         <table class="tab_gokopa tab_jogos">
             <tr>

@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Enquetes em andamento</h2>
+<div class="row justify-content-md-center"><div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+{% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
+<div class="alert alert-{{ category }} text-center " role="alert">
+    {{ message }}
+</div>
+{% endfor %} {% endif %} {% endwith %}</div></div>
+
+{% if dados['andamento'] %}
+
+{% for e in dados['andamento'] %}
+<div class="row mb-2">
+  <h4 class="text-center m-3">{{ e['nome'] }}</h4>
+  {% for opt in e['opcoes'] %}
+  <div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
+    <div class="card">
+      {% if opt['img'] %}<img src="../static/img/news/{{ opt['img'] }}" onerror="this.src='../static/img/flag/default.png'" class="card-img-top">{% endif %}
+      <div class="card-body">
+        <h5 class="card-title">{{ opt['nome'] }}</h5>
+        {% for pais in opt['paises'] %}
+        <h8 class="card-subtitle text-muted mb-2"><img class="flag" src="../static/img/flag/{{ pais }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ pais }}</h8><br>
+        {% endfor %}
+        <p class="card-text"><br />{{ opt['desc'] }}</p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% if session['username'] %}
+<p class="text-center">Vote agora nas suas melhores opções</p>
+{% if e['meuvoto'] %}<p class="text-center">Meu voto registrado: 1º {{ e['opcoes'][e['meuvoto'][0]]['nome'] }} / 2º {{ e['opcoes'][e['meuvoto'][1]]['nome'] }} / 3º {{ e['opcoes'][e['meuvoto'][2]]['nome'] }}</p>{% endif %}
+<form action="{{ url_for('gokopa.votar') }}" method="post">
+  <div class="row mb-2">
+      <input type="hidden" name="enquete" value="{{ e['nome'] }}" id="enquete">
+      <div class="col-sm-6 text-sm-end">
+          <label for="opt1">Primeira opção:</label>
+      </div>
+      <div class="col-sm-6 text-sm-start">
+          <select list="times" name="opt1" id="opt1">
+              {% for i in e["opcoes"] %}
+                  <option value="{{ i['id'] }}" label="{{ i['nome'] }}">{{ i['nome'] }}</option>
+              {% endfor %}
+          </select>
+      </div>
+  </div>
+  <div class="row mb-2">
+    <div class="col-sm-6 text-sm-end">
+        <label for="opt2">Segunda opção:</label>
+    </div>
+    <div class="col-sm-6 text-sm-start">
+        <select list="times" name="opt2" id="opt2">
+            {% for i in e["opcoes"] %}
+                <option value="{{ i['id'] }}" label="{{ i['nome'] }}">{{ i['nome'] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+  </div>
+  <div class="row mb-2">
+    <div class="col-sm-6 text-sm-end">
+        <label for="opt3">Terceira opção:</label>
+    </div>
+    <div class="col-sm-6 text-sm-start">
+        <select list="times" name="opt3" id="opt3">
+            {% for i in e["opcoes"] %}
+                <option value="{{ i['id'] }}" label="{{ i['nome'] }}">{{ i['nome'] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+  </div>
+  
+  
+  <div class="row mb-3">
+    <div class="col-12 text-center m-3"><button type="submit" class="btn btn-outline-primary">Votar</button></div>
+  </div>
+  
+</form>
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if dados['finalizadas'] %}
+<h2>Enquetes finalizadas</h2>
+
+{% for e in dados['andamento'] %}
+<div class="row mb-2">
+  <h4 class="text-center m-3">{{ e['nome'] }}</h4>
+  {% for opt in e['opcoes'] %}
+  <div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
+    <div class="card">
+      {% if opt['img'] %}<img src="../static/img/news/{{ opt['img'] }}" onerror="this.src='../static/img/flag/default.png'" class="card-img-top">{% endif %}
+      <div class="card-body">
+        <h5 class="card-title">{{ opt['nome'] }}</h5>
+        {% for pais in opt['paises'] %}
+        <h8 class="card-subtitle text-muted mb-2"><img class="flag" src="../static/img/flag/{{ pais }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ pais }}</h8><br>
+        {% endfor %}
+        <p class="card-text"><br />{{ opt['desc'] }}</p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<div class="row mb-2 ">
+  <p class="text-center"><b>Resultado</b></p>
+  {% for r in e['resultado'] %}
+  <div class="col-12 col-sm-12 col-md-6 col-lg-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Rodada {{ r }}</h5>
+        {% set idv = e['resultado'][r][0]['id'] %}
+        <h8 class="card-subtitle text-muted mb-2">Vencedor: <img class="flag" src="../static/img/flag/{{ e['opcoes'][idv]['paises'][0] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ e['opcoes'][idv]['nome'] }}</h8>
+        {% for pid in e['resultado'][r] %}
+        <p class="card-text"><br />{{ pid['votos'] }} voto(s): {{ e['opcoes'][pid['id']]['nome'] }}<br />
+        {% for v in pid['votantes'] %}{{ v }} {% endfor %}</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endfor %}
+
+{% endif %}
+{% endblock %}

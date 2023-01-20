@@ -4,9 +4,14 @@ All notable changes to this project will be documented in this file. Based on [K
 
 ## [unreleased]
 
+### Added
+- Survey page for voting
+- Teams classifying in real time
+
 ### Fixed
 - Score and probability computation
 - Small layout issues
+- History for moedas game
 
 ## [1.4.0] - 2023-01-11
 

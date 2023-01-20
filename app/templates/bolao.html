@@ -9,7 +9,7 @@
 
 <div class="row scoll-pane">
 
-  <div class="sectionj col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8">
+  <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8">
     <h3>Minhas apostas</h3>
       {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %}
       <div class="alert alert-success" role="alert">
@@ -45,7 +45,7 @@
   </div>
 
 
-  <div class="sectionj col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+  <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
       <h3>Resultado geral</h3>
         {% if dados['ranking'] %}
         <table class="tab_gokopa">

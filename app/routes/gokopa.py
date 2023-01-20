@@ -1,9 +1,9 @@
 import re
-from app.routes.backend import progress_data,get_aposta,get_score_game,get_rank, make_score_board,read_config_ranking,probability,get_ranking
+from app.routes.backend import get_user_name, progress_data,get_aposta,get_score_game,get_rank, make_score_board,read_config_ranking,probability,get_ranking
 from array import array
 from datetime import datetime, time
 from typing import Collection
-from flask import Blueprint, app, current_app, render_template, session, request, url_for, flash
+from flask import Blueprint, current_app, render_template, session, request, url_for, flash
 import pymongo
 from pymongo import collection
 from werkzeug.utils import redirect
@@ -69,7 +69,7 @@ def getNews():
     for u in news:
         u.pop('_id',None)
         u['texto'] = u['texto'].replace('\\n','<br/>')
-    print(news)
+    #print(news)
     return {'news': news}
 
 @gokopa.route('/')
@@ -103,7 +103,7 @@ def index():
 @gokopa.route('/noticias')
 @cache.cached(timeout=2*60)
 def noticias():
-    return render_template("news.html",menu="Home",news=getNews())
+    return render_template("news.html",menu="Gokopa",news=getNews())
 
 @cache.memoize(300)
 def get_jogos_tab(ano,r1):
@@ -230,29 +230,71 @@ def gerar_tabela(ano):
         else:
             outros.append(j)
     if ano == '22':
-        torneio = 'Taça Europa'
-        classificados = {
-            'grupos': []
-        }
-        for g in competicao[torneio]['grupos']:
-            #sorted(g, key=lambda k: k['pc'],reverse=True))
-            times = []
-            for i in range(len(competicao[torneio]['grupos'][g]['tabela']['times'])):
-                time = competicao[torneio]['grupos'][g]['tabela']['times'][i]
-                newt = {
-                    'time': time,
-                    'pts': competicao[torneio]['grupos'][g]['tabela']['pontos'][time][0],
-                    'sal': competicao[torneio]['grupos'][g]['tabela']['pontos'][time][1],
-                    'gol': competicao[torneio]['grupos'][g]['tabela']['pontos'][time][2],
-                    'rnk': get_rank(time)['posicao']
+        last_game = progress_data()['last_game']
+        for torneio in competicao:
+            adicionar = False
+            if torneio == 'Copa do Mundo':
+                if last_game > 100 and last_game < 190:
+                    adicionar = True
+            elif last_game > 1 and last_game < 91:
+                adicionar = True
+            if adicionar:
+                classificados = {
+                    'grupos': []
                 }
-                times.append(newt)
-            grupo = {
-                'nome': g,
-                'times': sorted(sorted(sorted(sorted(times, key=lambda k: k['rnk']), key=lambda k: k['gol'],reverse=True), key=lambda k: k['sal'],reverse=True), key=lambda k: k['pts'],reverse=True)
-            }
-            classificados['grupos'].append(grupo)
-        competicao[torneio]['classificados'] = classificados
+                for g in competicao[torneio]['grupos']:
+                    #sorted(g, key=lambda k: k['pc'],reverse=True))
+                    times = []
+                    for i in range(len(competicao[torneio]['grupos'][g]['tabela']['times'])):
+                        time = competicao[torneio]['grupos'][g]['tabela']['times'][i]
+                        newt = {
+                            'time': time,
+                            'pts': competicao[torneio]['grupos'][g]['tabela']['pontos'][time][0],
+                            'sal': competicao[torneio]['grupos'][g]['tabela']['pontos'][time][1],
+                            'gol': competicao[torneio]['grupos'][g]['tabela']['pontos'][time][2],
+                            'rnk': get_rank(time)['posicao'],
+                            'cor': 'des'
+                        }
+                        times.append(newt)
+                    grupo = {
+                        'nome': g,
+                        'times': sorted(sorted(sorted(sorted(times, key=lambda k: k['rnk']), key=lambda k: k['gol'],reverse=True), key=lambda k: k['sal'],reverse=True), key=lambda k: k['pts'],reverse=True)
+                    }
+                    classificados['grupos'].append(grupo)
+                if torneio == 'Copa do Mundo':
+                    for g in classificados['grupos']:
+                        g['times'][0]['cor'] = 'copa'
+                        g['times'][1]['cor'] = 'copa'
+                else:
+                    for g in classificados['grupos']:
+                        g['times'][0]['cor'] = 'taca'
+                        g['times'][1]['cor'] = 'copa'
+
+                # Definiçao de melhores 2os e 3os
+                if torneio == 'Taça América':
+                    times_2 = []
+                    for g in classificados['grupos']:
+                        times_2.append(g['times'][1])
+                    grupo_2 = {
+                        'nome': 'Segundos',
+                        'times': sorted(sorted(sorted(sorted(times_2, key=lambda k: k['rnk']), key=lambda k: k['gol'],reverse=True), key=lambda k: k['sal'],reverse=True), key=lambda k: k['pts'],reverse=True)
+                    }
+                    grupo_2['times'][0]['cor'] = 'taca'
+                    grupo_2['times'][1]['cor'] = 'taca'
+                    classificados['grupos'].append(grupo_2)
+                elif torneio == 'Copa do Mundo':
+                    times_3 = []
+                    for g in classificados['grupos']:
+                        times_3.append(g['times'][2])
+                    grupo_3 = {
+                        'nome': 'Terceiros',
+                        'times': sorted(sorted(sorted(sorted(times_3, key=lambda k: k['rnk']), key=lambda k: k['gol'],reverse=True), key=lambda k: k['sal'],reverse=True), key=lambda k: k['pts'],reverse=True)
+                    }
+                    for i in range(8):
+                        grupo_3['times'][i]['cor'] = 'copa'
+                    classificados['grupos'].append(grupo_3)
+
+                competicao[torneio]['classificados'] = classificados
 
     return {
         'ano': ano,
@@ -286,6 +328,11 @@ def tabela_his():
 def get_historic_copa(comp):
     if comp == 'tacas':
         historia = [u for u in mongo.db.historico.find({"comp": { '$in': [ "tacaame", "tacaeur", "tacaaso", "tacaafr" ] }}).sort('Ano',pymongo.DESCENDING)]
+    elif comp == 'bet':
+        historia = [u for u in mongo.db.historico.find({"comp": { '$in': [ "bet", "moedas" ] }}).sort('Ano',pymongo.DESCENDING)]
+        for u in historia:
+            if u['comp'] == 'moedas':
+                u['Ano'] = "🪙"+str(u['Ano'])
     else:
         historia = [u for u in mongo.db.historico.find({"comp": comp}).sort('Ano',pymongo.DESCENDING)]
     times = set()
@@ -318,6 +365,113 @@ def get_historic_copa(comp):
     #print(medal_count)
     return historia,medal_count
 
+@gokopa.route('/api/get_enquete')
+def getEnquete():
+    enq = [u for u in mongo.db.enquete.find()]
+    andamento = []
+    finalizadas = []
+    last_game = progress_data()['last_game']
+    for u in enq:
+        u.pop('_id',None)
+        if u['ano'] != ANO:
+            finalizadas.append(u)
+        elif last_game >= u['game']:
+            finalizadas.append(u)
+        else:
+            if session["username"]:
+                nome = get_user_name(session["username"])
+                u['meuvoto'] = u['votos'].get(nome)
+                if nome != 'rlins':
+                    if u['votos'].get(nome):
+                        u['votos'] = {
+                            nome: u['votos'][nome]
+                        }
+                    else:
+                        u['votos'] = {}
+                elif u['votos']:
+                    finalizadas.append(u)
+            else:
+                u['votos'] = {}
+            andamento.append(u)
+
+    for u in finalizadas:
+        mapa_id = []
+        resultado = {
+            '1r': [],
+            '2r': [],
+            '3r': []
+        }
+        for i in range(4):
+            mapa_id.append({
+                'id': i,
+                'votos': 0,
+                'votantes': []
+            })
+        for rodada in ['1r','2r','3r']:
+            for user in u['votos']:
+                voto = True
+                i = -1
+                while voto:
+                    i += 1
+                    pref = u['votos'][user][i]
+                    for candidato in mapa_id:
+                        if candidato['id'] == pref:
+                            candidato['votos'] += 1
+                            candidato['votantes'].append(user)
+                            voto = False
+                            #print(f'{rodada}: Voto feito por {user} em {pref}')
+            new_mapaid = []
+            for item in sorted(sorted(mapa_id, key=lambda k: k['id']), key=lambda k: k['votos'],reverse=True):
+                resultado[rodada].append(item.copy())
+                new_mapaid.append(item.copy())
+            new_mapaid.pop(-1)
+            for m in new_mapaid:
+                m['votos'] = 0
+                m['votantes'] = []
+            mapa_id = new_mapaid
+
+
+        u['resultado'] = resultado
+
+    return {
+        'andamento': andamento,
+        'finalizadas': finalizadas
+    }
+    
+@gokopa.route('/enquete')
+#@cache.cached(timeout=2*60)
+def enquete():
+    return render_template("enquete.html",menu="Gokopa",dados=getEnquete())
+
+@gokopa.route('/enquete/votar',methods=["POST"])
+def votar():
+    if "username" in session:
+        apostador = get_user_name(session["username"])
+        opt1 = request.values.get("opt1")
+        opt2 = request.values.get("opt2")
+        opt3 = request.values.get("opt3")
+        enquete = request.values.get("enquete")
+
+        
+        #enqdb = mongo.db.enquete.find_one({'nome': enquete})
+        if opt1 != opt2 and opt1 != opt3 and opt2 != opt3:
+            enqdb = mongo.db.enquete.find_one({'nome': enquete})
+            votos = enqdb['votos']
+            votos[apostador] = [int(opt1),int(opt2),int(opt3)]
+            outdb = mongo.db.enquete.find_one_and_update({'nome': enquete},{'$set': {'votos': votos}})
+            if outdb:
+                flash(f'Votação realizada!','success')
+                current_app.logger.info(f"Votação realizada por {apostador} na enquete: {enquete}")
+            else:
+                flash(f'Erro na atualização da enquete.','danger')
+                current_app.logger.error(f"Erro na atualização da enquete: {enquete}")
+        else:
+            flash(f'Os 3 valores precisam ser diferentes!','danger')
+    else:
+        flash(f'Usuário não logado.','danger')
+    
+    return redirect(url_for('gokopa.enquete'))
+
 @gokopa.route('/ranking')
 #@cache.cached(timeout=600)
 def ranking():
@@ -328,7 +482,9 @@ def ranking():
     taca_list,taca_medal = get_historic_copa("taca")
     bet_list,bet_medals = get_historic_copa("bet")
     tacas_list,tacas_medals = get_historic_copa("tacas")
-    return render_template("ranking.html",menu="Ranking",ranking=ranking,copa_his=copas_list,copa_med=copas_medal,bet_his=bet_list,bet_med=bet_medals,taca_his=taca_list,taca_med=taca_medal,tacas_his=tacas_list,tacas_med=tacas_medals)
+    tacas_list,tacas_medals = get_historic_copa("tacas")
+    moedas_list,moedas_med = get_historic_copa("moedas")
+    return render_template("ranking.html",menu="Gokopa",ranking=ranking,copa_his=copas_list,copa_med=copas_medal,bet_his=bet_list,bet_med=bet_medals,taca_his=taca_list,taca_med=taca_medal,tacas_his=tacas_list,tacas_med=tacas_medals,moedas_his=moedas_list)
 
 @cache.memoize(3600*24)
 def get_team_list():
@@ -378,7 +534,7 @@ def return_team_history(team1):
     # Add current rank
     pos_copa.append('?')
     pos_rank.append(get_rank(team1)['posicao'])
-    print(pos_copa,pos_rank)
+    #print(pos_copa,pos_rank)
     return pos_copa,pos_rank
 
 @gokopa.route('/historico',methods=["GET","POST"])
@@ -396,8 +552,8 @@ def historico():
         lista_jogos = []
         vev=[]
         #time1=""
-    print(f"lista_jogos={lista_jogos},vev={vev},time1={time_1},time2={time_2},lista_times=get_team_list()")
-    return render_template('historico.html',menu='Historico',lista_jogos=lista_jogos,vev=vev,time1=time_1,time2=time_2,lista_times=get_team_list())
+    #print(f"lista_jogos={lista_jogos},vev={vev},time1={time_1},time2={time_2},lista_times=get_team_list()")
+    return render_template('historico.html',menu='Gokopa',lista_jogos=lista_jogos,vev=vev,time1=time_1,time2=time_2,lista_times=get_team_list())
 
 def get_tabela_pot():
     tabela_pot = []

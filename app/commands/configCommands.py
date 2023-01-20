@@ -125,8 +125,8 @@ def set_bolao_users(ano,users):
 def get_bolao_users(ano):
     print(getBolaoUsers(ano))
 
-@configCommands.cli.command("migrate")
-def migrate():
+@configCommands.cli.command("migrate140")
+def migrate140():
     print("- Apagando dados de tipo dos boloes")
     print("bolao2022his gk")
     outdb = mongo.db.bolao2022his.find_one_and_delete({"tipo":"gk"})
@@ -449,13 +449,138 @@ def migrate():
 
     print("Finalizado.")
 
-@configCommands.cli.command("migratet")
-def migratet():
-    grupos = ["A","A","B","B","C","C","D","D","E","E","F","F","G","G","H","H"]
-    grconf = ["A-CONF","A-CONF","B-CONF","B-CONF"]
-    grreis = ["A-REIS","A-REIS","B-REIS","B-REIS","A-REIS","A-REIS","B-REIS","B-REIS","A-REIS","A-REIS","B-REIS","B-REIS","A-REIS","A-REIS","B-REIS","B-REIS","A-REIS","A-REIS","B-REIS","B-REIS","","","F-REIS","F-REIS","F-REIS","F-REIS","F-REIS","F-REIS"]
-
-
+@configCommands.cli.command("migrate")
+def migrate():
+    enquete = [{
+        'ano': 22,
+        'game': 90,
+        'nome': 'Votação para sede da Taça Ásia-Oceania 23',
+        'votos': {},
+        'opcoes': [
+            {
+                'nome': 'Coréia do Sul',
+                'paises': ['Coréia do Sul'],
+                'id': 0,
+                'desc': 'Coréia do Sul, atualmente na liderança do ranking asiático, deseja sediar com excelente estrutura.'
+            },
+            {
+                'nome': 'Coréia do Norte',
+                'paises': ['Coréia do Norte'],
+                'id': 1,
+                'desc': 'Os vizinhos do norte não querem ficar de fora, e querem ganhar a sede do vizinho do sul.'
+            },
+            {
+                'nome': 'Nova Zelândia',
+                'paises': ['Nova Zelândia'],
+                'id': 2,
+                'desc': 'Candidata oceânica, belo país e bela estrutura para sediar o evento.'
+            },
+            {
+                'nome': 'Vietnã',
+                'paises': ['Vietnã'],
+                'id': 3,
+                'desc': 'O Vietnã já fez boas participações e tomou gosto, quer voltar a ser protagonista nos jogos.'
+            }
+        ]
+    },{
+        'ano': 22,
+        'game': 95,
+        'nome': 'Votação para sede da Taça África 23',
+        'votos': {},
+        'opcoes': [
+            {
+                'nome': 'Camarões',
+                'paises': ['Camarões'],
+                'id': 0,
+                'desc': 'Uma das grandes seleções africanas e mais presentes nas copas.'
+            },
+            {
+                'nome': 'Argélia',
+                'paises': ['Argélia'],
+                'id': 1,
+                'desc': 'Árgélia sediou a Copa mas não a Taça África. Quer aproveitar sua experiência para este evento.'
+            },
+            {
+                'nome': 'Egito',
+                'paises': ['Egito'],
+                'id': 2,
+                'desc': 'País muito visitado e com um time que deseja muito voltar a competir.'
+            },
+            {
+                'nome': 'Costa do Marfim',
+                'paises': ['Costa do Marfim'],
+                'id': 3,
+                'desc': 'Uma das forças africanas, querendo ser mais protagonista como sede.'
+            }
+        ]
+    },{
+        'ano': 22,
+        'game': 99,
+        'nome': 'Votação para sede da Taça Europa 23',
+        'votos': {},
+        'opcoes': [
+            {
+                'nome': 'Ucrânia',
+                'paises': ['Ucrânia'],
+                'id': 0,
+                'desc': 'Sede e campeã da Gokopa 5, quer retomar os velhos tempos e sediar o evento.'
+            },
+            {
+                'nome': 'Áustria',
+                'paises': ['Áustria'],
+                'id': 1,
+                'desc': 'Sede da Gokopa 6 e 3x vice-campeã. O passado de glória é nostálgico aos austríacos.'
+            },
+            {
+                'nome': 'Inglaterra',
+                'paises': ['Inglaterra'],
+                'id': 2,
+                'desc': 'Sede e campeã da Gokopa 8, muita experiência no campo e em organização.'
+            },
+            {
+                'nome': 'Noruega',
+                'paises': ['Noruega'],
+                'id': 3,
+                'desc': 'Sede da Gokopa 10, quer sediar a Taça Regional.'
+            }
+        ]
+    },{
+        'ano': 22,
+        'game': 188,
+        'nome': 'Votação para sede da Gokopa 23',
+        'votos': {},
+        'opcoes': [
+            {
+                'nome': 'Hermanos da Plata',
+                'paises': ['Argentina','Uruguai'],
+                'id': 0,
+                'desc': 'Aliança entre Argentinos e Uruguaios para sediar a Gokopa. Chamada de Hermanos da Plata para tentar causar mais simpatia e atrair os jurados. Temos uma campeã do mundo, Argentina, e o Uruguai, candidatura com melhor tradição nos jogos da Gokopa e boa estrutura física.'
+            },
+            {
+                'nome': 'Caribe',
+                'paises': ['Trinidad e Tobago','St Vicente','São Cristóvão'],
+                'id': 1,
+                'desc': 'Caribe abre suas portas para a Gokopa! Trinidad e Tobago é o time com mais tradição e bem posicionado. St Vicente já foi sensação de Gokopas passadas. Muita alegria, mar e prais, e prometem também uma bela festa para sediar a Gokopa.'
+            },
+            {
+                'nome': 'Peru e Bolívia',
+                'paises': ['Peru','Bolívia'],
+                'id': 2,
+                'desc': 'A Gokopa das Cordilheiras e Amazônia. Peru e Bolívia não tem muita tradição na Gokopa, mas querem sediar com muita disposição, mostrar a cultura local e progredir em seu futebol.'
+            },
+            {
+                'nome': 'Equatombia',
+                'paises': ['Equador','Colômbia'],
+                'id': 3,
+                'desc': 'Duas boas seleções americanas, dispostas a fazer uma grande festa no centro da América do Sul. Equador e Colômbia já conquistaram medalhas, falta um campeonato. Os países dispõem de muitas atrações e estrutura.'
+            }
+        ]
+    }]
+    outdb = mongo.db.enquete.find_one({'ano': 22,'nome': 'Votação para sede da Gokopa 23'})
+    if outdb:
+        print("Enquete já cadastrada.")
+    else:
+        mongo.db.enquete.insert_many(enquete)
 
 
     print("Finalizado.")

@@ -12,7 +12,7 @@
 }
 
 body {
-  background-color: Ivory;
+  background-color: rgb(247, 247, 247);
   background-size: auto 100vh;
   min-height: 100vh;
   font-size: 16px;
@@ -28,15 +28,15 @@ header {
   padding:5px;
 }
 
-.menu nav {
+/* .menu nav {
   width: 100%;
-}
+} */
 
 .menu ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  /* overflow: hidden; */
   background-color: #333;
   width: 100%;
 }
@@ -47,14 +47,37 @@ header {
 
 .menu li a {
   display: block;
-  color: white;
+  /* color: white; */
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
 }
 
+.menulink {
+  color: white;
+}
+
+.menulink a:hover {
+  color: rgb(240, 240, 240);
+}
+
+.navbar-nav > li > .dropdown-menu { 
+  background-color: #333;
+  color: white;
+  text-align: left;
+}
+
+.navbar-nav > a:hover > .dropdown-menu { 
+  background-color: #111;
+  color: white;
+}
+
 .menu li a:hover:not(.active) {
   background-color: #111;
+}
+
+.menu li a:hover {
+  color: white;
 }
 
 h2 {
@@ -244,6 +267,20 @@ h3 {
 }
 .quadro tr td:nth-child(2) {
   text-align: left;
+}
+
+td.taca {
+  background-color: #f0b923;
+
+}
+
+td.copa {
+  background-color: #f7e867;
+
+}
+
+td.des {
+  background-color: #a8a6aaf8;
 }
 
 .smallt {

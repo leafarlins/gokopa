@@ -157,7 +157,7 @@ def get_bet_results2(users,aposta,jogo):
 @cache.memoize(300)
 def get_score_results(users,resultados,ano):
         list_total=[]
-        if ano >= 22:
+        if int(ano) in [22,23]:
             score_full = 10
         else:
             score_full = 5
@@ -531,7 +531,7 @@ def moedas_log(nome,moedas,time,jid,msg):
     if log_id:
         lid = log_id['lid']+1
     else:
-        print("Sem base de log, iniciando")
+        current_app.logger.info(f"Iniciando base de Moedaslog")
         lid = 1
         mongo.db.settings.insert_one({'config':'logid','lid': 1})
     log = {
