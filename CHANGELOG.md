@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
+## [1.4.1] - 2023-01-20
+## [1.4.1] - 2023-01-20
+## [1.4.1] - 2023-01-20
 
 ### Added
 - Survey page for voting
@@ -157,7 +160,10 @@ All notable changes to this project will be documented in this file. Based on [K
 - Table from games from first season year 20
 
 
-[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.4.0...HEAD
+[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.4.1...HEAD
+[1.4.1]: https://github.com/leafarlins/gokopa/compare/v1.4.1..1.4.1/
+[1.4.1]: https://github.com/leafarlins/gokopa/compare/v1.4.1..1.4.1/
+[1.4.1]: https://github.com/leafarlins/gokopa/compare/v1.4.0..1.4.1/
 [1.4.0]: https://github.com/leafarlins/gokopa/compare/v1.3.8..1.4.0/
 [1.3.8]: https://github.com/leafarlins/gokopa/compare/v1.3.7..1.3.8/
 [1.3.7]: https://github.com/leafarlins/gokopa/compare/v1.3.6..1.3.7/
