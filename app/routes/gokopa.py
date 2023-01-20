@@ -378,7 +378,7 @@ def getEnquete():
         elif last_game >= u['game']:
             finalizadas.append(u)
         else:
-            if session["username"]:
+            if session.get("username"):
                 nome = get_user_name(session["username"])
                 u['meuvoto'] = u['votos'].get(nome)
                 if nome != 'rlins':
