@@ -44,7 +44,7 @@ def get_ranking():
     ranking = []
     last_game = progress_data()['last_game']
     if last_game >= 75:
-        deb = (last_game-74)/129
+        deb = (last_game-74)/129/2
     else:
         deb = 0
     for t in historic:
@@ -52,7 +52,7 @@ def get_ranking():
         u_r = int(t['r21'])
         wcr = int(t['wcr'])
         pts_his = [t['p22'],t['p21'],t['p20'],t['p19'],t['p18'],t['ph']]
-        pts_bruto = 5*pts_his[0] + (5-deb)*pts_his[1] + (4-deb)*pts_his[2] + (3-deb)*pts_his[3] + (2-deb)*pts_his[4] + (1-deb/2)*pts_his[5]
+        pts_bruto = 5.5*pts_his[0] + (5-deb)*pts_his[1] + (4-deb)*pts_his[2] + (3-deb)*pts_his[3] + (2-deb)*pts_his[4] + (1-deb/2)*pts_his[5]
         wc_pts = int(250*(128-wcr)/127*(128-u_r)/127)
         if pts_bruto > wc_pts:
             pontos = int(pts_bruto+wc_pts)
