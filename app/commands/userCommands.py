@@ -16,6 +16,16 @@ def get_user(name):
     user = [u for u in userCollection.find({"name": name})]
     print(user)
 
+@userCommands.cli.command("setTelegram")
+@click.argument("name")
+@click.argument("telegram")
+def setTelegram(name,telegram):
+    user = mongo.db.users.find_one_and_update({'name': name},{'$set': {'telegram': telegram}})
+    if user:
+        print('Telegram atualizado')
+    else:
+        print("Ocorreu um erro.")
+
 @userCommands.cli.command("addUser")
 @click.argument("username")
 @click.argument("name")

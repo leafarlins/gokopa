@@ -255,15 +255,18 @@ def report(jogos,proximos,texto=""):
     add_news("Jogos recentes",newsm)
 
     if next_list:
-        allUsers = get_users('gk')
+        allUsers = [u for u in mongo.db.users.find({"active": True,"gokopa": True}).sort("name",pymongo.ASCENDING)]
         #print(allUsers)
         missing_users = set()
         for j in next_list:
             bets = apostas.find_one({'Jogo': j['jid']})
             for user in allUsers:
-                betu = user + '_p1'
+                betu = user.get('name') + '_p1'
                 if (not bets.get(betu)) and bets.get(betu) != 0:
-                    missing_users.add(user)
+                    if user.get('telegram'):
+                        missing_users.add(user.get('telegram'))
+                    else:
+                        missing_users.add(user.get('name'))
             #print(bets)
         #print(missing_users)
         lista_users = ', '.join(missing_users)

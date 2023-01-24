@@ -70,15 +70,15 @@
     <b><p class="center">Classificando</p></b>
     {% for grupo in dados['competicao'][torneio]['classificados']['grupos'] %}
     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
-        <table class="tab_gokopa tabelas m-3">
+        <table class="tab_gokopa tabelas mb-3">
             <tr>
                 <th>{{ grupo['nome'] }}</th>
                 <th title="Pontos/Saldo/Gols/Ranking">PSGR</th>
             </tr>
             {% for team in grupo['times'] %}
             <tr>
-                <td class="{{ team['cor'] }}"><img class="flag" src="../static/img/flag/{{ team['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ team['time'] }}</td>
-                <td class="{{ team['cor'] }} smallt">{{ team['pts'] }}/{{ team['sal'] }}/{{ team['gol'] }}/{{ team['rnk'] }}</td>
+                <td class="text-nowrap {{ team['cor'] }}"><img class="flag" src="../static/img/flag/{{ team['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ team['time'] }}</td>
+                <td class="text-nowrap {{ team['cor'] }} smallt">{{ team['pts'] }}/{{ team['sal'] }}/{{ team['gol'] }}/{{ team['rnk'] }}</td>
             </tr>
             {% endfor %}
         </table>
