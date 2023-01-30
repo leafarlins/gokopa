@@ -141,7 +141,7 @@ def gerar_tabela(ano):
         ano_jogos[17]['Time1'] = 'Qatar'
         ano_jogos[32]['Time1'] = 'Qatar'
     descs = {
-        '2022': 'Este é a tabela da Copa do Mundo de 2022, no Qatar.',
+        '2022': 'Esta é a tabela da Copa do Mundo de 2022, no Qatar.',
         '22': 'O ano 22 terá taças regionais, classificando para as finais das taças e para a gokopa de 48 times. A maior gokopa de todos os tempos até aqui, com 104 jogos em 12 grupos de 4.',
         '21': 'O ano 21 é a Gokopa simulada em homenagem à Copa do Mundo de 2022, com a mesma tabela.',
         '20': 'Ano 20 com taças regionais e Copa do Mundo versão 32 times.',
@@ -554,6 +554,57 @@ def historico():
         #time1=""
     #print(f"lista_jogos={lista_jogos},vev={vev},time1={time_1},time2={time_2},lista_times=get_team_list()")
     return render_template('historico.html',menu='Gokopa',lista_jogos=lista_jogos,vev=vev,time1=time_1,time2=time_2,lista_times=get_team_list())
+
+def getDossieTime(time):
+    jogos = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': time},{'Time2': time }],"Ano": {'$lt':ANO} }).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.DESCENDING)])]
+    for j in jogos:
+        j.pop('_id')
+    posc,posr = return_team_history(time)
+    ved = [0,0,0,len(jogos)]
+    for j in jogos:
+        if j['p1'] == j['p2']:
+            ved[1] += 1
+        elif (j['p1'] > j['p2']):
+            if j['Time1'] == time:
+                ved[0] += 1
+            else:
+                ved[2] += 1
+        else:
+            if j['Time2'] == time:
+                ved[0] += 1
+            else:
+                ved[2] += 1
+    aproveitamento = (ved[0]*2 + ved[1]) / (ved[3]*2)
+    return {
+        'time': time,
+        'pos_c': posc,
+        'pos_r': posr,
+        'ved': ved,
+        'ranking': get_rank(time),
+        'aprov': "{:.2%}".format(aproveitamento),
+        'jogos': jogos
+    }
+
+
+@gokopa.route('/api/get_dossie',methods=["GET","POST"])
+def getDossie():
+    time = request.values.get("time")
+    return getDossieTime(time)
+
+@gokopa.route('/dossie',methods=["GET","POST"])
+def dossie():
+    if request.method == "POST":
+        time = request.values.get("time")
+        dados = getDossieTime(time)
+    else:
+        dados = {}
+    lista = [u['Time'] for u in mongo.db.timehistory.find().sort("Time",pymongo.ASCENDING)]
+    dados['lista_times'] = lista
+    # print(lista)
+    # for t in lista:
+    #     dados['lista_times'].append(t['Time'])
+    return render_template('dossie.html',menu='Gokopa',dados=dados)
+
 
 def get_tabela_pot():
     tabela_pot = []

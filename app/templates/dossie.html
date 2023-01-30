@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Dossiê</h2>
+<div class="row justify-content-md-center"><div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
+  <div class="alert alert-{{ category }} text-center " role="alert">
+      {{ message }}
+  </div>
+  {% endfor %} {% endif %} {% endwith %}
+</div></div>
+
+<form action="{{ url_for('gokopa.dossie') }}" method="post">
+  <div class="row mb-2">
+      <div class="col-6 text-sm-end">
+          <label for="opt1">Gerar dossiê:</label>
+      </div>
+      <div class="col-6 text-sm-start">
+          <input list="times" name="time" id="time">
+          <datalist id="times">
+            {% for i in dados['lista_times'] %}
+              <option value="{{ i }}">
+            {% endfor %}
+          </datalist>
+      </div>
+  </div>
+  
+  <div class="row mb-3">
+    <div class="col-12 text-center m-3"><button type="submit" class="btn btn-outline-primary">Gerar</button></div>
+  </div>
+  
+</form>
+
+{% if dados['time'] %}
+<h4 class="text-center">{{ dados['time'] }}</h4>
+<div class="row scoll-pane"><div class="col-12"><div class="text-center">
+  <p class="text-center"><b>Histórico de posições na copa</b></p>
+  {% for i in range(0,22) %}
+  <!-- <div class="col-6 col-sm-4 col-md-3 col-lg-2 col-xl-1"> -->
+    <div class="betcorner">
+      <p>Ano {{ i+1 }}<br>
+        {% if dados['pos_c'][i]|int != 0 %}
+          {% if dados['pos_c'][i] == '1' %}<img class="flag" src="../static/img/ouro.png">
+          {% elif dados['pos_c'][i] == '2' %}<img class="flag" src="../static/img/prata.png">
+          {% elif dados['pos_c'][i] == '3' %}<img class="flag" src="../static/img/bronze.png">
+          {% endif %}
+          <b>{{ dados['pos_c'][i] }}º</b>
+        {% else %}{{ dados['pos_c'][i] }}
+        {% endif %}</p>
+    </div>
+  {% endfor %}
+  <p class="smallt text-center">Legenda: "-" (não participou), "e" (eliminatórias), "t" (taça regional)</p>
+</div></div></div>
+
+<div class="row">
+  <h4 class="text-center">Ranking</h4>
+  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
+    <p class="text-center"><b>Ranking atual</b></p>
+    <table class="tab_gokopa ranking" width="95%">
+      <tr>
+        <th title="Posição">#</th>
+        <th>País</th>
+        <th>Pontos</th>
+        <th title="Mudança nos pontos">+/-p</th>
+        <th title="Último Ranking">ur</th>
+      </tr>
+        <tr>
+          <td>{{ dados['ranking']['posicao'] }}</td>
+          <td><img class="flag" src="../static/img/flag/{{ dados['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ dados['time'] }}</td>
+          <td>{{ dados['ranking']['score'] }}</td>
+          <td>
+            {% if dados['ranking']['d_pts'] > 0 %}<img class="flag updown" src="../static/img/up.png">
+            {% elif dados['ranking']['d_pts'] == 0 %}<img class="flag updown" src="../static/img/steady.png">
+            {% else %}<img class="flag updown" src="../static/img/down.png">
+            {% endif %}{{ dados['ranking']['d_pts'] }}
+          </td>
+          <td class="updown">{% if dados['ranking']['d_r'] > 0 %}<img class="flag updown" src="../static/img/up.png">
+            {% elif dados['ranking']['d_r'] == 0 %}<img class="flag updown" src="../static/img/steady.png">
+            {% else %}<img class="flag updown" src="../static/img/down.png">
+            {% endif %}
+            {{ dados['ranking']['d_r'] }}</td>
+        </tr>
+    </table>
+  </div>
+  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-8">
+
+      {% set times = [ dados['time'] ] %}
+      {% set datag = [ dados['pos_r'] ] %}
+      <div width="99%" height="40vh"><canvas id="grafico" style="position: relative; text-align: center; display: unset;"></canvas></div>
+      <script>
+
+        var labelsgr = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22'];
+        const colors = ['#3e95cd'];
+        let nomes = {{ times | safe }}; 
+        let datagr = {{ datag | safe }};
+        
+        myLineChart= new Chart(document.getElementById("grafico"), {
+          type: 'line',
+          data: {
+            labels: labelsgr,
+            datasets: [
+              {
+                data: datagr[0],
+                label: nomes[0],
+                borderColor: colors[0],
+                fill: false
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            resizeDelay: 200,
+            //maintainAspectRatio: true,
+            spanGaps: true,
+            scales: {
+              yAxes: [{
+                ticks: { reverse: true }
+              }]
+            },
+            title: {
+              display: true,
+              text: 'Posição em cada ano'
+            },
+            hover: {
+            mode: 'index',
+            intersect: true
+            },
+            labels: {
+              boxWidth: 20
+            }
+          }
+        });
+      </script>
+
+  </div>
+</div>
+
+<div class="row">
+  <h4 class="text-center">Todos os jogos</h4>
+  {% for j in dados['jogos'] %}
+    <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+        <p class="m-0 text-center smallt">{{ j['Competição'] }} - {{ j['Fase'] }}</p>
+        <table class="tab_gokopa tab_jogos">
+            <tr>
+                <td title="{{ j['Jogo'] }}">#{{ j['Ano'] }} {{ j['Data'] }}</td>
+                <td>{% if j['Estadio'] %}{{ j['Estadio'] }} 
+                    <img class="miniflag" src="../static/img/flag/{{ j['Pais'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+                {% else %}-{% endif %}</td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    {{ j['Time1'] }} <img class="flag" src="../static/img/flag/{{ j['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+                    {% if j['pe1'] or j['pe2'] == 0 %}
+                        <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }} pe: {{ j['pe1'] }}x{{ j['pe2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
+                    {% elif j['tr1'] or j['tr2'] == 0 %}
+                        <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
+                    {% else %}{{ j['p1'] }}x{{ j['p2'] }}
+                    {% endif %}
+                    <img class="flag" src="../static/img/flag/{{ j['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ j['Time2'] }}
+                </td>
+            </tr>
+        </table>
+    </div>
+    {% endfor %}
+</div>
+
+{% endif %}
+
+{% endblock %}

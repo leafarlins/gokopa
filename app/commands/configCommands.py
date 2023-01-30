@@ -449,8 +449,8 @@ def migrate140():
 
     print("Finalizado.")
 
-@configCommands.cli.command("migrate")
-def migrate():
+@configCommands.cli.command("migrate141")
+def migrate141():
     enquete = [{
         'ano': 22,
         'game': 90,
@@ -583,6 +583,14 @@ def migrate():
         mongo.db.enquete.insert_many(enquete)
 
 
+    print("Finalizado.")
+
+@configCommands.cli.command("migrate142")
+def migrate142():
+    mongo.db.jogos.find_one_and_update({'Ano': 22,'Time1': 'Bélgica','Time2':'Ucrânia'},{'$set': {'Jogo': 53}})
+    mongo.db.jogos.find_one_and_update({'Ano': 22,'Time1': 'Alemanha','Time2':'Italia'},{'$set': {'Jogo': 54}})
+    mongo.db.jogos.find_one_and_update({'Ano': 22,'Time1': 'Rússia','Time2':'Holanda'},{'$set': {'Jogo': 51}})
+    mongo.db.jogos.find_one_and_update({'Ano': 22,'Time1': 'Espanha','Time2':'Suiça'},{'$set': {'Jogo': 52}})
     print("Finalizado.")
 
 def add_news(titulo,noticia,img="",link="",linkname=""):
