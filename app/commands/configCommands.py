@@ -582,15 +582,42 @@ def migrate141():
     else:
         mongo.db.enquete.insert_many(enquete)
 
-
     print("Finalizado.")
 
 @configCommands.cli.command("migrate142")
 def migrate142():
+    print("-Correção no id de jogos 51-54")
     mongo.db.jogos.find_one_and_update({'Ano': 22,'Time1': 'Bélgica','Time2':'Ucrânia'},{'$set': {'Jogo': 53}})
     mongo.db.jogos.find_one_and_update({'Ano': 22,'Time1': 'Alemanha','Time2':'Italia'},{'$set': {'Jogo': 54}})
     mongo.db.jogos.find_one_and_update({'Ano': 22,'Time1': 'Rússia','Time2':'Holanda'},{'$set': {'Jogo': 51}})
     mongo.db.jogos.find_one_and_update({'Ano': 22,'Time1': 'Espanha','Time2':'Suiça'},{'$set': {'Jogo': 52}})
+    print("-Seta status de c22")
+    times_ano22 = ['Dinamarca']
+    for j in mongo.db.jogos.find({'Ano': 22, 'Jogo': {'$lt': 51}}):
+        times_ano22.append(j.get('Time1'))
+        times_ano22.append(j.get('Time2'))
+    timehis = [u for u in mongo.db.timehistory.find()]
+    for t in timehis:
+        if t['Time'] in times_ano22:
+            mongo.db.timehistory.find_one_and_update({"_id": t['_id']},{'$set':{'c22': 't'}})
+        else:
+            mongo.db.timehistory.find_one_and_update({"_id": t['_id']},{'$set':{'c22': '-'}})
+    mongo.db.timehistory.find_one_and_update({"Time": 'Dinamarca'},{'$set':{'c22': '?'}})
+
+    print("-Ajuste de nomes de competição")
+    compn = {
+        'copa':'Copa do Mundo',
+        'tacaaso':'Taça Ásia-Oceania',
+        'tacaame':'Taça América',
+        'tacaeur':'Taça Europa',
+        'tacaafr':'Taça África',
+        'taca':'Taça Mundial'
+    }
+    historico = [u for u in mongo.db.historico.find()]
+    for h in historico:
+        if h['comp'] in ['copa','tacaaso','tacaame','tacaeur','tacaafr','taca']:
+            mongo.db.historico.find_one_and_update({'_id': h['_id']},{'$set': {'comp': compn[h['comp']] }})
+
     print("Finalizado.")
 
 def add_news(titulo,noticia,img="",link="",linkname=""):

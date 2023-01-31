@@ -1,17 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
 
+<h2>Histórico</h2>
+<div class="row justify-content-md-center"><div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
+  <div class="alert alert-{{ category }} text-center " role="alert">
+      {{ message }}
+  </div>
+  {% endfor %} {% endif %} {% endwith %}
+</div></div>
+
 <div class="row scoll-pane">
 
-    <div class="sectionj col-12 col-sd-12 col-md-6 col-lg-6 col-xl-8">
-        <h2>Histórico</h2>
-        <p>Histórico de duelos</p>
-        {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
-        <div class="alert alert-{{ category }}" role="alert">
-            {{ message }}
-        </div>
-        {% endfor %} {% endif %} {% endwith %}
-        {% if time1 %}
+    <div class="col-12 col-sd-12 col-md-6 col-lg-6 col-xl-8 text-center">
+        <h4>Histórico de duelos</h4>
+        {% if vev %}
         <table class="tab_gokopa">
           <tr>
             <td>V. <img class="flag" src="../static/img/flag/{{ time1['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time1['nome'] }}</td>
@@ -46,7 +49,7 @@
             </form>
     </div>
 
-    <div class="sectionj col-12 col-sd-12 col-md-6 col-lg-6 col-xl-4">
+    <div class="col-12 col-sd-12 col-md-6 col-lg-6 col-xl-4 text-center">
       <h2>Confrontos</h2>
     
       {% if lista_jogos %}
@@ -80,10 +83,10 @@
   
   </div>
 
-{% if time1 %}
-  <div class="row scoll-pane">
+{% if vev %}
+  <div class="row scoll-pane justify-content-md-center">
 
-    <div class="sectionj col-12 col-sd-12 col-md-10">
+    <div class="col-12 col-sd-12 col-md-10 text-center">
 
       <h4>Histórico de posições na copa</h4>
       <table class="tab_gokopa">
@@ -120,7 +123,7 @@
           {% endfor %}
         </tr>
       </table>
-      <p>Legenda: "-" (não participou), "e" (eliminatórias), "t" (taça regional), "a" ou "b" (ligas regionais)</p>
+      <p>Legenda: "-" (não participou), "e" (eliminatórias), "t" (taça regional)</p>
 
         <h4>Histórico de posições nos rankings</h4>
         {% set times = [ time1["nome"] , time2["nome"] ] %}

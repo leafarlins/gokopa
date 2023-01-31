@@ -52,17 +52,101 @@
   <p class="smallt text-center">Legenda: "-" (não participou), "e" (eliminatórias), "t" (taça regional)</p>
 </div></div></div>
 
-<div class="row">
+<div class="row justify-content-md-center">
+  
+  <div class="col-12 col-sm-4 col-md-4 col-lg-2 col-xl-2">
+    <table class="tab_gokopa quadro mb-3">
+      <tr>
+        <th colspan="2">Jogos</th>
+      </tr>
+      <tr>
+        <td>Vitórias</td>
+        <td>{{ dados['ved'][0] }}</td>
+      </tr>
+      <tr>
+        <td>Empates</td>
+        <td>{{ dados['ved'][1] }}</td>
+      </tr>
+      <tr>
+        <td>Derrotas</td>
+        <td>{{ dados['ved'][2] }}</td>
+      </tr>
+      <tr>
+        <td>Total</td>
+        <td>{{ dados['ved'][3] }}</td>
+      </tr>
+    </table>
+  </div>
+  <div class="col-12 col-sm-8 col-md-8 col-lg-4 col-xl-4">
+    <p class="text-center"><b>Aproveitamento</b></p>
+    {% set vitbar = dados['ved'][0] * 100 / dados['ved'][3] %}
+    {% set empbar = dados['ved'][1] * 100/ dados['ved'][3] %}
+    {% set derbar = dados['ved'][2] * 100/ dados['ved'][3] %}
+    <p class="text-center">Barra de vitória - empate- derrota</p>
+    <div class="progress" style="width: 400px; margin: auto;">
+      <div class="progress-bar bg-success" role="progressbar" aria-label="Vitórias" style="width: {{ vitbar }}%" aria-valuenow="{{ vitbar }}" aria-valuemin="0" aria-valuemax="100"></div>
+      <div class="progress-bar bg-warning" role="progressbar" aria-label="Empates" style="width: {{ empbar }}%" aria-valuenow="{{ empbar }}" aria-valuemin="0" aria-valuemax="100"></div>
+      <div class="progress-bar bg-danger" role="progressbar" aria-label="Derrotas" style="width: {{ derbar }}%" aria-valuenow="{{ derbar }}" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <p class="text-center">{{ dados['aprov'] }} de aproveitamento</p>
+  </div>
+  <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+    <p class="text-center"><b>Títulos</b></p>
+    {% if dados['titulos']['lista'] %}
+    <div class="row">
+      <div class="col-12 col-sm-6">
+      <table class="tab_gokopa quadro mb-3 text-nowrap">
+        <tr>
+          <th>Ano</th>
+          <th>Torneio</th>
+          <th>Título</th>
+        </tr>
+        {% for i in dados['titulos']['lista'] %}
+        <tr>
+          <td>{{ i['ano'] }}</td>
+          <td>{{ i['comp'] }}</td>
+          <td><img class="flag" src="../static/img/{{ i['medal'] }}.png"> {{ i['medal'] }}</td>
+        </tr>
+        {% endfor %}
+      </table></div>
+      <div class="col-12 col-sm-6">
+      <table class="tab_gokopa quadro mb-3 text-nowrap">
+        <tr>
+          <th>Torneio</th>
+          <th title="Ouro"><img class="flag" src="../static/img/ouro.png"></th>
+          <th title="Prata"><img class="flag" src="../static/img/prata.png"></th>
+          <th title="Bronze"><img class="flag" src="../static/img/bronze.png"></th>
+          <th title="Total"><img class="flag" src="../static/img/total.png"></th>
+        </tr>
+        {% for i in dados['titulos']['torneios'] %}
+        <tr>
+          <td>{{ i }}</td>
+          <td class="text-center">{{ dados['titulos']['torneios'][i]['ouro'] }}</td>
+          <td>{{ dados['titulos']['torneios'][i]['prata'] }}</td>
+          <td>{{ dados['titulos']['torneios'][i]['bronze'] }}</td>
+          <td>{{ dados['titulos']['torneios'][i]['total'] }}</td>
+        </tr>
+        {% endfor %}
+      </table></div>
+    </div>
+    {% else %}
+    <p class="text-center">Sem títulos para exibir.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row justify-content-md-center">
   <h4 class="text-center">Ranking</h4>
   <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
     <p class="text-center"><b>Ranking atual</b></p>
-    <table class="tab_gokopa ranking" width="95%">
+    <table class="tab_gokopa ranking mb-3" width="95%">
       <tr>
         <th title="Posição">#</th>
         <th>País</th>
         <th>Pontos</th>
         <th title="Mudança nos pontos">+/-p</th>
         <th title="Último Ranking">ur</th>
+        <th title="Ranking FIFA 2006 WC">wcr</th>
       </tr>
         <tr>
           <td>{{ dados['ranking']['posicao'] }}</td>
@@ -79,8 +163,32 @@
             {% else %}<img class="flag updown" src="../static/img/down.png">
             {% endif %}
             {{ dados['ranking']['d_r'] }}</td>
+          <td class="smallt">{{ dados['ranking']['wcr'] }}</td>
         </tr>
     </table>
+    <p class="text-center">Pontos por ano</p>
+    <table class="tab_gokopa quadro mb-3">
+      <tr>
+        <th title="Ano">22</th>
+        <th title="Ano">21</th>
+        <th title="Ano">20</th>
+        <th title="Ano">19</th>
+        <th title="Ano">18</th>
+        <th title="Histórico">His</th>
+        <th title="Pontos Ranking FIFA">FIFA</th>
+      </tr>
+      <tr>
+        <td>{{ dados['ranking']['pts'][0] }}</td>
+        <td class="text-center">{{ dados['ranking']['pts'][1] }}</td>
+        <td>{{ dados['ranking']['pts'][2] }}</td>
+        <td>{{ dados['ranking']['pts'][3] }}</td>
+        <td>{{ dados['ranking']['pts'][4] }}</td>
+        <td>{{ dados['ranking']['pts'][5] }}</td>
+        <td>{{ dados['ranking']['wc_pts'] }}</td>
+      </tr>
+    </table>
+    <p class="fs-6 text-center">O ranking é calculado dando mais peso aos anos recentes. O valor de His reflete o resquício de pontuação de rankings anteriores. O valor de FIFA é um bonus de pontuação de acordo com o ranking da FIFA dentro do jogo.</p>
+
   </div>
   <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-8">
 
@@ -139,10 +247,10 @@
   <h4 class="text-center">Todos os jogos</h4>
   {% for j in dados['jogos'] %}
     <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
-        <p class="m-0 text-center smallt">{{ j['Competição'] }} - {{ j['Fase'] }}</p>
+        <p class="m-0 text-center smallt">#{{ j['Ano'] }} {{ j['Competição'] }} - {{ j['Fase'] }}</p>
         <table class="tab_gokopa tab_jogos">
             <tr>
-                <td title="{{ j['Jogo'] }}">#{{ j['Ano'] }} {{ j['Data'] }}</td>
+                <td title="{{ j['Jogo'] }}">{{ j['Data'] }}</td>
                 <td>{% if j['Estadio'] %}{{ j['Estadio'] }} 
                     <img class="miniflag" src="../static/img/flag/{{ j['Pais'] }}.png" onerror="this.src='../static/img/flag/default.png'">
                 {% else %}-{% endif %}</td>

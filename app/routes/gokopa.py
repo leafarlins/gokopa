@@ -324,10 +324,10 @@ def tabela_his():
         #print(f'Add ano {i+1}: {jogos}')
     return render_template('tabelahis.html',menu="Tabela",lista_jogos=fase_final)
 
-@cache.memoize(3600*24*7)
+@cache.memoize(3600*24)
 def get_historic_copa(comp):
     if comp == 'tacas':
-        historia = [u for u in mongo.db.historico.find({"comp": { '$in': [ "tacaame", "tacaeur", "tacaaso", "tacaafr" ] }}).sort('Ano',pymongo.DESCENDING)]
+        historia = [u for u in mongo.db.historico.find({"comp": { '$in': [ "Taça América", "Taça Europa", "Taça Ásia-Oceania", "Taça África" ] }}).sort('Ano',pymongo.DESCENDING)]
     elif comp == 'bet':
         historia = [u for u in mongo.db.historico.find({"comp": { '$in': [ "bet", "moedas" ] }}).sort('Ano',pymongo.DESCENDING)]
         for u in historia:
@@ -478,13 +478,12 @@ def ranking():
     #rank_ed = read_config_ranking()
     #ranking = [u for u in mongo.db.ranking.find({"ed": rank_ed}).sort('pos',pymongo.ASCENDING)]
     ranking = get_ranking()
-    copas_list,copas_medal = get_historic_copa("copa")
-    taca_list,taca_medal = get_historic_copa("taca")
+    copas_list,copas_medal = get_historic_copa("Copa do Mundo")
+    taca_list,taca_medal = get_historic_copa("Taça Mundial")
     bet_list,bet_medals = get_historic_copa("bet")
     tacas_list,tacas_medals = get_historic_copa("tacas")
-    tacas_list,tacas_medals = get_historic_copa("tacas")
-    moedas_list,moedas_med = get_historic_copa("moedas")
-    return render_template("ranking.html",menu="Gokopa",ranking=ranking,copa_his=copas_list,copa_med=copas_medal,bet_his=bet_list,bet_med=bet_medals,taca_his=taca_list,taca_med=taca_medal,tacas_his=tacas_list,tacas_med=tacas_medals,moedas_his=moedas_list)
+    #moedas_list,moedas_med = get_historic_copa("moedas")
+    return render_template("ranking.html",menu="Gokopa",ranking=ranking,copa_his=copas_list,copa_med=copas_medal,bet_his=bet_list,bet_med=bet_medals,taca_his=taca_list,taca_med=taca_medal,tacas_his=tacas_list,tacas_med=tacas_medals)
 
 @cache.memoize(3600*24)
 def get_team_list():
@@ -494,13 +493,11 @@ def get_team_list():
 
 @cache.memoize(3600*24*7)
 def return_historic_duels(team1,team2):
-    ano_max_game = 134
-    historico_total = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': team1,'Time2': team2 },{'Time1': team2,'Time2': team1 }],"Ano": {'$lt':22} }).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.DESCENDING)])]
-    #historico_a20 = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': team1,'Time2': team2 },{'Time1': team2,'Time2': team1 }],"Ano": 20, "Jogo": {'$lt':ano_max_game} }).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.ASCENDING)])]
-    #for obj in historico_a20:
-    #    historico_total.insert(0,obj)
-
-    #print(historico_total)
+    last_game = progress_data()['last_game']
+    historico_antigo = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': team1,'Time2': team2 },{'Time1': team2,'Time2': team1 }],"Ano": {'$lt':ANO} }).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.DESCENDING)])]
+    historico_atual = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': team1,'Time2': team2 },{'Time1': team2,'Time2': team1 }],"Ano": ANO, "Jogo": {'$lt':last_game+1} }).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.ASCENDING)])]
+    historico_total = historico_atual + historico_antigo
+    
     vev = [0,0,0,len(historico_total)]
     for j in historico_total:
         if j['p1'] == j['p2']:
@@ -532,7 +529,7 @@ def return_team_history(team1):
         else:
             pos_rank.append(int(historia[rank]))
     # Add current rank
-    pos_copa.append('?')
+    pos_copa.append(historia['c22'])
     pos_rank.append(get_rank(team1)['posicao'])
     #print(pos_copa,pos_rank)
     return pos_copa,pos_rank
@@ -541,22 +538,30 @@ def return_team_history(team1):
 def historico():
     time_1 = dict()
     time_2 = dict()
+    lista_times=get_team_list()
+    print(lista_times)
+    lista_jogos = []
+    vev=[]
     if request.method == "POST":
         time_1["nome"] = request.values.get("time1")
         time_2["nome"] = request.values.get("time2")
         #times = [time1,time2]
-        lista_jogos,vev = return_historic_duels(time_1["nome"],time_2["nome"])
-        time_1["hc"],time_1["hr"] = return_team_history(time_1["nome"])
-        time_2["hc"],time_2["hr"] = return_team_history(time_2["nome"])
-    else:
-        lista_jogos = []
-        vev=[]
+        if time_1["nome"] in lista_times and time_2["nome"] in lista_times:
+            lista_jogos,vev = return_historic_duels(time_1["nome"],time_2["nome"])
+            time_1["hc"],time_1["hr"] = return_team_history(time_1["nome"])
+            time_2["hc"],time_2["hr"] = return_team_history(time_2["nome"])
+        else:
+            flash(f'Times não encontrados na base.','danger')
         #time1=""
     #print(f"lista_jogos={lista_jogos},vev={vev},time1={time_1},time2={time_2},lista_times=get_team_list()")
-    return render_template('historico.html',menu='Gokopa',lista_jogos=lista_jogos,vev=vev,time1=time_1,time2=time_2,lista_times=get_team_list())
+    return render_template('historico.html',menu='Gokopa',lista_jogos=lista_jogos,vev=vev,time1=time_1,time2=time_2,lista_times=lista_times)
 
+@cache.memoize(3600*2)
 def getDossieTime(time):
-    jogos = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': time},{'Time2': time }],"Ano": {'$lt':ANO} }).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.DESCENDING)])]
+    jogos_antigos = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': time},{'Time2': time }],"Ano": {'$lt':ANO} }).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.DESCENDING)])]
+    last_game = progress_data()['last_game']
+    jogos_atual = [u for u in mongo.db.jogos.find({ '$or': [{'Time1': time},{'Time2': time }],"Ano": ANO ,'Jogo': {'$lt': last_game+1}}).sort([("Ano",pymongo.DESCENDING),("Jogo",pymongo.DESCENDING)])]
+    jogos = jogos_atual + jogos_antigos
     for j in jogos:
         j.pop('_id')
     posc,posr = return_team_history(time)
@@ -575,6 +580,30 @@ def getDossieTime(time):
             else:
                 ved[2] += 1
     aproveitamento = (ved[0]*2 + ved[1]) / (ved[3]*2)
+    historico = [u for u in mongo.db.historico.find().sort("Ano",pymongo.ASCENDING)]
+    titlist = []
+    tittorneios = {}
+    for h in historico:
+        for medal in ['ouro','prata','bronze','quarto']:
+            if h[medal] == time:
+                if medal in [ "Taça América", "Taça Europa", "Taça Ásia-Oceania", "Taça África" ] or medal != 'quarto':
+                    if medal == 'quarto':
+                        medal = 'bronze'
+                    if not tittorneios.get(h['comp']):
+                        tittorneios[h['comp']] = {
+                            'ouro': 0,
+                            'prata': 0,
+                            'bronze': 0,
+                            'total': 0
+                        }
+                    titlist.append({
+                        'ano': h['Ano'],
+                        'comp': h['comp'],
+                        'medal': medal
+                    })
+                    tittorneios[h['comp']][medal] += 1
+                    tittorneios[h['comp']]['total'] += 1
+
     return {
         'time': time,
         'pos_c': posc,
@@ -582,7 +611,11 @@ def getDossieTime(time):
         'ved': ved,
         'ranking': get_rank(time),
         'aprov': "{:.2%}".format(aproveitamento),
-        'jogos': jogos
+        'jogos': jogos,
+        'titulos': {
+            'lista': titlist,
+            'torneios': tittorneios
+        }
     }
 
 
@@ -593,12 +626,16 @@ def getDossie():
 
 @gokopa.route('/dossie',methods=["GET","POST"])
 def dossie():
+    lista = [u['Time'] for u in mongo.db.timehistory.find().sort("Time",pymongo.ASCENDING)]
     if request.method == "POST":
         time = request.values.get("time")
-        dados = getDossieTime(time)
+        if time in lista:
+            dados = getDossieTime(time)
+        else:
+            flash(f'Time {time} não encontrado.','danger')
+            dados = {}
     else:
         dados = {}
-    lista = [u['Time'] for u in mongo.db.timehistory.find().sort("Time",pymongo.ASCENDING)]
     dados['lista_times'] = lista
     # print(lista)
     # for t in lista:
