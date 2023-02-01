@@ -105,7 +105,7 @@
     <h2>Patrocínios e apoios</h2>
     {% if info['patrocinados'] %}
     <div class="row">{% for t in info['patrocinados'] %}
-    <div class="card {% if t['patrocinador'] == info['username'] %}text-bg-secondary{% else %}text-bg-light{% endif %} mb-3 col-12 col-sm-6 col-md-4 col-lg-6 col-xl-4" style="max-width: 25rem;">
+    <div class="card {% if t['patrocinador'] == info['username'] %}text-white bg-secondary{% else %}bg-light{% endif %} mb-3 col-12 col-sm-6 col-md-4 col-lg-6 col-xl-4" style="max-width: 25rem;">
         <div class="card-header">{% if t['patrocinador'] == info['username'] %}<b>{{ t['patrocinador'] }}</b>{% else %}{{ t['patrocinador'] }}{% endif %}</div>
         <div class="card-body">
           <h5 class="card-title"><img class="flag" src="../static/img/flag/{{ t['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ t['time'] }} {{ t['valor'] }}🪙</h5>
