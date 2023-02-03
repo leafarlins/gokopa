@@ -82,7 +82,7 @@
       {% for ano in copa_his %}
       <tr>
         <td>{{ ano['Ano'] }}</td>
-        <td><img class="flag" src="../static/img/flag/{{ ano['ouro'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ ano['ouro'] }}</td>
+        <td class="text-nowrap"><img class="flag" src="../static/img/flag/{{ ano['ouro'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ ano['ouro'] }}</td>
         <td><img class="flag" src="../static/img/flag/{{ ano['prata'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['prata'] }}"></td>
         <td><img class="flag" src="../static/img/flag/{{ ano['bronze'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['bronze'] }}"></td>
         <td><img class="flag" src="../static/img/flag/{{ ano['quarto'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['quarto'] }}"></td>
@@ -98,7 +98,7 @@
 
     <br><h3>Campeões da Taça Mundial</h3>
     <p class="text-center">Quadro geral de medalhas</p>
-    <table class="tab_gokopa quadro">
+    <table class="tab_gokopa quadro mb-3">
       <tr>
         <th title="Posição">#</th>
         <th>Time</th>
@@ -128,9 +128,9 @@
       </tr>
       {% endfor %}
     </table>
-    <br><p class="text-center">Histórico de conquistas na Taça Mundial</p>
+    <p class="text-center">Histórico de conquistas na Taça Mundial</p>
 
-    <table class="tab_gokopa quadro">
+    <table class="tab_gokopa quadro mb-3">
       <tr>
         <th title="Ano">A</th>
         <th><img class="flag" src="../static/img/ouro.png"> Campeão</th>
@@ -151,9 +151,10 @@
       {% endfor %}
     </table>
 
-    <br><h3>Campeões das Taças Regionais</h3>
-    <p class="text-center">Quadro geral de medalhas</p>
-    <table class="tab_gokopa quadro">
+    <h3>Campeões das Taças Regionais</h3>
+    <p class="text-center">Quadro geral de medalhas <a id="medtacr" href="javascript:toggle('medtacrtoggle','medtacr');">mostrar mais</a></p>
+    <div id="medtacrtoggle" style="display: none" class=".container-fluid">
+    <table class="tab_gokopa quadro mb-3">
       <tr>
         <th title="Posição">#</th>
         <th>Time</th>
@@ -175,14 +176,38 @@
             {% set ns.last_bronze = time['bronze'] %}
           {% endif %}
         </td>
-        <td><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</td>
+        <td class="text-nowrap"><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</td>
         <td>{{ time['ouro'] }}</td>
         <td>{{ time['prata'] }}</td>
         <td>{{ time['bronze'] }}</td>
         <td>{{ time['total'] }}</td>
       </tr>
       {% endfor %}
+    </table></div>
+    <p class="text-center">Histórico de conquistas nas Taças Regionais <a id="histacr" href="javascript:toggle('histacrtoggle','histacr');">mostrar mais</a></p>
+
+    <div id="histacrtoggle" style="display: none" class=".container-fluid">
+    <table class="tab_gokopa quadro mb-3">
+      <tr>
+        <th title="Ano">A</th>
+        <th><img class="flag" src="../static/img/ouro.png"> Campeão</th>
+        <th title="segundo"><img class="flag" src="../static/img/prata.png"></th>
+        <th title="semifinal"><img class="flag" src="../static/img/bronze.png"></th>
+        <th title="semifinal"><img class="flag" src="../static/img/bronze.png"></th>
+        <th>sede</th>
+      </tr>
+      {% for ano in tacas_his %}
+      <tr>
+        <td>{{ ano['Ano'] }}</td>
+        <td><img class="flag" src="../static/img/flag/{{ ano['ouro'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ ano['ouro'] }}</td>
+        <td><img class="flag" src="../static/img/flag/{{ ano['prata'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['prata'] }}"></td>
+        <td><img class="flag" src="../static/img/flag/{{ ano['bronze'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['bronze'] }}"></td>
+        <td><img class="flag" src="../static/img/flag/{{ ano['quarto'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['quarto'] }}"></td>
+        <td><img class="flag" src="../static/img/flag/{{ ano['sedes'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['sedes'] }}"></td>
+      </tr>
+      {% endfor %}
     </table>
+    </div>
   </div>
 
   <div class="col-12 col-sd-12 col-md-6 col-lg-6 col-xl-4">

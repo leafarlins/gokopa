@@ -422,18 +422,21 @@ def processa_pat(jogos='0',leilao=False):
 
 
     # Emprestimo extra inicial
+    emprestimo_ini = 500
+    debito = int((1000 + emprestimo_ini*6) / 20)
     if leilao:
-        moedas.update_many({},{'$inc': {'saldo': 200}})
-        moedas_log('all',"+200","",0,"Empréstimo inicial")
+        moedas.update_many({},{'$inc': {'saldo': emprestimo_ini}})
+        moedas_log('all',"+"+str(emprestimo_ini),"",0,"Empréstimo inicial")
 
     # Processamento dos últimos jogos
     if jogos > 0:
         past_jogos = get_next_jogos()['past_jogos'][:jogos]
         verify_jogos = get_next_jogos()['next_jogos'][:4]
 
-        if past_jogos[0]['jid'] > 146:
-            moedas.update_many({},{'$inc': {'saldo': -100}})
-            moedas_log('all',"-150","",0,"Pagamento de empréstimo")
+        # Equivale aos 20 ultimos processamentos
+        if past_jogos[0]['jid'] > 140:
+            moedas.update_many({},{'$inc': {'saldo': -debito}})
+            moedas_log('all',"-"+str(debito),"",0,"Pagamento de empréstimo")
 
         # Devolve apoios de jogos impedidos de apoiar
         for j in (verify_jogos + past_jogos):
