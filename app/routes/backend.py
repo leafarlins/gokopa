@@ -35,10 +35,7 @@ def read_config_ranking():
     dbitem = mongo.db.settings.find_one({"config": "ranking"})
     return dbitem.get('edition')
 
-
-
-@backend.route('/api/get_ranking')
-#@cache.cached(timeout=3600*24)
+@cache.memoize(600)
 def get_ranking():
     historic = [u for u in mongo.db.timehistory.find() ]
     ranking = []
@@ -76,7 +73,6 @@ def get_ranking():
             i += 1
         #lista_users = sorted(lista_users, key=lambda k: k['total'],reverse=True)
     
-
     return {'ranking': sorted_ranking }
 
 @cache.memoize(300)
@@ -87,6 +83,16 @@ def get_rank(time):
         if t['time'] == time:
             return t
     return ""
+
+@backend.route('/api/get_ranking')
+@cache.cached(timeout=3600)
+def get_rank_api():
+    return get_ranking()
+
+@backend.route('/api/get_ranking/<time>')
+@cache.cached(timeout=600)
+def get_rank_t_api(time):
+    return get_rank(time)
 
 @cache.memoize(3600)
 def get_user_name(username):
