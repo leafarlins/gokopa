@@ -25,4 +25,4 @@ s3transfer==0.6.0
 six==1.16.0
 twilio==7.14.0
 urllib3==1.26.12
-Werkzeug==2.0.1
+Werkzeug==2.2.3
