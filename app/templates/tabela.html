@@ -66,7 +66,7 @@
     </div>
     
     {% if dados['competicao'][torneio]['classificados'] %}
-    <div class="row justify-content-md-center">
+    <div class="row scoll-pane justify-content-md-center">
     <b><p class="center">Classificando</p></b>
     {% for grupo in dados['competicao'][torneio]['classificados']['grupos'] %}
     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
@@ -95,7 +95,7 @@
     {% endif %}
 
     {% if dados['competicao'][torneio]['eliminatorias']['outros'] %}
-    <div class="row justify-content-md-center">
+    <div class="row scoll-pane justify-content-md-center">
         <b><p class="center">Outros jogos</p></b>
         {% for j in dados['competicao'][torneio]['eliminatorias']['outros']['jogos'] %}
         <div class="col-12 col-sm-10 col-md-6 col-lg-4 col-xl-3">
@@ -124,7 +124,7 @@
     </div>
     {% endif %}
 
-    <div class="row justify-content-md-center">
+    <div class="row scoll-pane justify-content-md-center">
         {% set fases = ['16-avos-de-final','8vas-de-final','4as-de-final','Semi-final','D. 3º Lugar','Final'] %}
         {% for fase in fases %}
         {% if dados['competicao'][torneio]['eliminatorias'][fase] %}
@@ -162,7 +162,7 @@
 {% endif %}{% endfor %}
 
 {% if dados['outros'] %}
-<div class="row justify-content-md-center">
+<div class="row scoll-pane justify-content-md-center">
     <h3>Outros jogos do ano</h3>
     {% for j in dados['outros'] %}
     <div class="col-12 col-sm-10 col-md-6 col-lg-4 col-xl-3">

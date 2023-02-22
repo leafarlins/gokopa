@@ -147,7 +147,8 @@ def gera_random_penalti():
 def teste2(user,jogo):
     p1 = gera_random_score()
     p2 = gera_random_score()
-    if p1 == p2 and jogo in list(range(172,204))+[9,10,25,34,35,50,59,60,75]:
+    list_pe = list(range(172,204))+[9,10,25,34,35,50,59,60,75]+list(range(76,100))
+    if p1 == p2 and int(jogo) in list_pe:
         r = randrange(2)
         outp = mongo.db.apostas22.find_one_and_update(
             {"Jogo": int(jogo)},
@@ -156,6 +157,7 @@ def teste2(user,jogo):
                 str(user + "_p2"): int(p2),
                 str(user + "_vit"): str(r)
                 }})
+        print(f'jid {jogo} Aposta de {user}: {p1}x{p2} v{r}')
     else:
         outp = mongo.db.apostas22.find_one_and_update(
             {"Jogo": int(jogo)},
@@ -163,7 +165,7 @@ def teste2(user,jogo):
                 str(user + "_p1"): int(p1),
                 str(user + "_p2"): int(p2)
                 }})
-    print(f'jid {jogo} Aposta de {user}: {p1}x{p2}')
+        print(f'jid {jogo} Aposta de {user}: {p1}x{p2}')
     #print(outp)
 
 # Print random commando to edit game

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <p>&nbsp;</p>
-<div class="row">
+<div class="row  scoll-pane">
 
 <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-4">
 
@@ -87,12 +87,16 @@
     {% for n in news %}
     <div class="col-12 col-sm-6 col-md-4 col-lg-6 col-xl-4">
       <div class="card">
-        {% if n['img'] %}<img src="../static/img/news/{{ n['img'] }}" onerror="this.src='../static/img/flag/default.png'" class="card-img-top">{% endif %}
+        {% if n['img'] %}{% if n['img'] != 'youtube' %}<img src="../static/img/news/{{ n['img'] }}" onerror="this.src='../static/img/flag/default.png'" class="card-img-top">{% endif %}{% endif %}
         <div class="card-body">
           <h5 class="card-title">{{ n['titulo'] }}</h5>
           <h8 class="card-subtitle m-2 text-muted smallt">{{ n['data'] }}</h8>
-          <p class="card-text">{% autoescape false %}{{ n['texto'] }}{% endautoescape %}</p>
-          {% if n['link'] %}<a href="{{ n['link'] }}" class="card-link">{{ n['linkname'] }}</a>{% endif %}
+          <p class="card-text">
+            {% if n['img'] == 'youtube' %}
+            <iframe width="100%" src="https://www.youtube.com/embed/{{ n['link'] }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            {% endif %}
+            {% autoescape false %}{{ n['texto'] }}{% endautoescape %}</p>
+          {% if n['linkname'] %}<a href="{{ n['link'] }}" class="card-link">{{ n['linkname'] }}</a>{% endif %}
         </div>
       </div>
     </div>
@@ -103,7 +107,7 @@
 
 </div>
 
-<div class="row">
+<div class="row  scoll-pane">
 
 <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-8 col-xxl-9">
   <h2>Últimos Jogos</h2>

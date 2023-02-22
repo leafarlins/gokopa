@@ -2,7 +2,7 @@
 {% block content %}
 
 <h2>Dossiê</h2>
-<div class="row justify-content-md-center"><div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+<div class="row scoll-pane justify-content-md-center"><div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
   {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
   <div class="alert alert-{{ category }} text-center " role="alert">
       {{ message }}
@@ -10,6 +10,7 @@
   {% endfor %} {% endif %} {% endwith %}
 </div></div>
 
+<div class="row scoll-pane">
 <form action="{{ url_for('gokopa.dossie') }}" method="post">
   <div class="row mb-2">
       <div class="col-6 text-sm-end">
@@ -30,6 +31,7 @@
   </div>
   
 </form>
+</div>
 
 {% if dados['time'] %}
 <h4 class="text-center">{{ dados['time'] }}</h4>
@@ -52,7 +54,7 @@
   <p class="smallt text-center">Legenda: "-" (não participou), "e" (eliminatórias), "t" (taça regional)</p>
 </div></div></div>
 
-<div class="row justify-content-md-center">
+<div class="row scoll-pane justify-content-md-center">
   
   <div class="col-12 col-sm-4 col-md-4 col-lg-2 col-xl-2">
     <table class="tab_gokopa quadro mb-3">
@@ -135,7 +137,7 @@
   </div>
 </div>
 
-<div class="row justify-content-md-center">
+<div class="row scoll-pane justify-content-md-center">
   <h4 class="text-center">Ranking</h4>
   <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
     <p class="text-center"><b>Ranking atual</b></p>
@@ -243,7 +245,7 @@
   </div>
 </div>
 
-<div class="row">
+<div class="row scoll-pane">
   <h4 class="text-center">Todos os jogos</h4>
   {% for j in dados['jogos'] %}
     <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">

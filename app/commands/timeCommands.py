@@ -139,17 +139,17 @@ def calc_ranking(j_i,j_f):
         pts1 = 0
         pts2 = 0
         if jogo['p1'] > jogo['p2']:
-            if jogo.get('Grupo'):
-                pts1 = 3
-            elif jogo.get('tr1'):
+            if not jogo.get('Grupo') and jogo.get('tr1'):
                 pts1 = 2.5
                 pts2 = 0.5
+            else:
+                pts1 = 3
         elif jogo['p2'] > jogo['p1']:
-            if jogo.get('Grupo'):
-                pts2 = 3
-            elif jogo.get('tr1'):
+            if not jogo.get('Grupo') and jogo.get('tr1'):
                 pts2 = 2.5
                 pts1 = 0.5
+            else:
+                pts2 = 3
         else:
             if jogo.get('Grupo'):
                 pts1 = 1.5
