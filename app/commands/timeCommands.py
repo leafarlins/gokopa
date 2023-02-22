@@ -422,7 +422,7 @@ def processa_pat(jogos='0',leilao=False):
 
 
     # Emprestimo extra inicial
-    emprestimo_ini = 500
+    emprestimo_ini = 300
     debito = int((1000 + emprestimo_ini*6) / 20)
     if leilao:
         moedas.update_many({},{'$inc': {'saldo': emprestimo_ini}})
