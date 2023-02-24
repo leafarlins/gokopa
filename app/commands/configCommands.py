@@ -82,7 +82,7 @@ def set_history(ano):
     ordered_total_gk = get_ordered(ano)
     print(ordered_total_gk)
     print("Escrevendo placar de hoje na base")
-    mongo.db[basehis].insert(ordered_total_gk)
+    mongo.db[basehis].insert_many(ordered_total_gk)
 
 @configCommands.cli.command("setRank")
 @click.argument("edition")
