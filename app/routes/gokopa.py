@@ -401,11 +401,20 @@ def getEnquete():
             '2r': [],
             '3r': []
         }
+        pts = [0,0,0,0]
+        for votante in u['votos']:
+            indice4 = u['votos'][votante][0]
+            indice2 = u['votos'][votante][1]
+            indice1 = u['votos'][votante][2]
+            pts[indice4] += 4
+            pts[indice2] += 2
+            pts[indice1] += 1
         for i in range(4):
             mapa_id.append({
                 'id': i,
                 'votos': 0,
-                'votantes': []
+                'votantes': [],
+                'pontos': pts[i]
             })
         for rodada in ['1r','2r','3r']:
             for user in u['votos']:
@@ -421,7 +430,7 @@ def getEnquete():
                             voto = False
                             #print(f'{rodada}: Voto feito por {user} em {pref}')
             new_mapaid = []
-            for item in sorted(sorted(mapa_id, key=lambda k: k['id']), key=lambda k: k['votos'],reverse=True):
+            for item in sorted(sorted(sorted(mapa_id, key=lambda k: k['id']), key=lambda k: k['pontos'],reverse=True), key=lambda k: k['votos'],reverse=True):
                 resultado[rodada].append(item.copy())
                 new_mapaid.append(item.copy())
             new_mapaid.pop(-1)

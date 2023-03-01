@@ -84,7 +84,7 @@
 {% if dados['finalizadas'] %}
 <h2>Enquetes finalizadas</h2>
 
-{% for e in dados['andamento'] %}
+{% for e in dados['finalizadas'] %}
 <div class="row mb-2">
   <h4 class="text-center m-3">{{ e['nome'] }}</h4>
   {% for opt in e['opcoes'] %}
@@ -112,7 +112,7 @@
         {% set idv = e['resultado'][r][0]['id'] %}
         <h8 class="card-subtitle text-muted mb-2">Vencedor: <img class="flag" src="../static/img/flag/{{ e['opcoes'][idv]['paises'][0] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ e['opcoes'][idv]['nome'] }}</h8>
         {% for pid in e['resultado'][r] %}
-        <p class="card-text"><br />{{ pid['votos'] }} voto(s): {{ e['opcoes'][pid['id']]['nome'] }}<br />
+        <p class="card-text"><br />{{ e['opcoes'][pid['id']]['nome'] }}: {{ pid['votos'] }} voto{% if pid['votos'] > 1 %}s{% endif %}, {{ pid['pontos'] }} pts<br />
         {% for v in pid['votantes'] %}{{ v }} {% endfor %}</p>
         {% endfor %}
       </div>

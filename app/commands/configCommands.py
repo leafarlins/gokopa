@@ -651,7 +651,7 @@ def add_news(titulo,noticia,img="",link="",linkname=""):
         mensagem+="\n\n➡️ Todas as notícias em: https://gokopa.leafarlins.com/noticias"
     print("Preparando mensagem para envio")
     print(mensagem)
-    if TELEGRAM:
+    if TELEGRAM and titulo != 'Jogos recentes':
         print("Enviando mensagem via telegram")
         params = {
             'chat_id': TELEGRAM_CHAT_ID,

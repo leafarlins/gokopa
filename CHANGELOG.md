@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
+
+### Fixed
+- Enquete api and page
+
 ## [1.4.3] - 2023-02-22
 
 ### Fixed
