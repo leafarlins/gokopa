@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-
+<div class="container-sm mt-3">
 <h2>Dossiê</h2>
 <div class="row scoll-pane justify-content-md-center"><div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
   {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
@@ -12,11 +12,11 @@
 
 <div class="row scoll-pane">
 <form action="{{ url_for('gokopa.dossie') }}" method="post">
-  <div class="row mb-2">
-      <div class="col-6 text-sm-end">
+  <div class="row mb-2 text-center">
+      <div class="col-12 col-sm-6 text-sm-end">
           <label for="opt1">Gerar dossiê:</label>
       </div>
-      <div class="col-6 text-sm-start">
+      <div class="col-12 col-sm-6 text-sm-start">
           <input list="times" name="time" id="time">
           <datalist id="times">
             {% for i in dados['lista_times'] %}
@@ -56,8 +56,8 @@
 
 <div class="row scoll-pane justify-content-md-center">
   
-  <div class="col-12 col-sm-4 col-md-4 col-lg-2 col-xl-2">
-    <table class="tab_gokopa quadro mb-3">
+  <div class="col-12 col-sm-4 col-md-4 col-lg-6 col-xl-2 col-xxl-2">
+    <table class="tab_gokopa quadro mb-3 tabp5">
       <tr>
         <th colspan="2">Jogos</th>
       </tr>
@@ -79,25 +79,25 @@
       </tr>
     </table>
   </div>
-  <div class="col-12 col-sm-8 col-md-8 col-lg-4 col-xl-4">
+  <div class="col-12 col-sm-8 col-md-8 col-lg-6 col-xl-3 col-xxl-4">
     <p class="text-center"><b>Aproveitamento</b></p>
     {% set vitbar = dados['ved'][0] * 100 / dados['ved'][3] %}
     {% set empbar = dados['ved'][1] * 100/ dados['ved'][3] %}
     {% set derbar = dados['ved'][2] * 100/ dados['ved'][3] %}
     <p class="text-center">Barra de vitória - empate- derrota</p>
-    <div class="progress" style="width: 400px; margin: auto;">
+    <div class="progress w-80" style="margin: auto;">
       <div class="progress-bar bg-success" role="progressbar" aria-label="Vitórias" style="width: {{ vitbar }}%" aria-valuenow="{{ vitbar }}" aria-valuemin="0" aria-valuemax="100"></div>
       <div class="progress-bar bg-warning" role="progressbar" aria-label="Empates" style="width: {{ empbar }}%" aria-valuenow="{{ empbar }}" aria-valuemin="0" aria-valuemax="100"></div>
       <div class="progress-bar bg-danger" role="progressbar" aria-label="Derrotas" style="width: {{ derbar }}%" aria-valuenow="{{ derbar }}" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
     <p class="text-center">{{ dados['aprov'] }} de aproveitamento</p>
   </div>
-  <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+  <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-7 col-xxl-6">
     <p class="text-center"><b>Títulos</b></p>
     {% if dados['titulos']['lista'] %}
     <div class="row">
       <div class="col-12 col-sm-6">
-      <table class="tab_gokopa quadro mb-3 text-nowrap">
+      <table class="tab_gokopa quadro mb-3 text-nowrap tabp5">
         <tr>
           <th>Ano</th>
           <th>Torneio</th>
@@ -112,7 +112,7 @@
         {% endfor %}
       </table></div>
       <div class="col-12 col-sm-6">
-      <table class="tab_gokopa quadro mb-3 text-nowrap">
+      <table class="tab_gokopa quadro mb-3 text-nowrap tabp5">
         <tr>
           <th>Torneio</th>
           <th title="Ouro"><img class="flag" src="../static/img/ouro.png"></th>
@@ -139,9 +139,9 @@
 
 <div class="row scoll-pane justify-content-md-center">
   <h4 class="text-center">Ranking</h4>
-  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
+  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-5 col-xxl-4">
     <p class="text-center"><b>Ranking atual</b></p>
-    <table class="tab_gokopa ranking mb-3" width="95%">
+    <table class="tab_gokopa ranking mb-3 tabp5" width="95%">
       <tr>
         <th title="Posição">#</th>
         <th>País</th>
@@ -169,7 +169,7 @@
         </tr>
     </table>
     <p class="text-center">Pontos por ano</p>
-    <table class="tab_gokopa quadro mb-3">
+    <table class="tab_gokopa quadro mb-3 tabp5">
       <tr>
         <th title="Ano">22</th>
         <th title="Ano">21</th>
@@ -192,7 +192,7 @@
     <p class="fs-6 text-center">O ranking é calculado dando mais peso aos anos recentes. O valor de His reflete o resquício de pontuação de rankings anteriores. O valor de FIFA é um bonus de pontuação de acordo com o ranking da FIFA dentro do jogo.</p>
 
   </div>
-  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-8">
+  <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-7 col-xxl-8">
 
       {% set times = [ dados['time'] ] %}
       {% set datag = [ dados['pos_r'] ] %}
@@ -248,7 +248,7 @@
 <div class="row scoll-pane">
   <h4 class="text-center">Todos os jogos</h4>
   {% for j in dados['jogos'] %}
-    <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+    <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xxl-3">
         <p class="m-0 text-center smallt">#{{ j['Ano'] }} {{ j['Competição'] }} - {{ j['Fase'] }}</p>
         <table class="tab_gokopa tab_jogos">
             <tr>
@@ -275,5 +275,5 @@
 </div>
 
 {% endif %}
-
+</div>
 {% endblock %}

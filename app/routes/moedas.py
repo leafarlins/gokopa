@@ -26,8 +26,6 @@ def gamemoedas():
     user_info = {}
     info = get_moedas_info()
     lista_pat = get_pat_teams()
-    print(lista_pat)
-    #print(request.values.get("pageind"))
     if request.values.get("pageind"):
         info['logsindex'] = int(request.values.get("pageind"))
     if session.get('username') == None:
@@ -43,6 +41,11 @@ def gamemoedas():
             moedas_user = mongo.db.moedas.find_one({'nome': validUser['name']})
             user_info['saldo'] = moedas_user['saldo']
             user_info['tentarpat'] = [u for u in mongo.db.tentarpat.find({'nome': validUser['name']})]
+            meus_pat = []
+            for item in lista_pat.get('patrocinados'):
+                if item.get('patrocinador') == validUser['name']:
+                    meus_pat.append(item)
+            user_info['meus_pat'] = meus_pat
         else:
             userLogado = False
     
@@ -51,7 +54,7 @@ def gamemoedas():
         info['username'] = 'false'
     info['patrocinados'] = lista_pat.get('patrocinados')
 
-    print(info,user_info)
+    #print(info,user_info)
 
     return render_template('moedas.html',menu='Moedas',info=info,user_info=user_info)
 
@@ -97,6 +100,27 @@ def addpat():
             else:
                 flash(f'Erro na atualização da base.','danger')
                 current_app.logger.error(f"Erro na atualização da base: {apostador} add pat de {time}")
+    else:
+        flash(f'Usuário não logado.','danger')
+    return redirect(url_for('moedas.gamemoedas'))
+
+@moedas.route('/gk/moedas/venderpat',methods=["POST"])
+def venderpat():
+    if "username" in session:
+        validUser = mongo.db.users.find_one({"username": session["username"]})
+        apostador = validUser["name"]
+        time = request.values.get("timevenda")
+        valor = int(request.values.get("valor_venda"))
+        if valor < 0:
+            flash(f"Valor de venda inválido","danger")
+        else:
+            outdb = mongo.db.patrocinio.find_one_and_update({'Time': time},{'$set':{'avenda': valor}})
+            if outdb:
+                flash(f'Time {time} colocado à venda por {valor}!','success')
+                current_app.logger.info(f"Apostador {apostador} colocou {time} à venda por {valor}")
+            else:
+                flash(f'Erro na atualização da base.','danger')
+                current_app.logger.error(f"Erro na atualização da base: {time} colocado à venda por {valor}")
     else:
         flash(f'Usuário não logado.','danger')
     return redirect(url_for('moedas.gamemoedas'))

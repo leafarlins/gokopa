@@ -17,7 +17,7 @@
         </div>
     {% endfor %} {% endif %} {% endwith %}
     {% if info["userlogado"] %}
-    <table class="tab_gokopa tab_jogos mb-3">
+    <table class="tab_gokopa tab_jogos mb-3 tabp5">
         <tr>
             <td>Saldo de Moedas</td>
         </tr>
@@ -51,6 +51,32 @@
             <div class="col-12 text-center m-3"><button type="submit" class="btn btn-outline-primary">Tentar investimento</button></div>
         </div>
         
+    </form>
+    {% endif %}
+    {% if user_info["meus_pat"] %}
+    <h4 class="m-3 text-center">Por à venda</h4>
+    <form action="{{ url_for('moedas.venderpat') }}" method="post">
+        <div class="row mb-2">
+            <div class="col-sm-6 text-sm-end">
+                <label for="meustimes">Selecione um time:</label>
+            </div>
+            <div class="col-sm-6 text-sm-start">
+                <input type="hidden" name="timevenda" value="" id="timevenda">
+                <select list="meustimes" name="timev" id="timev" onchange="update_minimo_v()">
+                    {% for i in user_info["meus_pat"] %}
+                        <option value="{{ i['valor'] }}" label="{{ i['time'] }}">{{ i['time'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div><div class="row mb-3">
+            <div class="col-sm-6 text-sm-end">
+                <label for="valor_venda">Valor:</label>
+            </div>
+            <div class="col-sm-6 text-sm-start">
+                <input style="max-width: 5rem" type="number" name="valor_venda" id="valor_venda" width="10px" value="0" min="0">
+            </div>
+            <div class="col-12 text-center m-3"><button type="submit" class="btn btn-outline-primary">Vender</button></div>
+        </div>
     </form>
     {% endif %}
 
@@ -89,8 +115,16 @@
             document.getElementById('valor_pat').min = option.value;
             document.getElementById('timename').value = option.label;
         }
+        function update_minimo_v() {
+            var select = document.getElementById('timev');
+            var option = select.options[select.selectedIndex];
+    
+            document.getElementById('valor_venda').value = option.value;
+            document.getElementById('timevenda').value = option.label;
+        }
     
         update_minimo();
+        update_minimo_v();
     </script>
 
     {% else %}
@@ -137,7 +171,7 @@
 <div class="row scoll-pane">
     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4">
         <h3>Resultado geral</h3>
-        <table class="tab_gokopa">
+        <table class="tab_gokopa tabp5">
             <tr>
                 <th title="Posição">#</th>
                 <th style="min-width: 100px;">Nome</th>
@@ -184,7 +218,7 @@
 
     <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 smallt center">
         <h3>Logs de moedas</h3>
-        <table class="tab_gokopa smallt mb-3" id="logtable">
+        <table class="tab_gokopa smallt mb-3 tabp5" id="logtable">
             <tr>
                 <th title="LogId">Data</th>
                 <th style="min-width: 20px;">Nome</th>
@@ -209,11 +243,11 @@
                   <span aria-hidden="true">&laquo;</span>
                 </a>
               </li>
-              {% for i in range(info['logspages']) %}
+              {% for i in range(info['logsindex']-3,info['logsindex']+4) %}{% if (i >=0) and (i < info['logspages']) %}
               <li class="page-item {% if info['logsindex'] == i %}disabled{% endif %}"><a class="page-link" href="{{ url_for('moedas.gamemoedas',pageind=i) }}">{{ i + 1 }}</a></li>
-              {% endfor %}
-              <li class="page-item">
-                <a class="page-link {% if info['logsindex'] == info['logspages']-1 %}disabled{% endif %}" href="{{ url_for('moedas.gamemoedas',pageind=info['logspages']-1) }}" aria-label="Next">
+              {% endif %}{% endfor %}
+              <li class="page-item{% if info['logsindex'] == info['logspages']-1 %} disabled{% endif %}">
+                <a class="page-link" href="{{ url_for('moedas.gamemoedas',pageind=info['logspages']-1) }}" aria-label="Next">
                   <span aria-hidden="true">&raquo;</span>
                 </a>
               </li>

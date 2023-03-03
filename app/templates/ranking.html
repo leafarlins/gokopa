@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="row scoll-pane">
-  <div class="col-12 col-sd-12 col-md-6 col-lg-6 col-xl-4">
+<div class="container-sm">
+<div class="row scoll-pane justify-content-center">
+  <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xxl-4 mt-3">
     <h2>Ranking atual</h2>
     <p class="text-center">Ranking atual do ano 22.</p>
         <table class="tab_gokopa ranking" width="95%">
@@ -16,7 +17,7 @@
           {% for t in ranking['ranking'] %}
             <tr>
               <td>{{ t['posicao'] }}</td>
-              <td><img class="flag" src="../static/img/flag/{{ t['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ t['time'] }}</td>
+              <td class="tp2"><img class="flag" src="../static/img/flag/{{ t['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ t['time'] }}</td>
               <td>{{ t['score'] }}</td>
               <td>
                 {% if t['d_pts'] > 0 %}<img class="flag updown" src="../static/img/up.png">
@@ -35,7 +36,7 @@
         </table>
 
   </div>
-  <div class="col-12 col-sd-12 col-md-6 col-lg-6 col-xl-4">
+  <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xxl-4 mt-3">
     <h3>Campeões da Copa</h3>
     <p class="text-center">Quadro geral de medalhas</p>
     <table class="tab_gokopa quadro">
@@ -60,7 +61,7 @@
             {% set ns.last_bronze = time['bronze'] %}
           {% endif %}
         </td>
-        <td><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</td>
+        <td class="tp2"><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</td>
         <td>{{ time['ouro'] }}</td>
         <td>{{ time['prata'] }}</td>
         <td>{{ time['bronze'] }}</td>
@@ -82,7 +83,7 @@
       {% for ano in copa_his %}
       <tr>
         <td>{{ ano['Ano'] }}</td>
-        <td class="text-nowrap"><img class="flag" src="../static/img/flag/{{ ano['ouro'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ ano['ouro'] }}</td>
+        <td class="text-nowrap tp2"><img class="flag" src="../static/img/flag/{{ ano['ouro'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ ano['ouro'] }}</td>
         <td><img class="flag" src="../static/img/flag/{{ ano['prata'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['prata'] }}"></td>
         <td><img class="flag" src="../static/img/flag/{{ ano['bronze'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['bronze'] }}"></td>
         <td><img class="flag" src="../static/img/flag/{{ ano['quarto'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['quarto'] }}"></td>
@@ -120,7 +121,7 @@
             {% set ns.last_bronze = time['bronze'] %}
           {% endif %}
         </td>
-        <td><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</td>
+        <td class="tp2"><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</td>
         <td>{{ time['ouro'] }}</td>
         <td>{{ time['prata'] }}</td>
         <td>{{ time['bronze'] }}</td>
@@ -142,7 +143,7 @@
       {% for ano in taca_his %}
       <tr>
         <td>{{ ano['Ano'] }}</td>
-        <td><img class="flag" src="../static/img/flag/{{ ano['ouro'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ ano['ouro'] }}</td>
+        <td class="tp2"><img class="flag" src="../static/img/flag/{{ ano['ouro'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ ano['ouro'] }}</td>
         <td><img class="flag" src="../static/img/flag/{{ ano['prata'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['prata'] }}"></td>
         <td><img class="flag" src="../static/img/flag/{{ ano['bronze'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['bronze'] }}"></td>
         <td><img class="flag" src="../static/img/flag/{{ ano['quarto'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['quarto'] }}"></td>
@@ -176,7 +177,7 @@
             {% set ns.last_bronze = time['bronze'] %}
           {% endif %}
         </td>
-        <td class="text-nowrap"><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</td>
+        <td class="text-nowrap tp2"><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</td>
         <td>{{ time['ouro'] }}</td>
         <td>{{ time['prata'] }}</td>
         <td>{{ time['bronze'] }}</td>
@@ -199,7 +200,7 @@
       {% for ano in tacas_his %}
       <tr>
         <td>{{ ano['Ano'] }}</td>
-        <td><img class="flag" src="../static/img/flag/{{ ano['ouro'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ ano['ouro'] }}</td>
+        <td class="tp2"><img class="flag" src="../static/img/flag/{{ ano['ouro'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ ano['ouro'] }}</td>
         <td><img class="flag" src="../static/img/flag/{{ ano['prata'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['prata'] }}"></td>
         <td><img class="flag" src="../static/img/flag/{{ ano['bronze'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['bronze'] }}"></td>
         <td><img class="flag" src="../static/img/flag/{{ ano['quarto'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['quarto'] }}"></td>
@@ -210,7 +211,7 @@
     </div>
   </div>
 
-  <div class="col-12 col-sd-12 col-md-6 col-lg-6 col-xl-4">
+  <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xxl-4 mt-3">
     <h3>Campeões do Bolão</h3>
     <p class="text-center">Quadro geral de medalhas do bolão e jogo das moedas</p>
     <table class="tab_gokopa quadro">
@@ -235,7 +236,7 @@
             {% set ns.last_bronze = apostador['bronze'] %}
           {% endif %}
         </td>
-        <td>{{ apostador['nome'] }}</td>
+        <td class="tp2">{{ apostador['nome'] }}</td>
         <td>{{ apostador['ouro'] }}</td>
         <td>{{ apostador['prata'] }}</td>
         <td>{{ apostador['bronze'] }}</td>
@@ -253,7 +254,7 @@
         <th title="quarto">4º</th>
       </tr>
       {% for ano in bet_his %}
-      <tr>
+      <tr class="tp2">
         <td>{{ ano['Ano'] }}</td>
         <td style="text-align: center;">{{ ano['ouro'] }}</td>
         <td>{{ ano['prata'] }}</td>
@@ -264,5 +265,5 @@
     </table>
   </div>
 
-</div>
+</div></div>
 {% endblock %}

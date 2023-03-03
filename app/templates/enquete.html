@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-
+<div class="container-sm mt-3">
 <h2>Enquetes em andamento</h2>
 <div class="row justify-content-md-center"><div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
 {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
@@ -33,7 +33,7 @@
 <p class="text-center">Vote agora nas suas melhores opções</p>
 {% if e['meuvoto'] %}<p class="text-center">Meu voto registrado: 1º {{ e['opcoes'][e['meuvoto'][0]]['nome'] }} / 2º {{ e['opcoes'][e['meuvoto'][1]]['nome'] }} / 3º {{ e['opcoes'][e['meuvoto'][2]]['nome'] }}</p>{% endif %}
 <form action="{{ url_for('gokopa.votar') }}" method="post">
-  <div class="row mb-2">
+  <div class="row mb-2 text-center">
       <input type="hidden" name="enquete" value="{{ e['nome'] }}" id="enquete">
       <div class="col-sm-6 text-sm-end">
           <label for="opt1">Primeira opção:</label>
@@ -46,7 +46,7 @@
           </select>
       </div>
   </div>
-  <div class="row mb-2">
+  <div class="row mb-2 text-center">
     <div class="col-sm-6 text-sm-end">
         <label for="opt2">Segunda opção:</label>
     </div>
@@ -58,7 +58,7 @@
         </select>
     </div>
   </div>
-  <div class="row mb-2">
+  <div class="row mb-2 text-center">
     <div class="col-sm-6 text-sm-end">
         <label for="opt3">Terceira opção:</label>
     </div>
@@ -124,4 +124,5 @@
 {% endfor %}
 
 {% endif %}
+</div>
 {% endblock %}

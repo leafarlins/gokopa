@@ -637,7 +637,7 @@ def get_pat_teams():
     lista_leilao = []
     next_jogos_list = get_next_jogos()
     jogos = next_jogos_list['next_jogos']
-    past_jogos = next_jogos_list['past_jogos'][:4]
+    past_jogos = next_jogos_list['past_jogos'][:6]
     for t in lista:
         if t['Patrocinador'] == "-":
             valor = t["Valor"]
@@ -684,11 +684,15 @@ def get_pat_teams():
                     j+=1
                     if j >= len(jogos):
                         busca = False
+            if t.get('avenda'):
+                valorvenda = t.get('avenda')
+                lista_livres.append({'time': t["Time"],'valor': valorvenda})
             lista_pat.append({
                 'next_jogo': {'t1': t1,'t2':t2},
                 'patrocinador': t['Patrocinador'],
                 'time': t["Time"],
                 'valor': t["Valor"],
+                'avenda': t.get('avenda'),
                 'apoiadores': t.get('Apoiadores'),
                 'moedas_em_jogo': moedas_do_jogo,
                 'apoio_liberado': apoio_liberado

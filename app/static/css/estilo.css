@@ -15,7 +15,7 @@ body {
   background-color: rgb(247, 247, 247);
   background-size: auto 100vh;
   min-height: 100vh;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 header {
@@ -138,7 +138,18 @@ h3 {
 .tab_gokopa td, .jogos th {
   border: 1px solid #ddd;
   text-align: center;
-  padding: 8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.tabp5 td {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.tp2 {
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 .tab_gokopa tr:nth-child(even){background-color: #f2f2f2}
@@ -146,8 +157,7 @@ h3 {
 .tab_gokopa tr:hover {background-color: #ddd;}
 
 .tab_gokopa th {
-    padding-top: 12px;
-    padding-bottom: 12px;
+    padding: 12px;
     font-size:small;
     text-align:center;
     background-color: #4CAF50;
@@ -208,8 +218,8 @@ h3 {
 }
 
 .tab_jogos td {
-  padding-left: 20px;
-  padding-right: 20px;
+  /* padding-left: 20px;
+  padding-right: 20px; */
   white-space: nowrap;
 }
 

@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file. Based on [K
 
 ### Fixed
 - Enquete api and page
+- Small layout issues
 
 ## [1.4.3] - 2023-02-22
 

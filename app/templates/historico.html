@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
+<div class="container-sm mt-3">
 <h2>Histórico</h2>
 <div class="row justify-content-md-center"><div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
   {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
@@ -15,7 +16,7 @@
     <div class="col-12 col-sd-12 col-md-6 col-lg-6 col-xl-8 text-center">
         <h4>Histórico de duelos</h4>
         {% if vev %}
-        <table class="tab_gokopa">
+        <table class="tab_gokopa tabp5">
           <tr>
             <td>V. <img class="flag" src="../static/img/flag/{{ time1['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time1['nome'] }}</td>
             <td>{{ vev[0] }}</td>
@@ -89,7 +90,7 @@
     <div class="col-12 col-sd-12 col-md-10 text-center">
 
       <h4>Histórico de posições na copa</h4>
-      <table class="tab_gokopa">
+      <table class="tab_gokopa tabp5">
         <tr>
           <td>Edição:</td>
           {% for i in range(0,22)|reverse %}
@@ -201,5 +202,5 @@
     </div>
   </div>
 {% endif %}
-
+</div>
 {% endblock %}

@@ -2,14 +2,13 @@
 {% block content %}
 
 
-<div class="sectionj">
+<div class="container-sm mt-3">
   <h2>Bolão</h2>
-  <p>Bolão do ano {{ dados['Ano'] }}</p>
-</div>
+  <p class="text-sm-center">Bolão do ano {{ dados['Ano'] }}</p>
 
 <div class="row scoll-pane">
 
-  <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8">
+  <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 mb-3">
     <h3>Minhas apostas</h3>
     {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
     <div class="alert alert-{{ category }} text-center" role="alert">
@@ -45,7 +44,7 @@
   </div>
 
 
-  <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+  <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 mb-3">
       <h3>Resultado geral</h3>
         {% if dados['ranking'] %}
         <table class="tab_gokopa">
@@ -188,7 +187,7 @@ for(let i=0;i<nomes.length;i++){
 
 {% set lista_jogos = dados['resultados'] %}
 {% for jogo in lista_jogos | sort(attribute='Jogo', reverse = True) %}
-<div class="row scoll-pane">
+<div class="row scoll-pane justify-content-center">
   <div class="col-12 col-sm-12 col-md-6 col-lg-4">
     <table class="tab_gokopa tab_jogos smallt">
       <tr>
@@ -214,8 +213,8 @@ for(let i=0;i<nomes.length;i++){
 <div class="text-center">
   <h3>Bolões antigos</h3>
   <p>Veja resultados dos bolões da Copa do Mundo: <a href="bolao2022">Bolão Copa 2022</a></p>
-  <p class="center">Veja resultado de bolões antigos da gokopa: <a href="bolao21">Bolão 21</a> <a href="bolao20">Bolão 20</a></p>
-  <p>&nbsp;</p>
+  <p class="center mb-5">Veja resultado de bolões antigos da gokopa: <a href="bolao21">Bolão 21</a> <a href="bolao20">Bolão 20</a></p>
 </div>
 
+</div>
 {% endblock %}
