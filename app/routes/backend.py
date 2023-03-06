@@ -629,18 +629,22 @@ def get_next_jogos():
     return {'next_jogos': next_jogos, 'past_jogos': past_jogos}
 
 @backend.route('/api/get_pat_teams', methods=['GET'])
-@cache.cached(timeout=30)
+@cache.cached(timeout=2)
 def get_pat_teams():
     lista = [u for u in mongo.db.patrocinio.find().sort("Valor",pymongo.DESCENDING)]
     lista_pat = []
     lista_livres = []
     lista_leilao = []
+    lista_avenda = []
     next_jogos_list = get_next_jogos()
     jogos = next_jogos_list['next_jogos']
     past_jogos = next_jogos_list['past_jogos'][:6]
     for t in lista:
-        if t['Patrocinador'] == "-":
-            valor = t["Valor"]
+        if t['Patrocinador'] == "-" or t.get('avenda'):
+            if t.get('avenda'):
+                valor = t.get('avenda')
+            else:
+                valor = t["Valor"]
             procpatDb = mongo.db.tentarpat.find({'processar': True,'time':t['Time']})
             if procpatDb:
                 for item in procpatDb:
@@ -651,7 +655,7 @@ def get_pat_teams():
                     })
                     valor = item['valor']
             lista_livres.append({'time': t["Time"],'valor': valor})
-        else:
+        if t['Patrocinador'] != "-":
             if jogos:
                 busca = True
             else:
@@ -684,10 +688,8 @@ def get_pat_teams():
                     j+=1
                     if j >= len(jogos):
                         busca = False
-            if t.get('avenda'):
-                valorvenda = t.get('avenda')
-                lista_livres.append({'time': t["Time"],'valor': valorvenda})
-            lista_pat.append({
+                        
+            timepat = {
                 'next_jogo': {'t1': t1,'t2':t2},
                 'patrocinador': t['Patrocinador'],
                 'time': t["Time"],
@@ -696,6 +698,9 @@ def get_pat_teams():
                 'apoiadores': t.get('Apoiadores'),
                 'moedas_em_jogo': moedas_do_jogo,
                 'apoio_liberado': apoio_liberado
-            })
+            }
+            if t.get('avenda'):
+                lista_avenda.append(timepat)
+            lista_pat.append(timepat)
         
-    return {"livres": lista_livres, "patrocinados": lista_pat, 'lista_leilao': lista_leilao}
+    return {"livres": lista_livres, "patrocinados": lista_pat, 'lista_leilao': lista_leilao,'lista_avenda': lista_avenda}

@@ -589,53 +589,62 @@ def processa_pat(jogos='0',leilao=False):
             et = emojis.find_one({'País': t['time']})['flag']
             if len(t['palpites']) == 1:
                 p = t['palpites'][0]
-                if leilao:
-                    if p.get('processar'):
-                        ganhador = p
-                    else:
-                        texto_imp+=f"{p['nome']} deu o lance líder do dia em {t['time']} por {p['valor']}🪙.\n"
-                        moedas_log(p['nome'],"l "+str(p['valor']),t['time'],0,"Lance líder do dia")
-                        next_lista_pat.append({'time': t['time'],'nome': p['nome'],'valor':p['valor'],'processar': True})
-                else:
+                if p.get('processar'):
                     ganhador = p
+                else:
+                    texto_imp+=f"{p['nome']} deu o lance líder do dia em {t['time']} por {p['valor']}🪙.\n"
+                    moedas_log(p['nome'],"l "+str(p['valor']),t['time'],0,"Lance líder do dia")
+                    next_lista_pat.append({'time': t['time'],'nome': p['nome'],'valor':p['valor'],'processar': True})
             else:
                 if t['palpites'][0]['valor'] != t['palpites'][1]['valor']:
                     p = t['palpites'][0]
-                    if leilao:
-                        if p.get('processar'):
-                            ganhador = p
-                            t['palpites'].remove(p)
-                        else:
-                            t['palpites'].remove(p)
-                            texto_imp+=f"{p['nome']} deu o lance líder do dia em {et} {t['time']} por {p['valor']}🪙.\n"
-                            moedas_log(p['nome'],"l "+str(p['valor']),t['time'],0,"Lance líder do dia")
-                            next_lista_pat.append({'time': t['time'],'nome': p['nome'],'valor':p['valor'],'processar': True})
-                    else:
+                    if p.get('processar'):
                         ganhador = p
                         t['palpites'].remove(p)
+                    else:
+                        t['palpites'].remove(p)
+                        texto_imp+=f"{p['nome']} deu o lance líder do dia em {et} {t['time']} por {p['valor']}🪙.\n"
+                        moedas_log(p['nome'],"l "+str(p['valor']),t['time'],0,"Lance líder do dia")
+                        next_lista_pat.append({'time': t['time'],'nome': p['nome'],'valor':p['valor'],'processar': True})
                 for p in t['palpites']:
                     texto_imp+=f"{p['nome']} tentou patrocinar {et} {t['time']} por {p['valor']}🪙.\n"
                     moedas_log(p['nome'],"x "+str(p['valor']),t['time'],0,"Não conseguiu patrocinar")
                     moedas.find_one_and_update({'nome': p['nome']}, {'$inc': {'saldo': p['valor'],'bloqueado': -p['valor']}})
             if ganhador:
-                texto_pat+=f"{ganhador['nome']} conseguiu patrocinar {et} {ganhador['time']} por {ganhador['valor']}🪙!\n"
-                moedas_log(ganhador['nome'],"i "+str(ganhador['valor']),ganhador['time'],0,"Conseguiu patrocinar")
-                moedas.find_one_and_update({'nome': ganhador['nome']}, {'$inc': {'bloqueado': -ganhador['valor'],'investido': ganhador['valor']}})
-                patrocinios.find_one_and_update({'Time': ganhador['time']}, {'$set': {'Patrocinador': ganhador['nome'],'Valor': ganhador['valor']}})
+                # Checa se time nao estava a venda
+                outpat = mongo.db.patrocinio.find_one({'Time': ganhador['time']})
+                if outpat["Patrocinador"] != "-":
+                    if outpat.get('avenda'):
+                        vendedor = outpat['Patrocinador']
+                        valorat = outpat['Valor']
+                        texto_pat+=f"{ganhador['nome']} conseguiu patrocinar {et} {ganhador['time']} vendido por {vendedor} por {ganhador['valor']}🪙\n"
+                        moedas_log(ganhador['nome'],"i "+str(ganhador['valor']),ganhador['time'],0,"Comprou patrocinado")
+                        moedas.find_one_and_update({'nome': ganhador['nome']}, {'$inc': {'bloqueado': -ganhador['valor'],'investido': ganhador['valor']}})
+                        patrocinios.find_one_and_update({'Time': ganhador['time']}, {'$set': {'Patrocinador': ganhador['nome'],'Valor': ganhador['valor'],'avenda': ""}})
+                        moedas_log(vendedor,"v "+str(ganhador['valor']),ganhador['time'],0,"Venda de time")
+                        moedas.find_one_and_update({'nome': vendedor},{'$inc': {'saldo': ganhador['valor'],'investido': -valorat}})
+                    else:
+                        moedas_log(ganhador['nome'],"x "+str(ganhador['valor']),ganhador['time'],0,"Venda cancelada")
+                        moedas.find_one_and_update({'nome': ganhador['nome']}, {'$inc': {'saldo': ganhador['valor'],'bloqueado': -ganhador['valor']}})
+                else:
+                    texto_pat+=f"{ganhador['nome']} conseguiu patrocinar {et} {ganhador['time']} por {ganhador['valor']}🪙\n"
+                    moedas_log(ganhador['nome'],"i "+str(ganhador['valor']),ganhador['time'],0,"Conseguiu patrocinar")
+                    moedas.find_one_and_update({'nome': ganhador['nome']}, {'$inc': {'bloqueado': -ganhador['valor'],'investido': ganhador['valor']}})
+                    patrocinios.find_one_and_update({'Time': ganhador['time']}, {'$set': {'Patrocinador': ganhador['nome'],'Valor': ganhador['valor']}})
 
 
         mongo.db.tentarpat.drop()
-        if leilao and next_lista_pat:
+        if next_lista_pat:
             mongo.db.tentarpat.insert_many(next_lista_pat)
             
     # Envio de mensagem
     if texto_imp or texto_pat:
         mensagem="🪙 PATROCÍNIOS DO DIA 🪙\n"
         if texto_imp:
-            mensagem+= "\n=> Sem sucesso:\n"
+            mensagem+= "\n=> Tentativas:\n"
             mensagem+=texto_imp
         if texto_pat:
-            mensagem+= "\n=> Com sucesso:\n"
+            mensagem+= "\n=> Finalizadas:\n"
             mensagem+=texto_pat
         print(mensagem)
         if TELEGRAM:

@@ -4,7 +4,7 @@
 <div class="texto">
   <h2 class="center">Moedas</h2>
   <p>Aqui você pode gerenciar suas moedas de investimentos em seus times favoritos. Diariamente os leilões são processados e os retornos dos investimentos dos jogos do dia também.</p>
-  <p>Atue como patrocinador (ganhando moedas + patrimônio) ou como apoiador livre. Saldo livre no fim do dia poderá ser penalizado.</p>
+  <p>Atue como patrocinador (ganhando moedas + patrimônio) ou como apoiador livre.</p>
 </div>
 
 <div class="row scoll-pane">
@@ -99,6 +99,29 @@
     <ul class="list-group text-center">
         {% for item in user_info['lista_leilao'] %}
         <li class="list-group-item">{{ item['valor'] }}🪙 {{ item['nome'] }} <img class="flag" src="../static/img/flag/{{ item['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ item['time'] }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if user_info['meus_avenda'] %}
+    <h4 class="m-3 text-center">Meus patrocínios à venda</h4>
+    <ul class="list-group text-center">
+        {% for item in user_info['meus_avenda'] %}
+        <li class="list-group-item">{{ item['avenda'] }}🪙 <img class="flag" src="../static/img/flag/{{ item['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ item['time'] }} 
+            <form style="display: inline" action="{{ url_for('moedas.removeavenda') }}" method="post">
+            <button type="submit" class="btn btn-outline-danger btn-sm">X</button>
+            <input type="hidden" name="time_av" value="{{ item['time'] }}" id="time_av">
+            <input type="hidden" name="valor_av" value="{{ item['avenda'] }}" id="valor_av">
+            </form></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if user_info['lista_avenda'] %}
+    <h4 class="m-3 text-center">Patrocinados à venda</h4>
+    <ul class="list-group text-center">
+        {% for item in user_info['lista_avenda'] %}
+        <li class="list-group-item">{{ item['avenda'] }}🪙 {{ item['patrocinador'] }}: <img class="flag" src="../static/img/flag/{{ item['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ item['time'] }} ({{ item['valor'] }}🪙)</li>
         {% endfor %}
     </ul>
     {% endif %}

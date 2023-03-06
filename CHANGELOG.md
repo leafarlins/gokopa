@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file. Based on [K
 
 ## [unreleased]
 
+### Changed
+- Moedas game, venda de patrocínio
+
 ### Fixed
 - Enquete api and page
 - Small layout issues

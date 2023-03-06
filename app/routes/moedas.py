@@ -37,6 +37,12 @@ def gamemoedas():
             info['username'] = validUser['name']
             user_info['lista_leilao'] = lista_pat.get('lista_leilao')
             user_info["lista_livre"] = lista_pat.get('livres')
+            user_info["lista_avenda"] = lista_pat.get('lista_avenda')
+            meus_avenda = []
+            for item in lista_pat.get('lista_avenda'):
+                if item['patrocinador'] == validUser['name']:
+                    meus_avenda.append(item)
+            user_info['meus_avenda'] = meus_avenda
             user_info["nome"] = validUser['name']
             moedas_user = mongo.db.moedas.find_one({'nome': validUser['name']})
             user_info['saldo'] = moedas_user['saldo']
@@ -125,7 +131,6 @@ def venderpat():
         flash(f'Usuário não logado.','danger')
     return redirect(url_for('moedas.gamemoedas'))
 
-
 @moedas.route('/gk/moedas/removepat',methods=["POST"])
 def removepat():
     if "username" in session:
@@ -148,6 +153,29 @@ def removepat():
                 else:
                     flash(f'Erro na atualização da base.','danger')
                     current_app.logger.error(f"Erro na atualização da base: {apostador} remove pat de {time}")
+    else:
+        flash(f'Usuário não logado.','danger')
+    return redirect(url_for('moedas.gamemoedas'))
+
+
+@moedas.route('/gk/moedas/removeavenda',methods=["POST"])
+def removeavenda():
+    if "username" in session:
+        validUser = mongo.db.users.find_one({"username": session["username"]})
+        apostador = validUser["name"]
+        time = request.values.get("time_av")
+        valor = int(request.values.get("valor_av"))
+        checktp = mongo.db.tentarpat.find_one({'time': time,'processar': True})
+        if checktp:
+            flash(f'Venda não pode mais ser cancelada','danger')
+        else:
+            outdb = mongo.db.patrocinio.find_one_and_update({'Time': time,'Patrocinador': apostador},{'$set':{'avenda': ""}})
+            if outdb:
+                flash(f'Venda do time {time} cancelada','success')
+                current_app.logger.info(f"{apostador} cancelou venda de {time}")
+            else:
+                flash(f'Patrocínio não encontrado','danger')
+                current_app.logger.error(f"{apostador} tentou cancelar venda de {time}")
     else:
         flash(f'Usuário não logado.','danger')
     return redirect(url_for('moedas.gamemoedas'))
