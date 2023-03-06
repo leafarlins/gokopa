@@ -661,7 +661,8 @@ def processa_pat(jogos='0',leilao=False):
                 r.raise_for_status()
     else:
         print("Sem patrocinadores novos hoje.")
-    ranking_moedas()
+    if jogos > 0:
+        ranking_moedas()
 
 #@timeCommands.cli.command("rankingMoedas")
 def ranking_moedas():
