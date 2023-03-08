@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
+## [1.4.5] - 2023-03-08
 
 ### Fixed
 - Cache in edit_aposta
@@ -186,7 +187,8 @@ All notable changes to this project will be documented in this file. Based on [K
 - Table from games from first season year 20
 
 
-[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.4.4...HEAD
+[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.4.5...HEAD
+[1.4.5]: https://github.com/leafarlins/gokopa/compare/v1.4.4..1.4.5/
 [1.4.4]: https://github.com/leafarlins/gokopa/compare/v1.4.3..1.4.4/
 [1.4.3]: https://github.com/leafarlins/gokopa/compare/v1.4.2..1.4.3/
 [1.4.2]: https://github.com/leafarlins/gokopa/compare/v1.4.1..1.4.2/
