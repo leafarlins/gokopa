@@ -13,9 +13,9 @@
         <p>Fase do jogo: {{ jogo['Competição'] }} - {{ jogo['Fase'] }}</p>
         <p>Data: {{ jogo['Data'] }}</p>
         <form action="{{ url_for('bolao.edit_aposta') }}" method="post">
-          <input type="hidden" name="idjogo" value="{{ jogo['Jogo'] }}" id="idproduto" class="form-control" placeholder="Id do Jogo" required>
+          <input type="hidden" name="jogoid" value="{{ jogo['Jogo'] }}" id="jogoid" class="form-control" placeholder="Id do Jogo" required>
           <input type="hidden" name="data" value="{{ jogo['Data'] }}" id="data" class="form-control" placeholder="Data" required>
-          
+          <input type="hidden" value="{{ nextbet }}" name="nextbet" id="nextbet">
           {{ jogo['Time1'] }} <img class="flag" src="../static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
           <input maxlength="2" size="2" width="20" type="number" name="p1" value="{{ a1 }}" id="p1" required autofocus>
           x

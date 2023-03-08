@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
+
+### Fixed
+- Cache in edit_aposta
+- Historico page
+- Small fixes
+
 ## [1.4.4] - 2023-03-06
 
 ### Changed

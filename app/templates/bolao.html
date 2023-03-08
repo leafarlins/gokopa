@@ -31,9 +31,16 @@
             </tr><tr>
               <td colspan="2">{{ jogo['Time1'] }} <img class="flag" src="../static/img/flag/{{ jogo['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
                 x <img class="flag" src="../static/img/flag/{{ jogo['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ jogo['Time2'] }}</td>
-              <td>{% if jogo['bet1'] %}{{ jogo['bet1'] }}x{{ jogo['bet2'] }} <a target="_blank" href="{{ url_for('bolao.edit_aposta',idjogo=jogo['Jogo']) }}">Editar</a>
-                {% else %}<a target="_blank" href="{{ url_for('bolao.edit_aposta',idjogo=jogo['Jogo']) }}">Apostar</a>
-              {% endif %}</td>
+              <td>
+                <form action="{{ url_for('bolao.edit_aposta') }}" method="post">
+                  <input type="hidden" value="{{ jogo['Jogo'] }}" name="jogoid" id="jogoid">
+                  <input type="hidden" value="{{ dados['next_bet'] }}" name="nextbet" id="nextbet">
+                  {% if jogo['bet1'] %}{{ jogo['bet1'] }}x{{ jogo['bet2'] }}{% set buttonname = 'Editar' %}
+                  {% else %}{% set buttonname = 'Apostar' %}
+                  {% endif %}
+                  <button type="submit" class="btn btn-outline-success">{{ buttonname }}</button>
+                </form>
+              </td>
             </tr>
           {% endfor %}
         </table>

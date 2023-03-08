@@ -1,3 +1,4 @@
+import json
 from flask import Blueprint, current_app, render_template, session, request, url_for, flash
 from app.routes.backend import getBolaoUsers,progress_data,get_aposta,get_users,get_games,make_score_board,get_user_name,get_bet_results,get_bet_results2,get_rank
 import pymongo
@@ -77,13 +78,15 @@ def get_bolao_data(ano,apostador=""):
                 list_next_bet.append(jogo['Jogo'])
             output.append(jogo)
 
-    #print(list_next_bet)
-    if apostador:
-        cache.set(apostador,list_next_bet,3600)
+    # print(list_next_bet)
+    # print(json.dumps(list_next_bet))
+    # if apostador:
+    #     cache.set(apostador,,3600)
+    #     print(f'Set cache: "lista": {list_next_bet}')
     ordered_total = make_score_board(ano_bolao)
     gr_labels,gr_data = get_history_data(ordered_total,ano)
 
-    return {"Ano": ano, "apostador": apostador, "lista_jogos": output, 'users': allUsers, "grafico": {"labels": gr_labels, "data": gr_data}, 'ranking': ordered_total, 'progress_data':  progresso,'resultados': resultados}
+    return {"Ano": ano, "apostador": apostador, "next_bet": json.dumps(list_next_bet), "lista_jogos": output, 'users': allUsers, "grafico": {"labels": gr_labels, "data": gr_data}, 'ranking': ordered_total, 'progress_data':  progresso,'resultados': resultados}
 
 @bolao.route('/bolao<ano>')
 def apostas(ano):
@@ -112,70 +115,55 @@ def regras():
 def sobre():
     return render_template("sobre.html",menu="Sobre")
 
-@bolao.route('/editaposta',methods=["GET","POST"])
+@bolao.route('/aposta',methods=["GET","POST"])
 def edit_aposta():
     if "username" in session:
         validUser = mongo.db.users.find_one({"username": session["username"]})
         apostador = validUser["name"]
-        idjogo = int(request.values.get("idjogo"))
+        jogoid = int(request.values.get("jogoid"))
         # Faixa no ano22 de jogos que precisa indicar vencedor
         faixa_j = [9,10,34,35,59,60,25,50]
         faixa_j = faixa_j + [u for u in range(75,100)]
         faixa_j = faixa_j + [u for u in range(172,204)]
-        if idjogo in faixa_j:
+        if jogoid in faixa_j:
             faixavit = True
         else:
             faixavit = False
-        #print("idjogo:",idjogo)
-        if idjogo != 0:
-            jogo = mongo.db.jogos.find_one_or_404({"Ano": ANO,"Jogo": idjogo})
-            aposta = mongo.db[APOSTADB].find_one_or_404({"Jogo": idjogo})
-            a1 = aposta.get(str(apostador + "_p1"))
-            a2 = aposta.get(str(apostador + "_p2"))
-            if a1 == None:
-                a1 = ""
-            if a2 == None:
-                a2 = ""
-            r1 = get_rank(jogo['Time1'])['posicao']
-            r2 = get_rank(jogo['Time2'])['posicao']
+        jogo = mongo.db.jogos.find_one_or_404({"Ano": ANO,"Jogo": jogoid})
+        aposta = mongo.db[APOSTADB].find_one_or_404({"Jogo": jogoid})
+        a1 = aposta.get(str(apostador + "_p1"))
+        a2 = aposta.get(str(apostador + "_p2"))
+        if a1 == None:
+            a1 = ""
+        if a2 == None:
+            a2 = ""
+        r1 = get_rank(jogo['Time1'])['posicao']
+        r2 = get_rank(jogo['Time2'])['posicao']
+        nextbetarr = request.values.get('nextbet')
+        if nextbetarr:
+            list_next_bet = json.loads(nextbetarr)
         else:
-            jogo = ""
-            a1=""
-            a2=""
-            r1=""
-            r2=""
+            list_next_bet = []
+        if list_next_bet and jogoid in list_next_bet:
+            list_next_bet.remove(jogoid)
 
-        if request.method == "GET":
-            #list_next_bet=request.values.get("list_next_bet")
-            return render_template('edit_aposta.html',menu='Bolao',jogo=jogo,a1=a1,a2=a2,idjogo=idjogo,r1=r1,r2=r2,faixavit=faixavit)
-        else:
-            list_next_bet = cache.get(apostador)
-            next_bet = 0
-            if list_next_bet and len(list_next_bet)>0:
-                if idjogo in list_next_bet:
-                    list_next_bet.remove(idjogo)
-                if len(list_next_bet)>0:
-                    next_bet = list_next_bet.pop(0)
-            #print("Next bet",next_bet)
-            #print("Next bets",list_next_bet)
-            cache.set(apostador,list_next_bet)
-
-            p1 = request.values.get("p1")
-            p2 = request.values.get("p2")
-            vit = request.values.get("vitradio")
+        p1 = request.values.get("p1")
+        p2 = request.values.get("p2")
+        vit = request.values.get("vitradio")
+        if p1 and request.method == "POST":
             data_jogo = datetime.strptime(request.values.get("data"),"%d/%m/%Y %H:%M")
             now = datetime.now()
             if not p1.isdigit() or not p2.isdigit():
-                flash("Placar deve ser um número!",'danger')
+                flash("Placar deve ser um número",'danger')
             elif now > data_jogo:
-                flash("Data do jogo já passou!",'danger')
-                current_app.logger.info(f"Apostador {apostador} tentou apostar no jogo {idjogo} com data passada")
-            elif idjogo in faixa_j and not vit and p1 == p2:
-                flash("Deve-se indicar vitorioso em caso de empate!",'danger')
+                flash("Data do jogo já passou",'danger')
+                current_app.logger.info(f"Apostador {apostador} tentou apostar no jogo {jogoid} com data passada")
+            elif jogoid in faixa_j and not vit and p1 == p2:
+                flash("Deve-se indicar vitorioso em caso de empate",'danger')
             else:
-                if idjogo in faixa_j and p1 == p2:
+                if jogoid in faixa_j and p1 == p2:
                     outdb = mongo.db[APOSTADB].find_one_and_update(
-                        {"Jogo": idjogo},
+                        {"Jogo": jogoid},
                         {'$set': {
                             str(apostador + "_p1"): int(p1),
                             str(apostador + "_p2"): int(p2),
@@ -183,20 +171,29 @@ def edit_aposta():
                             }})
                 else:
                     outdb = mongo.db[APOSTADB].find_one_and_update(
-                        {"Jogo": idjogo},
+                        {"Jogo": jogoid},
                         {'$set': {
                             str(apostador + "_p1"): int(p1),
                             str(apostador + "_p2"): int(p2)
                             }})
                 if outdb:
-                    flash(f'Placar adicionado com sucesso no jogo {idjogo}!','success')
-                    current_app.logger.info(f"Usuário {apostador} apostou no jogo {idjogo}")
+                    flash(f'Placar adicionado com sucesso no jogo {jogoid}!','success')
+                    current_app.logger.info(f"Usuário {apostador} apostou no jogo {jogoid}")
+                    # next jogoid
+                    #print(f'nextid: {list_next_bet},nextbet={json.dumps(list_next_bet)}')
+                    if list_next_bet:
+                        nextjogo = list_next_bet[0]
+                        return redirect(url_for('bolao.edit_aposta',jogoid=nextjogo,nextbet=json.dumps(list_next_bet)))
+                    else:
+                        flash(f'Apostas finalizadas','success')
+                        return redirect(url_for('bolao.apostas',ano='22'))
                 else:
-                    flash(f'Erro ao escrever na base placar do jogo {idjogo}','danger')
-                    current_app.logger.error(f"Erro ao escrever na base: aposta de {apostador} do jogo {idjogo}")
-            return redirect(url_for('bolao.edit_aposta',idjogo=next_bet))
+                    flash(f'Erro ao escrever na base placar do jogo {jogoid}','danger')
+                    current_app.logger.error(f"Erro ao escrever na base: aposta de {apostador} do jogo {jogoid}")
+        return render_template('edit_aposta.html',menu='Bolao',jogo=jogo,a1=a1,a2=a2,idjogo=jogoid,r1=r1,r2=r2,faixavit=faixavit,nextbet=json.dumps(list_next_bet))
     else:
         return redirect(url_for('usuario.login'))
+
 
 # Funcao criada para cadastro na copa
 @bolao.route('/placar',methods=["GET","POST"])

@@ -161,10 +161,11 @@ def calc_ranking(j_i,j_f):
                 pts1 = 1
                 pts2 = 2
         #print(f'Jogo: {jogo}')
+        pesojogo = float((int(jogo['peso'])+1)/2) 
         if pts1 > 0:
-            ptsg1 = int( (ft1 + ft2*(127-times[jogo['Time2']]['posicao'])/126) * pts1 * float(jogo['peso']) ) + 1
+            ptsg1 = int( (ft1 + ft2*(127-times[jogo['Time2']]['posicao'])/126) * pts1 * pesojogo ) + 1
         if pts2 > 0:
-            ptsg2 = int( (ft1 + ft2*(127-times[jogo['Time1']]['posicao'])/126) * pts2 * float(jogo['peso']) ) + 1
+            ptsg2 = int( (ft1 + ft2*(127-times[jogo['Time1']]['posicao'])/126) * pts2 * pesojogo ) + 1
         times[jogo['Time1']]['pts'] += ptsg1
         times[jogo['Time2']]['pts'] += ptsg2
         #print(f'ptsg1: {ptsg1} ptsg2: {ptsg2}')

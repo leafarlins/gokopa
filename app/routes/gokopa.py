@@ -129,6 +129,8 @@ def get_anoX_games(ano,indx):
             if data_jogo > now:
                 j['p1'] = ""
                 j['p2'] = ""
+                j['tr1'] = ""
+                j['tr2'] = ""
     
     return anoX_games
 
