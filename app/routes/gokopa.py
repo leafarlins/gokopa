@@ -496,8 +496,7 @@ def ranking():
 
 @cache.memoize(3600*24)
 def get_team_list():
-    rank_ed = read_config_ranking()
-    ranking = [u['time'] for u in mongo.db.ranking.find({"ed": rank_ed}).sort('pos',pymongo.ASCENDING)]
+    ranking = [u['Time'] for u in mongo.db.timehistory.find().sort('Time',pymongo.ASCENDING)]
     return ranking
 
 @cache.memoize(3600*24*7)
@@ -548,7 +547,7 @@ def historico():
     time_1 = dict()
     time_2 = dict()
     lista_times=get_team_list()
-    print(lista_times)
+    #print(lista_times)
     lista_jogos = []
     vev=[]
     if request.method == "POST":
