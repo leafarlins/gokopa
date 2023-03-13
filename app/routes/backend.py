@@ -611,7 +611,7 @@ def get_next_jogos():
                     timevit = time2
                 else:
                     timevit = 'empate'
-                    if n.get("pe1"):
+                    if n.get("pe1") or type(n.get("pe1")) == int:
                         if n['pe1'] > n['pe2']:
                             timevit = time1
                         else:

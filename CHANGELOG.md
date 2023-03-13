@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
+
+### Fixed
+- Games with penaltis/tr in templates
+
 ## [1.4.5] - 2023-03-08
 
 ### Fixed

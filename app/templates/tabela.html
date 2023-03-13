@@ -109,9 +109,9 @@
                 <tr>
                     <td colspan="2">
                         {{ j['Time1'] }} <img class="flag" src="../static/img/flag/{{ j['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
-                        {% if j['pe1'] or j['pe2'] == 0 %}
+                        {% if j['pe1'] is number and j['pe2'] is number %}
                             <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }} pe: {{ j['pe1'] }}x{{ j['pe2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
-                        {% elif j['tr1'] or j['tr2'] == 0 %}
+                        {% elif j['tr1'] is number and j['tr2'] is number %}
                             <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
                         {% else %}{{ j['p1'] }}x{{ j['p2'] }}
                         {% endif %}
@@ -142,9 +142,9 @@
             <tr>
                 <td colspan="2">
                     {{ j['Time1'] }} <img class="flag" src="../static/img/flag/{{ j['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
-                    {% if j['pe1'] or j['pe2'] == 0 %}
+                    {% if j['pe1'] is number and j['pe2'] is number %}
                         <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }} pe: {{ j['pe1'] }}x{{ j['pe2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
-                    {% elif j['tr1'] or j['tr2'] == 0 %}
+                    {% elif j['tr1'] is number and j['tr2'] is number %}
                         <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
                     {% else %}{{ j['p1'] }}x{{ j['p2'] }}
                     {% endif %}
@@ -177,9 +177,9 @@
             <tr>
                 <td colspan="2">
                     {{ j['Time1'] }} <img class="flag" src="../static/img/flag/{{ j['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
-                    {% if j['pe1'] or j['pe2'] == 0 %}
+                    {% if j['pe1'] is number and j['pe2'] is number %}
                         <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }} pe: {{ j['pe1'] }}x{{ j['pe2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
-                    {% elif j['tr1'] or j['tr2'] == 0 %}
+                    {% elif j['tr1'] is number and j['tr2'] is number %}
                         <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
                     {% else %}{{ j['p1'] }}x{{ j['p2'] }}
                     {% endif %}
