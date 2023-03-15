@@ -289,7 +289,7 @@ def def_historico(comp,ano,ouro,prata,bronze,quarto,sedes):
     ano_hist['sedes'] = sedes
     ano_hist['comp'] = comp
     print(f'Inserindo histórico para {comp} ano {ano}: {ouro},{prata},{bronze},{quarto} em {sedes}')
-    mongo.db.historico.insert([ano_hist])
+    mongo.db.historico.insert_one(ano_hist)
 
 @timeCommands.cli.command("defPot")
 @click.argument("time")
