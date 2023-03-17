@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-sm mt-3">
+<h2>Estádios</h2>
+<div class="row justify-content-md-center"><div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-4">
+{% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
+<div class="alert alert-{{ category }} text-center " role="alert">
+    {{ message }}
+</div>
+{% endfor %} {% endif %} {% endwith %}</div></div>
+
+
+
+
+{% for e in estadios %}
+<h3 class="text-center m-3">{{ e['nome'] }}</h2>
+
+<div class="row mb-2">
+  {% for c in e['opcoes'] %} 
+  <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+    <div class="card-group">
+      <div class="card">
+        <img src="../static/img/city/{{ c['cidade'] }}l.png" class="card-img-top" alt="localização da cidade">
+        <div class="card-body">
+          <h5 class="card-title"><img class="flag" src="../static/img/flag/{{ c['pais'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ c['pais'] }}</h5>
+          <p class="card-text">{{ c['desc1'] }}</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="../static/img/city/{{ c['cidade'] }}.png" class="card-img-top" alt="foto da cidade">
+        <div class="card-body">
+          <h5 class="card-title">{{ c['cidade'] }}</h5>
+          <p class="card-text">{{ c['desc2'] }}</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="../static/img/city/{{ c['cidade'] }}e.png" class="card-img-top" alt="estádio da cidade">
+        <div class="card-body">
+          <h5 class="card-title">{{ c['estadio'] }}</h5>
+          <p class="card-text">{{ c['desc3'] }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+  <h5 class="text-center m-3">Jogos</h5>
+
+</div>
+{% endfor %}
+
+</div>
+{% endblock %}

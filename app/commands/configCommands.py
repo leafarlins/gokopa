@@ -620,6 +620,156 @@ def migrate142():
 
     print("Finalizado.")
 
+@configCommands.cli.command("migrate147")
+def migrate147():
+    estadiolist = [{
+        'ano': 22,
+        'games': [100,203],
+        'nome': 'Estádios da Copa do Mundo',
+        'cidades': ['Estocolmo','Copenhague','Malmo','Brøndbyvester','Gotemburgo','Aarhus','Norrköping','Esbjerg']
+    },{
+        'ano': 22,
+        'games': [1,99],
+        'nome': 'Estádios das Taças Regionais e Mundial',
+        'cidades': ['Estocolmo','Malmo']
+    }]
+    estadios = [
+            {
+                'cidade': 'Estocolmo',
+                'estadio': 'Friends Arena',
+                'capacidade': '50k',
+                'pais': 'Suécia',
+                'desc1': 'Localizada na costa oriental próximo ao mar Báltico.',
+                'desc2': 'Capital sueca com 1,7mi habitantes, principal cidade do país.',
+                'desc3': 'Arena multiuso coberta com 50k de capacidade.'
+            },
+            {
+                'cidade': 'Copenhague',
+                'estadio': 'Parken Stadium',
+                'capacidade': '38k',
+                'pais': 'Dinamarca',
+                'desc1': 'Localizada na costa leste e próxima da Suécia.',
+                'desc2': 'Capital da Dinamarca, com metrópole de mais de 1,3mi habitantes.',
+                'desc3': 'Principal palco de jogos da Dinamarca com 38k de capacidade.'
+            },
+            {
+                'cidade': 'Malmo',
+                'estadio': 'Eleda Stadium',
+                'capacidade': '24k',
+                'pais': 'Suécia',
+                'desc1': 'Localizada ao sul, próximo à Dinamarca.',
+                'desc2': 'Cidade com mais de 350k habitantes e bastante próxima a Copenhague.',
+                'desc3': 'Estádio do Malmo FC, com 24k de capacidade.'
+            },
+            {
+                'cidade': 'Brøndbyvester',
+                'estadio': 'Brøndby Stadium',
+                'capacidade': '29k',
+                'pais': 'Dinamarca',
+                'desc1': 'Localizada na mesma área metropolitana da capital.',
+                'desc2': 'Cidade no subúrbio sudoeste de Copenhague.',
+                'desc3': 'Segundo maior estádio do país com 29k de capacidade.'
+            },
+            {
+                'cidade': 'Gotemburgo',
+                'estadio': 'Ullevi Stadium',
+                'capacidade': '43k',
+                'pais': 'Suécia',
+                'desc1': 'Localizada na costa oeste da Suécia.',
+                'desc2': 'Cidade com 1,1mi habitantes em sua metrópole, bastante diversa e com o maior porto nórdico.',
+                'desc3': 'Estádio multiuso com 43k de capacidade.'
+            },
+            {
+                'cidade': 'Aarhus',
+                'estadio': 'Aarhus Stadium',
+                'capacidade': '21k',
+                'pais': 'Dinamarca',
+                'desc1': 'Localizada na região da Jutlândia, porção continental dinamarquesa.',
+                'desc2': 'Segunda maior cidade do país com 270k habitantes, universidades e catedral.',
+                'desc3': 'Terceiro maior estádio do país com 21k de capacidade.'
+            },
+            {
+                'cidade': 'Norrköping',
+                'estadio': 'Nya Parken',
+                'capacidade': '17k',
+                'pais': 'Suécia',
+                'desc1': 'Localizada a 160km a sudoeste de Estocolmo.',
+                'desc2': 'Com população próxima de 130k habitantes, cidade medieval próxima à capital do país.',
+                'desc3': 'Pequeno estádio multiuso com 17k de capacidade.'
+            },
+            {
+                'cidade': 'Esbjerg',
+                'estadio': 'Blue Water Arena',
+                'capacidade': '18k',
+                'pais': 'Dinamarca',
+                'desc1': 'Localizada na península Jutland no sudoeste dinamarquês.',
+                'desc2': 'Cidade costeira com 115k habitantes.',
+                'desc3': 'Pequeno estádio de futebol com 18k de capacidade.'
+            },
+            {
+                'cidade': 'Abuja',
+                'estadio': 'Moshood Abiola Stadium',
+                'capacidade': '60k',
+                'pais': 'Nigéria',
+                'desc1': 'Localizada no centro do país.',
+                'desc2': 'Capital do país desde 1991, planejada e com 1,7mi de habitantes.',
+                'desc3': 'Grande estádio no centro do país com 60k de capacidade.'
+            },
+            {
+                'cidade': 'Lagos',
+                'estadio': 'Lagos National Stadium',
+                'capacidade': '55k',
+                'pais': 'Nigéria',
+                'desc1': '',
+                'desc2': '',
+                'desc3': ''
+            },
+            {
+                'cidade': 'Melbourne',
+                'estadio': 'Melbourne Cricket Ground',
+                'capacidade': '100k',
+                'pais': 'Austrália',
+                'desc1': '',
+                'desc2': '',
+                'desc3': ''
+            },
+            {
+                'cidade': 'Sydney',
+                'estadio': 'Stadium Austrália',
+                'capacidade': '84k',
+                'pais': 'Austrália',
+                'desc1': '',
+                'desc2': '',
+                'desc3': ''
+            },
+            {
+                'cidade': 'New Jersey',
+                'estadio': 'MetLife Stadium',
+                'capacidade': '82k',
+                'pais': 'Estados Unidos',
+                'desc1': '',
+                'desc2': '',
+                'desc3': ''
+            },
+            {
+                'cidade': 'Orlando',
+                'estadio': 'Camping World Stadium',
+                'capacidade': '70k',
+                'pais': 'Estados Unidos',
+                'desc1': '',
+                'desc2': '',
+                'desc3': ''
+            }
+        ]
+    outdb = mongo.db.estadios.find_one({'cidade': 'Estocolmo'})
+    if outdb:
+        print("Estádios já cadastrados.")
+    else:
+        mongo.db.estadios.insert_many(estadios)
+        mongo.db.estadiolist.insert_many(estadiolist)
+
+    print("Finalizado.")
+
 def add_news(titulo,noticia,img="",link="",linkname=""):
     new = {
         'titulo': titulo,

@@ -449,6 +449,11 @@ def getEnquete():
         'finalizadas': finalizadas
     }
     
+@gokopa.route('/estadios')
+#@cache.cached(timeout=2*60)
+def estadios():
+    return render_template("estadios.html",menu="Gokopa",dados=getEnquete())
+
 @gokopa.route('/enquete')
 #@cache.cached(timeout=2*60)
 def enquete():

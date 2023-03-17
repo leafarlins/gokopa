@@ -526,6 +526,14 @@ def processa_pat(jogos='0',leilao=False):
                         lista_apoios = patDb.get('Apoiadores')
                         if lista_apoios:
                             apoios_taxa =  0
+                            # Calculo da taxa de apoio
+                            if moeda_ganha < 100:
+                                percent_taxa = 0.1
+                            elif moeda_ganha < 1000:
+                                percent_taxa = 97/900 - 7*moeda_ganha/90000
+                            else:
+                                percent_taxa = 0.03
+                            # Ganho para cada apoiador
                             for a in lista_apoios:
                                 valor_max = moeda_ganha
                                 if moeda_ganha > a['valor']:
@@ -542,13 +550,13 @@ def processa_pat(jogos='0',leilao=False):
                                         moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'investido': moeda_perdida}})
                                         moedas_log(a['nome'],"i"+str(moeda_perdida),t,jogo['jid'],"Perda parcial do apoio ao time")
                                         a['valor'] = novo_valor_apoio
-                                # Se ganho, incrementa saldo e +10% ao patrocinador
+                                # Se ganho, incrementa saldo e +x% ao patrocinador
                                 else:
                                     advDb = patrocinios.find_one({'Time': tadv})
                                     patadversario = advDb['Patrocinador']
                                     if a['nome'] != patadversario:
                                         valor_apoio = valor_max
-                                        apoios_taxa += int(valor_max/10 + 1)
+                                        apoios_taxa += int(valor_max*percent_taxa + 1)
                                         moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'saldo': valor_apoio}})
                                         moedas_log(a['nome'],"+"+str(valor_apoio),t,jogo['jid'],"Jogo de time apoiado")
                                     else:
