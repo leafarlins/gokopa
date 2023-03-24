@@ -720,16 +720,16 @@ def migrate147():
                 'estadio': 'Lagos National Stadium',
                 'capacidade': '55k',
                 'pais': 'Nigéria',
-                'desc1': '',
-                'desc2': '',
-                'desc3': ''
+                'desc1': 'Localizada no sudoeste do país, no litoral.',
+                'desc2': 'Maior metrópole nigeriana com mais de 10mi habitantes.',
+                'desc3': 'Estádio muito utilizado pela seleção nigeriana no passado, com 55k de capacidade.'
             },
             {
                 'cidade': 'Melbourne',
                 'estadio': 'Melbourne Cricket Ground',
                 'capacidade': '100k',
                 'pais': 'Austrália',
-                'desc1': '',
+                'desc1': 'Localizada ',
                 'desc2': '',
                 'desc3': ''
             },
@@ -747,18 +747,18 @@ def migrate147():
                 'estadio': 'MetLife Stadium',
                 'capacidade': '82k',
                 'pais': 'Estados Unidos',
-                'desc1': '',
-                'desc2': '',
-                'desc3': ''
+                'desc1': 'Localizado na costa leste próximo a Nova Iorque.',
+                'desc2': 'Parte da grande área metropolitana de Nova Iorque, do lado do estado de New Jersey.',
+                'desc3': 'Enorme estádio multiuso na grande metrópole de NYC, com 82k de capacidade.'
             },
             {
                 'cidade': 'Orlando',
                 'estadio': 'Camping World Stadium',
                 'capacidade': '70k',
                 'pais': 'Estados Unidos',
-                'desc1': '',
-                'desc2': '',
-                'desc3': ''
+                'desc1': 'Localizada na região central do estado da Flórida.',
+                'desc2': 'Famosa por seus parques, cidade muito visitada com 2,3mi habitantes.',
+                'desc3': 'Casa de times de futebol americado com 70k de capacidade.'
             }
         ]
     outdb = mongo.db.estadios.find_one({'cidade': 'Estocolmo'})
