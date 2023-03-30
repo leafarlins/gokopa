@@ -9,41 +9,71 @@
 </div>
 {% endfor %} {% endif %} {% endwith %}</div></div>
 
+<p class="text-center">Veja a lista de estádios que foram definidos para o ano {{ dados['ano'] }}</p>
 
+{% for torneio in dados['data'] %}
 
+<h3 class="text-center m-3">{{ torneio['nome'] }}</h2>
 
-{% for e in estadios %}
-<h3 class="text-center m-3">{{ e['nome'] }}</h2>
-
-<div class="row mb-2">
-  {% for c in e['opcoes'] %} 
-  <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+<div class="row mb-2 justify-content-md-center">
+  {% for c in torneio['estadios'] %}
+  <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 mb-3">
+    <a href="#{{ c['cidade'] }}"></a>
     <div class="card-group">
       <div class="card">
-        <img src="../static/img/city/{{ c['cidade'] }}l.png" class="card-img-top" alt="localização da cidade">
+        <img src="../static/img/data/city/{{ c['cidade'] }}l.png" class="card-img-top" alt="localização da cidade">
         <div class="card-body">
           <h5 class="card-title"><img class="flag" src="../static/img/flag/{{ c['pais'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ c['pais'] }}</h5>
           <p class="card-text">{{ c['desc1'] }}</p>
         </div>
       </div>
       <div class="card">
-        <img src="../static/img/city/{{ c['cidade'] }}.png" class="card-img-top" alt="foto da cidade">
+        <img src="../static/img/data/city/{{ c['cidade'] }}.png" class="card-img-top" alt="foto da cidade">
         <div class="card-body">
           <h5 class="card-title">{{ c['cidade'] }}</h5>
           <p class="card-text">{{ c['desc2'] }}</p>
         </div>
       </div>
       <div class="card">
-        <img src="../static/img/city/{{ c['cidade'] }}e.png" class="card-img-top" alt="estádio da cidade">
+        <img src="../static/img/data/city/{{ c['cidade'] }}e.png" class="card-img-top" alt="estádio da cidade">
         <div class="card-body">
           <h5 class="card-title">{{ c['estadio'] }}</h5>
           <p class="card-text">{{ c['desc3'] }}</p>
         </div>
       </div>
     </div>
+
+    <div class="row justify-content-md-center"><h5 class="text-center m-3">Jogos</h5>
+    {% for j in c['jogos'] %}
+    <div class="col-12 col-xxl-6">
+        <p class="m-0 text-center smallt">{{ j['Competição'] }} - {{ j['Fase'] }}</p>
+        <table class="tab_gokopa tab_jogos">
+            <tr>
+                <td title="{{ j['Jogo'] }}">{{ j['Data'] }}</td>
+                <td>{% if j['Estadio'] %}{{ j['Estadio'] }} 
+                    <img class="miniflag" src="../static/img/flag/{{ j['Pais'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+                {% else %}-{% endif %}</td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    {{ j['Time1'] }} <img class="flag" src="../static/img/flag/{{ j['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+                    {% if j['pe1'] is number and j['pe2'] is number %}
+                        <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }} pe: {{ j['pe1'] }}x{{ j['pe2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
+                    {% elif j['tr1'] is number and j['tr2'] is number %}
+                        <b title="tr: {{ j['tr1'] }}x{{ j['tr2'] }}">{{ j['p1'] }}x{{ j['p2'] }}</b>
+                    {% else %}{{ j['p1'] }}x{{ j['p2'] }}
+                    {% endif %}
+                    <img class="flag" src="../static/img/flag/{{ j['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ j['Time2'] }}
+                </td>
+            </tr>
+        </table>
+    </div>
+    {% endfor %}
+    </div>
+
   </div>
+
   {% endfor %}
-  <h5 class="text-center m-3">Jogos</h5>
 
 </div>
 {% endfor %}

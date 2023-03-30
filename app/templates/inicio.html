@@ -1,6 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-<p>&nbsp;</p>
+<div class="container">
+<h1 class="m-3 text-center">Gokopa do Mundo</h1>
+<div class="row mb-3">
+  <div class="col-12 col-sm-6 text-sm-end text-">
+    <img title="Logo da Gokopa 22" alt="Logo da Gokopa 22" src="../static/img/data/logo/copa22.png" class="img-fluid float-sm-end">
+  </div>
+  <div class="col-12 col-sm-6 text-sm-start">
+    <p class="mt-4">Bem vindos à página da Gokopa do Mundo! Este é um universo de simulação de copas do mundo de futebol e estamos atualmente na 22ª edição, com a copa se passando na Suécia e Dinamarca.</p>
+    <p>A Gokopa 22 vai de 28/02/2023 a 30/04/2023 e terá o bolão de placares e o jogo das moedas de competição para os participantes.</p>
+  </div>
+</div>
+</div>
+
 <div class="row  scoll-pane">
 
 <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-4">
@@ -87,7 +99,7 @@
     {% for n in news %}
     <div class="col-12 col-sm-6 col-md-4 col-lg-6 col-xl-4">
       <div class="card">
-        {% if n['img'] %}{% if n['img'] != 'youtube' %}<img src="../static/img/news/{{ n['img'] }}" onerror="this.src='../static/img/flag/default.png'" class="card-img-top">{% endif %}{% endif %}
+        {% if n['img'] %}{% if n['img'] != 'youtube' %}<img src="../static/img/data/news/{{ n['img'] }}" onerror="this.src='../static/img/flag/default.png'" class="card-img-top">{% endif %}{% endif %}
         <div class="card-body">
           <h5 class="card-title">{{ n['titulo'] }}</h5>
           <h8 class="card-subtitle m-2 text-muted smallt">{{ n['data'] }}</h8>

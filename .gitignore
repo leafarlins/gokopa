@@ -2,3 +2,4 @@
 venv
 **/__pycache__
 executar
+app/static/img/data

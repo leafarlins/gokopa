@@ -115,12 +115,17 @@ def get_team_table(descx,desc,timex):
     return mongo.db.jogos.find_one({"Ano": ANO, descx: desc}).get(timex)
 
 @cache.memoize(20)
-def get_anoX_games(ano,indx):
-    anoX_games = [u for u in mongo.db.jogos.find({'Ano': ano, "Jogo": {'$gt': indx }}).sort("Jogo",pymongo.ASCENDING)]
+def get_anoX_games(ano,indi,indf):
+    if indf > 0:
+        search_criteria = {'$gte': indi ,'$lte': indf}
+    else:
+        search_criteria = {'$gte': indi }
+    anoX_games = [u for u in mongo.db.jogos.find({'Ano': ano, "Jogo": search_criteria}).sort("Jogo",pymongo.ASCENDING)]
     now = datetime.now()
 
     # Zera placares caso seja futuro
     for j in anoX_games:
+        j.pop('_id')
         try:
             data_jogo = datetime.strptime(j.get("Data"),"%d/%m/%Y %H:%M")
         except:
@@ -136,7 +141,7 @@ def get_anoX_games(ano,indx):
 
 @gokopa.route('/api/get_tabela<ano>')
 def gerar_tabela(ano):
-    ano_jogos = get_anoX_games(int(ano),0)
+    ano_jogos = get_anoX_games(int(ano),0,0)
     # Temporario copa do Qatar
     if ano == '2022':
         ano_jogos[0]['Time1'] = 'Qatar'
@@ -180,7 +185,6 @@ def gerar_tabela(ano):
     outros = []
 
     for j in ano_jogos:
-        j.pop('_id',None)
         if not j['Time1']:
             j['Time1'] = j['desc1']
         if not j['Time2']:
@@ -448,11 +452,38 @@ def getEnquete():
         'andamento': andamento,
         'finalizadas': finalizadas
     }
+
+@gokopa.route('/api/estadios/<ano>')
+def getEstadios(ano):
+    data = [u for u in mongo.db.estadiolist.find({'ano': int(ano)})]
+    for item in data:
+        item.pop("_id")
+        estadios = []
+        jogos = get_anoX_games(int(ano),item['games'][0],item['games'][1])
+        for c in item['cidades']:
+            edesc = mongo.db.estadios.find_one({"cidade": c})
+            jogose = []
+            for j in jogos:
+                if j["Estadio"] == c:
+                    jogose.append(j)
+            edesc['jogos'] = jogose
+            edesc.pop('_id')
+            estadios.append(edesc)
+        item['estadios'] = estadios
+    #print(data)
+    return {'dados': data}
     
-@gokopa.route('/estadios')
+@gokopa.route('/estadios<ano>')
 #@cache.cached(timeout=2*60)
-def estadios():
-    return render_template("estadios.html",menu="Gokopa",dados=getEnquete())
+def estadios(ano):
+    if ano not in ['22']:
+        flash(f'Ano {ano} não válido.','danger')
+        ano = '22'
+    dados = {
+        'ano': ano,
+        'data': getEstadios(ano)['dados']
+    }
+    return render_template("estadios.html",menu="Gokopa",dados = dados)
 
 @gokopa.route('/enquete')
 #@cache.cached(timeout=2*60)

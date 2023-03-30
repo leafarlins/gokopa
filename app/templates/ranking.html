@@ -12,7 +12,8 @@
             <th>Pontos</th>
             <th title="Mudança nos pontos">+/-p</th>
             <th title="Último Ranking">ur</th>
-            <th title="Pontos ano22">p22</th>
+            <th title="Pontos no ano atual">pat</th>
+            <th title="Posição na copa atual">cat</th>
           </tr>
           {% for t in ranking['ranking'] %}
             <tr>
@@ -31,6 +32,7 @@
                 {% endif %}
                 {{ t['d_r'] }}</td>
                 <td class="smallt">{{ t['pts'][0] }}</td>
+                <td class="smallt" title="{{ t['cleg'] }}">{{ t['cat'] }}</td>
             </tr>
           {% endfor %}
         </table>

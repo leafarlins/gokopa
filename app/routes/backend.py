@@ -55,6 +55,14 @@ def get_ranking():
             pontos = int(pts_bruto+wc_pts)
         else:
             pontos = int(pts_bruto*2)
+        if t['c22'] == "-":
+            cleg = "não participa"
+        elif t['c22'] == "t":
+            cleg = "taça regional"
+        elif t['c22'] == "c":
+            cleg = "jogando a copa"
+        else:
+            cleg = "posição final"
         ranking.append({
             'time': time,
             'u_pts': int(t['u_pts']),
@@ -63,7 +71,9 @@ def get_ranking():
             'wcr': int(t['wcr']),
             'wc_pts': wc_pts,
             'pts': pts_his,
-            'score': pontos
+            'score': pontos,
+            'cat': t['c22'],
+            'cleg': cleg
         })
         sorted_ranking = sorted(sorted(ranking,key=lambda k: k['wcr']),key=lambda k: k['score'],reverse=True)
         i = 1

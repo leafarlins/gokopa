@@ -18,7 +18,7 @@
   {% for n in news['news'] %}
   <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 col-xxl-2">
     <div class="card">
-      {% if n['img'] %}{% if n['img'] != 'youtube' %}<img src="../static/img/news/{{ n['img'] }}" onerror="this.src='../static/img/flag/default.png'" class="card-img-top">{% endif %}{% endif %}
+      {% if n['img'] %}{% if n['img'] != 'youtube' %}<img src="../static/img/data/news/{{ n['img'] }}" onerror="this.src='../static/img/flag/default.png'" class="card-img-top">{% endif %}{% endif %}
       <div class="card-body">
         <h5 class="card-title">{{ n['titulo'] }}</h5>
         <h8 class="card-subtitle mb-3 text-muted smallt">{{ n['data'] }}</h8>

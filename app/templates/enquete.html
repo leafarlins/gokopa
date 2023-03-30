@@ -17,8 +17,9 @@
   {% for opt in e['opcoes'] %}
   <div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
     <div class="card">
-      {% if opt['img'] %}<img src="../static/img/news/{{ opt['img'] }}" onerror="this.src='../static/img/flag/default.png'" class="card-img-top">{% endif %}
+      {% if opt['img'] %}<img src="../static/img/data/enq/{{ opt['img'] }}.png" onerror="this.src='../static/img/flag/default.png'" class="card-img-top">{% endif %}
       <div class="card-body">
+        {% if opt['video'] %}<iframe width="100%" src="https://www.youtube.com/embed/{{ opt['video'] }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>{% endif %}
         <h5 class="card-title">{{ opt['nome'] }}</h5>
         {% for pais in opt['paises'] %}
         <h8 class="card-subtitle text-muted mb-2"><img class="flag" src="../static/img/flag/{{ pais }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ pais }}</h8><br>
@@ -90,7 +91,7 @@
   {% for opt in e['opcoes'] %}
   <div class="col-12 col-sm-12 col-md-6 col-lg-3 col-xl-3">
     <div class="card">
-      {% if opt['img'] %}<img src="../static/img/news/{{ opt['img'] }}" onerror="this.src='../static/img/flag/default.png'" class="card-img-top">{% endif %}
+      {% if opt['img'] %}<img src="../static/img/data/enq/{{ opt['img'] }}" onerror="this.src='../static/img/flag/default.png'" class="card-img-top">{% endif %}
       <div class="card-body">
         <h5 class="card-title">{{ opt['nome'] }}</h5>
         {% for pais in opt['paises'] %}

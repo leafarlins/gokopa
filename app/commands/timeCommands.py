@@ -432,7 +432,7 @@ def processa_pat(jogos='0',leilao=False):
     # Processamento dos últimos jogos
     if jogos > 0:
         past_jogos = get_next_jogos()['past_jogos'][:jogos]
-        verify_jogos = get_next_jogos()['next_jogos'][:4]
+        verify_jogos = get_next_jogos()['next_jogos'][:12]
 
         # Equivale aos 20 ultimos processamentos
         if past_jogos[0]['jid'] > 140:

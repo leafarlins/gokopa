@@ -1,28 +1,38 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Tabela do ano {{ dados['ano'] }}</h2>
+<h2 class="mt-3">Tabela do ano {{ dados['ano'] }}</h2>
 {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
         <div class="alert alert-{{ category }} text-center" role="alert">
             {{ message }}
         </div>
 {% endfor %} {% endif %} {% endwith %}
-<p class="center">{{ dados['desc'] }}</p>
 
-<div class=".container-fluid">
 
+<div class="container">
+
+<div class="row mb-3 justify-content-center mb-3">
+    {% if dados['ano'] in ['22'] %}
+    <div class="col-12 col-sm-6 text-center text-sm-end">
+      <img title="Logo da Gokopa 22" alt="Logo da Gokopa {{ dados['ano'] }}" src="../static/img/data/logo/copa{{ dados['ano'] }}.png" class="img-fluid float-sm-end">
+    </div>
+    {% endif %}
+    <div class="col-12 col-sm-6 text-center">
+      <p class="mt-4">{{ dados['desc'] }}</p>
+    </div>
+  </div>
 
 {% set torneios = ['Copa do Mundo','Taça Mundial','Taça América','Taça Europa','Taça Ásia-Oceania','Taça África','Confederações','Reis'] %}
 {% for torneio in torneios %}
 {% if dados['competicao'][torneio] %}
 
-<a href="#{{ torneio }}"></a><h2 id="{{ torneio }}">{{ torneio }}</h2>
+<a href="#{{ torneio }}"></a><h2 id="{{ torneio }}" class="mb-3">{{ torneio }}</h2>
     <!-- <a id="displayText" href="javascript:toggle();">mostrar mais</a></p> -->
 
 <!-- <div id="toggleText" style="display: none" class=".container-fluid"> -->
-    <div class="row scoll-pane">
+    <div class="row">
         {% for i in dados['competicao'][torneio]['grupos'] %}
-            <div class="sectionj col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3">
+            <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 mb-3">
                 <table class="tab_gokopa tabelas">
                     <tr>
                         <th>Grupo {{ i }}</th>
@@ -42,7 +52,7 @@
                 </table>
             </div>
         
-            <div class="sectionj col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3">
+            <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 mb-3">
                 {% for j in dados['competicao'][torneio]['grupos'][i]['jogos'] %}
                 <table class="tab_gokopa tab_jogos">
                     <tr>
@@ -66,7 +76,7 @@
     </div>
     
     {% if dados['competicao'][torneio]['classificados'] %}
-    <div class="row scoll-pane justify-content-md-center">
+    <div class="row justify-content-md-center">
     <b><p class="center">Classificando</p></b>
     {% for grupo in dados['competicao'][torneio]['classificados']['grupos'] %}
     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
@@ -77,7 +87,7 @@
             </tr>
             {% for team in grupo['times'] %}
             <tr>
-                <td class="text-nowrap {{ team['cor'] }}"><img class="flag" src="../static/img/flag/{{ team['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ team['time'] }}</td>
+                <td class="text-truncate {{ team['cor'] }}"><img class="flag" src="../static/img/flag/{{ team['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ team['time'] }}</td>
                 <td class="text-nowrap {{ team['cor'] }} smallt">{{ team['pts'] }}/{{ team['sal'] }}/{{ team['gol'] }}/{{ team['rnk'] }}</td>
             </tr>
             {% endfor %}
@@ -95,7 +105,7 @@
     {% endif %}
 
     {% if dados['competicao'][torneio]['eliminatorias']['outros'] %}
-    <div class="row scoll-pane justify-content-md-center">
+    <div class="row justify-content-md-center">
         <b><p class="center">Outros jogos</p></b>
         {% for j in dados['competicao'][torneio]['eliminatorias']['outros']['jogos'] %}
         <div class="col-12 col-sm-10 col-md-6 col-lg-4 col-xl-3">
@@ -124,7 +134,7 @@
     </div>
     {% endif %}
 
-    <div class="row scoll-pane justify-content-md-center">
+    <div class="row justify-content-md-center">
         {% set fases = ['16-avos-de-final','8vas-de-final','4as-de-final','Semi-final','D. 3º Lugar','Final'] %}
         {% for fase in fases %}
         {% if dados['competicao'][torneio]['eliminatorias'][fase] %}
@@ -162,7 +172,7 @@
 {% endif %}{% endfor %}
 
 {% if dados['outros'] %}
-<div class="row scoll-pane justify-content-md-center">
+<div class="row justify-content-md-center">
     <h3>Outros jogos do ano</h3>
     {% for j in dados['outros'] %}
     <div class="col-12 col-sm-10 col-md-6 col-lg-4 col-xl-3">

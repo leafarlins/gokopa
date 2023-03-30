@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
+
+### Added
+- Page "estadios"
+- Cup logo
+
+### Fixed
+- Small layout issues
+
 ## [1.4.6] - 2023-03-14
 
 ### Fixed
