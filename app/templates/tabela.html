@@ -32,7 +32,7 @@
 <!-- <div id="toggleText" style="display: none" class=".container-fluid"> -->
     <div class="row">
         {% for i in dados['competicao'][torneio]['grupos'] %}
-            <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 mb-3">
+            <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 col-xxl-3 mb-3">
                 <table class="tab_gokopa tabelas">
                     <tr>
                         <th>Grupo {{ i }}</th>
@@ -52,7 +52,7 @@
                 </table>
             </div>
         
-            <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 mb-3">
+            <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 col-xxl-3 mb-3">
                 {% for j in dados['competicao'][torneio]['grupos'][i]['jogos'] %}
                 <table class="tab_gokopa tab_jogos">
                     <tr>
@@ -79,7 +79,7 @@
     <div class="row justify-content-md-center">
     <b><p class="center">Classificando</p></b>
     {% for grupo in dados['competicao'][torneio]['classificados']['grupos'] %}
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3 col-xxl-2">
         <table class="tab_gokopa tabelas mb-3">
             <tr>
                 <th>{{ grupo['nome'] }}</th>
@@ -139,7 +139,7 @@
         {% for fase in fases %}
         {% if dados['competicao'][torneio]['eliminatorias'][fase] %}
 
-        <div class="tabelaspd col-12 col-sm-10 col-md-6 col-lg-4 col-xl-3">
+        <div class="tabelaspd col-12 col-sm-10 col-md-6 col-lg-4 col-xl-4 col-xxl-3">
         <b><p class="center">{{ fase }}</p></b>
         <table class="tab_gokopa tab_jogos">
             {% for j in dados['competicao'][torneio]['eliminatorias'][fase]['jogos']  %}

@@ -330,6 +330,16 @@ def addEnquete(filerec):
     else:
         print("Erro ao cadastrar")
 
+@configCommands.cli.command("setEnqueteEnd")
+@click.argument("enquete")
+@click.argument("game")
+def setEnqueteEnd(enquete,game):
+    outdb = mongo.db.enquete.find_one_and_update({'ano': ANO, 'nome': enquete},{"$set": {'game': int(game)}})
+    if outdb:
+        print("Enquete alterada com sucesso.")
+    else:
+        print("Erro ao alterar enquete.")
+
 def add_news(titulo,noticia,img="",link="",linkname=""):
     new = {
         'titulo': titulo,

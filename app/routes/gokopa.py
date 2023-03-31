@@ -379,6 +379,7 @@ def getEnquete():
     last_game = progress_data()['last_game']
     for u in enq:
         u.pop('_id',None)
+        u['optqtd'] = len(u['opcoes'])
         if u['ano'] != ANO:
             finalizadas.append(u)
         elif last_game >= u['game']:
@@ -402,27 +403,30 @@ def getEnquete():
 
     for u in finalizadas:
         mapa_id = []
-        resultado = {
-            '1r': [],
-            '2r': [],
-            '3r': []
-        }
-        pts = [0,0,0,0]
+        resultado = {}
+        # Gera pts para pontos de cada indice e ptadd com qtd a ser somada
+        pts = []
+        ptadd = []
+        max_n = u['optqtd']
+        for i in range(max_n):
+            pts.append(0)
+            ptadd.append(max_n-i-1)
+        ptadd[0] += 2
+        ptadd[1] += 1
         for votante in u['votos']:
-            indice4 = u['votos'][votante][0]
-            indice2 = u['votos'][votante][1]
-            indice1 = u['votos'][votante][2]
-            pts[indice4] += 4
-            pts[indice2] += 2
-            pts[indice1] += 1
-        for i in range(4):
+            for i in range(len(u['votos'][votante])):
+                pts[u['votos'][votante][i]] += ptadd[i]
+
+        for i in range(max_n):
             mapa_id.append({
                 'id': i,
                 'votos': 0,
                 'votantes': [],
                 'pontos': pts[i]
             })
-        for rodada in ['1r','2r','3r']:
+        for rodada in range(max_n - 1):
+            rodadar = str(rodada+1)+"r"
+            resultado[rodadar] = []
             for user in u['votos']:
                 voto = True
                 i = -1
@@ -437,7 +441,7 @@ def getEnquete():
                             #print(f'{rodada}: Voto feito por {user} em {pref}')
             new_mapaid = []
             for item in sorted(sorted(sorted(mapa_id, key=lambda k: k['id']), key=lambda k: k['pontos'],reverse=True), key=lambda k: k['votos'],reverse=True):
-                resultado[rodada].append(item.copy())
+                resultado[rodadar].append(item.copy())
                 new_mapaid.append(item.copy())
             new_mapaid.pop(-1)
             for m in new_mapaid:
@@ -494,17 +498,19 @@ def enquete():
 def votar():
     if "username" in session:
         apostador = get_user_name(session["username"])
-        opt1 = request.values.get("opt1")
-        opt2 = request.values.get("opt2")
-        opt3 = request.values.get("opt3")
+        opcoes = []
+        for i in range(int(request.values.get("optqtd"))-1):
+            campo = "opt" + str(i)
+            print(f'campo {campo} valor {request.values.get(campo)}')
+            opcoes.append(int(request.values.get(campo)))
         enquete = request.values.get("enquete")
-
+        opcoesset = set(opcoes)
         
         #enqdb = mongo.db.enquete.find_one({'nome': enquete})
-        if opt1 != opt2 and opt1 != opt3 and opt2 != opt3:
+        if len(opcoes) == len(opcoesset):
             enqdb = mongo.db.enquete.find_one({'nome': enquete})
             votos = enqdb['votos']
-            votos[apostador] = [int(opt1),int(opt2),int(opt3)]
+            votos[apostador] = opcoes
             outdb = mongo.db.enquete.find_one_and_update({'nome': enquete},{'$set': {'votos': votos}})
             if outdb:
                 flash(f'Votação realizada!','success')
@@ -513,7 +519,7 @@ def votar():
                 flash(f'Erro na atualização da enquete.','danger')
                 current_app.logger.error(f"Erro na atualização da enquete: {enquete}")
         else:
-            flash(f'Os 3 valores precisam ser diferentes!','danger')
+            flash(f'Os valores precisam ser diferentes!','danger')
     else:
         flash(f'Usuário não logado.','danger')
     
