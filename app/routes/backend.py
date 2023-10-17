@@ -8,7 +8,7 @@ from pymongo import collection
 from ..extentions.database import mongo
 from ..cache import cache
 
-ANO=22
+ANO=23
 APOSTADB='apostas2022'
 
 # Para usar curl: WERKZEUG_DEBUG_PIN=off
@@ -40,26 +40,34 @@ def get_ranking():
     historic = [u for u in mongo.db.timehistory.find() ]
     ranking = []
     last_game = progress_data()['last_game']
-    if last_game >= 75:
-        deb = (last_game-74)/129/2
+    if last_game >= 81:
+        # deb varia ate chegar a valor maximo de 1 no ultimo jogo da temporada
+        # 212 jogos no total
+        deb = (last_game-62)/150
     else:
         deb = 0
     for t in historic:
+        # Enquanto no inicio da temporada, assume valor r21 como ultimo p calculo de wc_pts
+        if last_game >= 81:
+            u_rwc = t['r22']
+        else:
+            u_rwc = int(t['r21'])
+        u_r = t['r22']
         time = t['Time']
-        u_r = int(t['r21'])
         wcr = int(t['wcr'])
-        pts_his = [t['p22'],t['p21'],t['p20'],t['p19'],t['p18'],t['ph']]
-        pts_bruto = 5.5*pts_his[0] + (5-deb)*pts_his[1] + (4-deb)*pts_his[2] + (3-deb)*pts_his[3] + (2-deb)*pts_his[4] + (1-deb/2)*pts_his[5]
-        wc_pts = int(250*(128-wcr)/127*(128-u_r)/127)
+        pts_his = [t['p23'],t['p22'],t['p21'],t['p20'],t['p19'],t['p18']+int(t['ph']/2)]
+        pts_bruto = 6*pts_his[0] + (5.5-deb/2)*pts_his[1] + (5-deb)*pts_his[2] + (4-deb)*pts_his[3] + (3-deb)*pts_his[4] + (2-deb)*pts_his[5]
+        #pts_bruto = 5.5*pts_his[0] + (5-deb)*pts_his[1] + (4-deb)*pts_his[2] + (3-deb)*pts_his[3] + (2-deb)*pts_his[4] + (1-deb/2)*pts_his[5]
+        wc_pts = int(250*(128-wcr)/127*(128-u_rwc)/127)
         if pts_bruto > wc_pts:
             pontos = int(pts_bruto+wc_pts)
         else:
             pontos = int(pts_bruto*2)
-        if t['c22'] == "-":
+        if t['c23'] == "-":
             cleg = "não participa"
-        elif t['c22'] == "t":
+        elif t['c23'] == "t":
             cleg = "taça regional"
-        elif t['c22'] == "c":
+        elif t['c23'] == "c":
             cleg = "jogando a copa"
         else:
             cleg = "posição final"
@@ -67,12 +75,12 @@ def get_ranking():
             'time': time,
             'u_pts': int(t['u_pts']),
             'u_r': u_r,
-            'd_pts': pontos - int(t['u_pts']),
+            'd_pts': pontos - t['u_pts'],
             'wcr': int(t['wcr']),
             'wc_pts': wc_pts,
             'pts': pts_his,
             'score': pontos,
-            'cat': t['c22'],
+            'cat': t['c23'],
             'cleg': cleg
         })
         sorted_ranking = sorted(sorted(ranking,key=lambda k: k['wcr']),key=lambda k: k['score'],reverse=True)
@@ -582,10 +590,10 @@ def get_next_jogos():
                 t2v = t2['Valor']
                 if proporcao < 1:
                     proporcao = t2['Valor'] / t1['Valor']
-                if proporcao > 4:
+                if proporcao > 6:
                     percent = 100
                 else:
-                    percent = int(20*proporcao+20)
+                    percent = int(12*proporcao+28)
                 if t2['Valor'] > t1['Valor']:
                     moedas_em_jogo = int(t1['Valor']*percent/100)
                 else:
@@ -595,6 +603,8 @@ def get_next_jogos():
                 patdb2 = lista_pat.find_one({'Time': time2})
                 pat1 = patdb1['Patrocinador']
                 pat2 = patdb2['Patrocinador']
+                apo1 = patdb1.get('Apoiadores')
+                apo2 = patdb2.get('Apoiadores')
             else:
                 pat1 = "-"
                 pat2 = "-"
@@ -611,6 +621,8 @@ def get_next_jogos():
                 'time2_valor': t2v,
                 'percent': percent,
                 'moedas_em_jogo': moedas_em_jogo,
+                'apo1': apo1,
+                'apo2': apo2,
                 'pat1': pat1, 
                 'pat2': pat2 }
             data_jogo = datetime.strptime(n["Data"],"%d/%m/%Y %H:%M")

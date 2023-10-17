@@ -11,7 +11,7 @@ from flask import Blueprint,current_app
 from app.routes.backend import get_aposta,get_users,get_games,make_score_board,get_bet_results2,get_score_results,getBolaoUsers
 
 configCommands = Blueprint('config',__name__)
-ANO=22
+ANO=23
 TELEGRAM_TOKEN=os.getenv('TELEGRAM_TKN')
 TELEGRAM_CHAT_ID=os.getenv('TELEGRAM_CHAT_ID')
 TELEGRAM=os.getenv('TELEGRAM')
@@ -318,6 +318,67 @@ def migrate147():
         mongo.db.estadios.insert_many(estadios)
         mongo.db.estadiolist.insert_many(estadiolist)
     print("Finalizado.")
+
+@configCommands.cli.command("migrate150")
+def migrate150():
+    mongo.db.moedas.drop()
+    mongo.db.moedaslog.drop()
+    mongo.db.patrocinio.drop()
+    novo_user = {
+            "nome": "ernani",
+            "saldo": 1000,
+            "bloqueado": 0,
+            "investido": 0
+    }
+    mongo.db.moedas.insert(novo_user)
+    print(f"Reiniciando base de moedas")
+    # Mudança de nome da Rep Tcheca para Tcheca
+    print("Mudança de nome da Tcheca e Belarus")
+    oldname  = "Rep Tcheca"
+    newname = "Tcheca"
+    mongo.db.timehistory.find_one_and_update({'Time': oldname},{'$set': {"Time": newname}})
+    mongo.db.emoji.find_one_and_update({'País': oldname},{'$set': {"País": newname}})
+    mongo.db.historico.update_many({'ouro': oldname},{'$set': {"ouro": newname}})
+    mongo.db.historico.update_many({'prata': oldname},{'$set': {"prata": newname}})
+    mongo.db.jogos.update_many({'Time1': oldname},{'$set': {"Time1": newname}})
+    mongo.db.jogos.update_many({'Time2': oldname},{'$set': {"Time2": newname}})
+    oldname = "Bielorússia"
+    newname = "Belarus"
+    mongo.db.timehistory.find_one_and_update({'Time': oldname},{'$set': {"Time": newname}})
+    mongo.db.emoji.find_one_and_update({'País': oldname},{'$set': {"País": newname}})
+    mongo.db.jogos.update_many({'Time1': oldname},{'$set': {"Time1": newname}})
+    mongo.db.jogos.update_many({'Time2': oldname},{'$set': {"Time2": newname}})
+
+    print("Setando posições no ranking atual")
+    mongo.db.timehistory.update_many({},{'$set':{'c23': '-'}})
+    listat_gokopa23 = ["França","Alemanha","Sérvia","Bélgica","Italia","Espanha","Rússia","Croácia","Portugal","Tcheca","Bulgária","Suécia","Inglaterra","Escócia","Suiça","Dinamarca","Finlândia","Ucrânia","Polônia","Holanda","Gales","Bósnia","Lituânia","Israel","Irlanda","Áustria","Grécia","Cazaquistão","Eslováquia","Turquia","Noruega","Malta","Azerbaijão","Macedônia","Ilhas Faroe","Luxemburgo","Brasil","Argentina","Equador","Jamaica","Panamá","Estados Unidos","Colômbia","México","Chile","Honduras","Costa Rica","Uruguai","Venezuela","Bolívia","Canadá","Peru","El Salvador","Nigéria","Camarões","Marrocos","Argélia","Tunísia","Gana","Senegal","RD do Congo","Egito","Benin","Uganda","Libéria","Cabo Verde","Togo","Gabão","Coréia do Sul","Austrália","Japão","Irã","Hong Kong","Arábia Saudita","Ilhas Salomão","Paquistão","China","Coréia do Norte","Índia","Kwait"]
+    listac_gokopa23 = ["Trinidad e Tobago","St Vicente","São Cristóvão"]
+    for time in listat_gokopa23:
+        mongo.db.timehistory.find_one_and_update({'Time': time},{'$set': {'c23': 't'}})
+    for time in listac_gokopa23:
+        mongo.db.timehistory.find_one_and_update({'Time': time},{'$set': {'c23': 'c'}})
+    
+@configCommands.cli.command("updateEstadio")
+def updateEstadio():
+    estadiolist = [{
+        'ano': 23,
+        'games': [109,212],
+        'nome': 'Estádios da Copa do Mundo',
+        'cidades': ['Port of Spain','Arnos Vale','Basseterre','Couva','Arima','Marabella','Charlestown','Kingstown']
+    },{
+        'ano': 23,
+        'games': [1,108],
+        'nome': 'Estádios das Taças Regionais e Mundial',
+        'cidades': ['Port of Spain','Couva','Kiev','Carcóvia','Alexandria','Cairo','Rungra Island','Pyongyang']
+    }]
+    with open('executar/estadios23','r') as file:
+        estadios = json.load(file)
+    outdb = mongo.db.estadios.find_one({'cidade': 'Couva'})
+    if outdb:
+        print("Estádios já cadastrados.")
+    else:
+        mongo.db.estadios.insert_many(estadios)
+        mongo.db.estadiolist.insert_many(estadiolist)
 
 @configCommands.cli.command("addEnquete")
 @click.argument("filerec")

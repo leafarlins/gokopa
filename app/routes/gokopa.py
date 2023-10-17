@@ -15,7 +15,7 @@ from ..cache import cache
 
 gokopa = Blueprint('gokopa',__name__)
 
-ANO=22
+ANO=23
 
 @cache.memoize(600)
 def get_classificados():
@@ -62,20 +62,24 @@ def get_classificados():
 # Rota / associada a função index
 
 
-@gokopa.route('/api/get_news')
+@gokopa.route('/api/get_news<anon>')
 #@cache.cached(timeout=2*60)
-def getNews():
-    news = [u for u in mongo.db.news.find().sort('nid',pymongo.DESCENDING)]
+def getNews(anon=str(ANO)):
+    news23 = [u for u in mongo.db.news.find({'ano':int(anon)}).sort('nid',pymongo.DESCENDING)]
+    if len(news23) < 6:
+        newsold = [u for u in mongo.db.news.find({'ano':int(anon)-1}).sort('nid',pymongo.DESCENDING)]
+        news = news23 + newsold[0:6]
+    else:
+        news = news23
     for u in news:
         u.pop('_id',None)
         u['texto'] = u['texto'].replace('\\n','<br/>')
-    #print(news)
     return {'news': news}
 
 @gokopa.route('/')
 @cache.cached(timeout=2*60)
 def index():
-    past_jogos = [u for u in mongo.db.jogos.find({'Ano': 21}).sort([('Jogo',pymongo.DESCENDING)])]
+    past_jogos = [u for u in mongo.db.jogos.find({'Ano': ANO-1}).sort([('Jogo',pymongo.DESCENDING)])]
     #past_jogos=[]
     ano_jogos = mongo.db.jogos.find({'Ano': ANO}).sort([("Jogo",pymongo.ASCENDING)])
     next_jogos = []
@@ -100,10 +104,10 @@ def index():
     #tabelas = get_tabelas_copa()
     return render_template("inicio.html",menu="Home",past_jogos=past_jogos[:21],next_jogos=next_jogos[:15],classificados=classificados,total=lista_bolao,progress_data=progress_data(),probabilidade=probability(),news=getNews()['news'][:6])
 
-@gokopa.route('/noticias')
+@gokopa.route('/noticias<anon>')
 @cache.cached(timeout=2*60)
-def noticias():
-    return render_template("news.html",menu="Gokopa",news=getNews())
+def noticias(anon):
+    return render_template("news.html",menu="Gokopa",news=getNews(anon))
 
 @cache.memoize(300)
 def get_jogos_tab(ano,r1):
@@ -149,6 +153,7 @@ def gerar_tabela(ano):
         ano_jogos[32]['Time1'] = 'Qatar'
     descs = {
         '2022': 'Esta é a tabela da Copa do Mundo de 2022, no Qatar.',
+        '23': 'O ano 23 será no Caribe, com mesma sequência do ano anterior: taças regionais, classificando para as finais das taças e para a gokopa de 48 times. Mais um recorde de jogos, com 212 na temporada.',
         '22': 'O ano 22 terá taças regionais, classificando para as finais das taças e para a gokopa de 48 times. A maior gokopa de todos os tempos até aqui, com 104 jogos em 12 grupos de 4.',
         '21': 'O ano 21 é a Gokopa simulada em homenagem à Copa do Mundo de 2022, com a mesma tabela.',
         '20': 'Ano 20 com taças regionais e Copa do Mundo versão 32 times.',
@@ -235,12 +240,12 @@ def gerar_tabela(ano):
                 competicao[torneio]['eliminatorias'][fase]['jogos'].append(j)
         else:
             outros.append(j)
-    if ano == '22':
+    if ano == '23':
         last_game = progress_data()['last_game']
         for torneio in competicao:
             adicionar = False
             if torneio == 'Copa do Mundo':
-                if last_game > 100 and last_game < 190:
+                if last_game > 108 and last_game < 198:
                     adicionar = True
             elif last_game > 1 and last_game < 91:
                 adicionar = True
@@ -274,21 +279,10 @@ def gerar_tabela(ano):
                 else:
                     for g in classificados['grupos']:
                         g['times'][0]['cor'] = 'taca'
-                        g['times'][1]['cor'] = 'copa'
+                        #g['times'][1]['cor'] = 'copa'
 
                 # Definiçao de melhores 2os e 3os
-                if torneio == 'Taça América':
-                    times_2 = []
-                    for g in classificados['grupos']:
-                        times_2.append(g['times'][1])
-                    grupo_2 = {
-                        'nome': 'Segundos',
-                        'times': sorted(sorted(sorted(sorted(times_2, key=lambda k: k['rnk']), key=lambda k: k['gol'],reverse=True), key=lambda k: k['sal'],reverse=True), key=lambda k: k['pts'],reverse=True)
-                    }
-                    grupo_2['times'][0]['cor'] = 'taca'
-                    grupo_2['times'][1]['cor'] = 'taca'
-                    classificados['grupos'].append(grupo_2)
-                elif torneio == 'Copa do Mundo':
+                if torneio == 'Copa do Mundo':
                     times_3 = []
                     for g in classificados['grupos']:
                         times_3.append(g['times'][2])
@@ -297,8 +291,25 @@ def gerar_tabela(ano):
                         'times': sorted(sorted(sorted(sorted(times_3, key=lambda k: k['rnk']), key=lambda k: k['gol'],reverse=True), key=lambda k: k['sal'],reverse=True), key=lambda k: k['pts'],reverse=True)
                     }
                     for i in range(8):
-                        grupo_3['times'][i]['cor'] = 'copa'
+                       grupo_3['times'][i]['cor'] = 'copa'
                     classificados['grupos'].append(grupo_3)
+                elif torneio in ['Taça Ásia-Oceania','Taça América','Taça Europa','Taça África']:
+                    if torneio == 'Taça África':
+                        range_2o = 3
+                    elif torneio == 'Taça Europa':
+                        range_2o = 8
+                    else:
+                        range_2o = 4
+                    times_2 = []
+                    for g in classificados['grupos']:
+                        times_2.append(g['times'][1])
+                    grupo_2 = {
+                        'nome': 'Segundos',
+                        'times': sorted(sorted(sorted(sorted(times_2, key=lambda k: k['rnk']), key=lambda k: k['gol'],reverse=True), key=lambda k: k['sal'],reverse=True), key=lambda k: k['pts'],reverse=True)
+                    }
+                    for i in range(range_2o):
+                        grupo_2['times'][i]['cor'] = 'copa'
+                    classificados['grupos'].append(grupo_2)
 
                 competicao[torneio]['classificados'] = classificados
 
@@ -312,9 +323,9 @@ def gerar_tabela(ano):
 @gokopa.route('/tabela<ano>')
 #@cache.cached(timeout=60*2)
 def tabelaano(ano):
-    if ano not in ['2022'] and int(ano) not in range(1,23):
+    if ano not in ['2022'] and int(ano) not in range(1,ANO+1):
         flash(f'Tabela do ano {ano} não disponível.','danger')
-        ano = '22'
+        ano = str(ANO)
     dados = gerar_tabela(ano)
     return render_template('tabela.html',menu="Tabela",dados=dados)
 
@@ -480,9 +491,9 @@ def getEstadios(ano):
 @gokopa.route('/estadios<ano>')
 #@cache.cached(timeout=2*60)
 def estadios(ano):
-    if ano not in ['22']:
+    if int(ano) not in range(22,ANO+1):
         flash(f'Ano {ano} não válido.','danger')
-        ano = '22'
+        ano = str(ANO)
     dados = {
         'ano': ano,
         'data': getEstadios(ano)['dados']
@@ -572,16 +583,16 @@ def return_team_history(team1):
     historia = mongo.db.timehistory.find_one({'Time': team1})
     pos_copa = []
     pos_rank = []
-    for i in range(21):
-        copa = "c" + str(i+1)
-        rank = "r" + str(i+1)
+    for i in range(1,ANO):
+        copa = "c" + str(i)
+        rank = "r" + str(i)
         pos_copa.append(historia[copa])
         if historia[rank] == "-":
             pos_rank.append('null')
         else:
             pos_rank.append(int(historia[rank]))
     # Add current rank
-    pos_copa.append(historia['c22'])
+    pos_copa.append(historia['c'+str(ANO)])
     pos_rank.append(get_rank(team1)['posicao'])
     #print(pos_copa,pos_rank)
     return pos_copa,pos_rank

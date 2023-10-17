@@ -9,7 +9,7 @@ from ..cache import cache
 
 moedas = Blueprint('moedas',__name__)
 
-ANO=22
+ANO=23
 MAX_LOG_PAGE=100
 
 @cache.memoize(10)
@@ -52,6 +52,20 @@ def gamemoedas():
                 if item.get('patrocinador') == validUser['name']:
                     meus_pat.append(item)
             user_info['meus_pat'] = meus_pat
+            # Escreve nos dados de jogos meu apoio, caso exista, para cada time
+            for j in info['jogos']:
+                if j['pat1'] != '-':
+                    j['meuapo1'] = 0
+                    if j.get('apo1'):
+                        for item in j.get('apo1'):
+                            if item['nome'] == info['username']:
+                                j['meuapo1'] = item['valor']
+                if j['pat2'] != '-':
+                    j['meuapo2'] = 0
+                    if j.get('apo2'):
+                        for item in j.get('apo2'):
+                            if item['nome'] == info['username']:
+                                j['meuapo2'] = item['valor']
         else:
             userLogado = False
     

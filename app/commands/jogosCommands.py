@@ -13,9 +13,9 @@ from ..cache import cache
 from random import randrange
 #from twilio.rest import Client
 
-SEPARADOR_CSV=","
-ANO=22
-APOSTADB='apostas22'
+SEPARADOR_CSV="\t"
+ANO=23
+APOSTADB='apostas23'
 TELEGRAM_TOKEN=os.getenv('TELEGRAM_TKN')
 TELEGRAM_CHAT_ID=os.getenv('TELEGRAM_CHAT_ID')
 TELEGRAM=os.getenv('TELEGRAM')
@@ -147,10 +147,10 @@ def gera_random_penalti():
 def teste2(user,jogo):
     p1 = gera_random_score()
     p2 = gera_random_score()
-    list_pe = list(range(172,204))+[9,10,25,34,35,50,59,60,75]+list(range(76,100))
+    list_pe = list(range(82,109)) + list(range(181,213))
     if p1 == p2 and int(jogo) in list_pe:
         r = randrange(2)
-        outp = mongo.db.apostas22.find_one_and_update(
+        outp = mongo.db[APOSTADB].find_one_and_update(
             {"Jogo": int(jogo)},
             {'$set': {
                 str(user + "_p1"): int(p1),
@@ -159,7 +159,7 @@ def teste2(user,jogo):
                 }})
         print(f'jid {jogo} Aposta de {user}: {p1}x{p2} v{r}')
     else:
-        outp = mongo.db.apostas22.find_one_and_update(
+        outp = mongo.db[APOSTADB].find_one_and_update(
             {"Jogo": int(jogo)},
             {'$set': {
                 str(user + "_p1"): int(p1),
@@ -195,10 +195,10 @@ def print_random_editgame(jogoi,jogof,tr):
         else:
             print(f'flask jogos editJogo {ANO} {jogo} placar {p1} {p2}')
 
-@jogosCommands.cli.command("initApostas22")
-def init_apostas22():
-    JOGOS=203
-    apostas = mongo.db.apostas22
+@jogosCommands.cli.command("initApostas23")
+def init_apostas23():
+    JOGOS=212
+    apostas = mongo.db.apostas23
     if apostas.count_documents({}) > 0:
         print("Base já existente.")
     else:
@@ -223,7 +223,7 @@ def delete_ano(ano):
 @click.argument("texto",required=False)
 def report(jogos,proximos,texto=""):
     emojis = mongo.db.emoji
-    apostas = mongo.db.apostas22
+    apostas = mongo.db[APOSTADB]
     lista_jogos = get_next_jogos()
     jogos_list = lista_jogos['past_jogos'][:int(jogos)]
     next_list = lista_jogos['next_jogos'][:int(proximos)]

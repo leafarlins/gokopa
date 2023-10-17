@@ -37,7 +37,7 @@
 <h4 class="text-center">{{ dados['time'] }}</h4>
 <div class="row scoll-pane"><div class="col-12"><div class="text-center">
   <p class="text-center"><b>Histórico de posições na copa</b></p>
-  {% for i in range(0,22) %}
+  {% for i in range(0,23) %}
   <!-- <div class="col-6 col-sm-4 col-md-3 col-lg-2 col-xl-1"> -->
     <div class="betcorner">
       <p>Ano {{ i+1 }}<br>
@@ -171,11 +171,11 @@
     <p class="text-center">Pontos por ano</p>
     <table class="tab_gokopa quadro mb-3 tabp5">
       <tr>
+        <th title="Ano">23</th>
         <th title="Ano">22</th>
         <th title="Ano">21</th>
         <th title="Ano">20</th>
         <th title="Ano">19</th>
-        <th title="Ano">18</th>
         <th title="Histórico">His</th>
         <th title="Pontos Ranking FIFA">FIFA</th>
       </tr>
@@ -199,7 +199,7 @@
       <div width="99%" height="40vh"><canvas id="grafico" style="position: relative; text-align: center; display: unset;"></canvas></div>
       <script>
 
-        var labelsgr = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22'];
+        var labelsgr = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23'];
         const colors = ['#3e95cd'];
         let nomes = {{ times | safe }}; 
         let datagr = {{ datag | safe }};

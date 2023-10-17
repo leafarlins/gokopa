@@ -10,8 +10,8 @@ from ..cache import cache
 
 bolao = Blueprint('bolao',__name__)
 
-ANO=22
-APOSTADB='apostas22'
+ANO=23
+APOSTADB='apostas23'
 
 @cache.memoize(3600)
 def get_history_data(results,ano):
@@ -91,9 +91,9 @@ def get_bolao_data(ano,apostador=""):
 @bolao.route('/bolao<ano>')
 def apostas(ano):
     #ano = '2022'
-    if ano not in ['22','2022','21','20']:
+    if ano not in ['23','22','2022','21','20']:
         flash(f'Página do bolao {ano} não encontrada.','danger')
-        ano = '22'
+        ano = '23'
 
     if session.get('username') == None:
         dados = get_bolao_data(ano)

@@ -15,9 +15,9 @@ from app.routes.backend import get_moedas_board, get_next_jogos, get_pat_teams, 
 from ..extentions.database import mongo
 from flask import Blueprint,current_app
 
-SEPARADOR_CSV=","
-ANO=22
-RANKING='20-4'
+SEPARADOR_CSV="\t"
+ANO=23
+#RANKING='20-4'
 TELEGRAM_TOKEN=os.getenv('TELEGRAM_TKN')
 TELEGRAM_CHAT_ID=os.getenv('TELEGRAM_CHAT_ID')
 TELEGRAM=os.getenv('TELEGRAM')
@@ -129,6 +129,15 @@ def set_copa_pos(ano,time,status):
     else:
         print("Erro")
 
+@timeCommands.cli.command("set_rank_upts")
+@click.argument("ano")
+def set_rank_upts(ano):
+    ranking = get_ranking()
+    newr = "r" + ano
+    for t in ranking["ranking"]:
+        #print(f"{t['time']}: u_pts: {t['u_pts']} -> {t['score']} u_r/{newr}: {t['u_r']} -> {t['posicao']}")
+        mongo.db.timehistory.update_one({"Time": t['time']},{'$set': {newr: t['posicao'],'u_pts':t['score']}})
+
 @timeCommands.cli.command("zera_rank_pts")
 @click.argument("ano")
 def zera_rank_pts(ano):
@@ -194,9 +203,6 @@ def calc_ranking(j_i,j_f):
             print(f'Time {t} = +{pts}')
             mongo.db.timehistory.find_one_and_update({'Time': t},{'$inc': {'p22': pts}})
     
-
-
-
 @timeCommands.cli.command("loadEmojis")
 @click.argument("csv_file")
 def load_emoji(csv_file):
@@ -242,7 +248,7 @@ def get_rank(rank):
 @click.argument("desc")
 @click.argument("time")
 def edit_time(desc,time):
-    timeValid = mongo.db.ranking.find_one({"ed": RANKING,'time': time})
+    timeValid = mongo.db.timehistory.find_one({'Time': time})
     if timeValid:
         print(f'Definindo time {time} em {desc}')
     else:
@@ -268,7 +274,7 @@ def edit_time(desc,time):
 @click.argument("time")
 @click.argument("conf")
 def classifica_time(time,conf):
-    timeValid = mongo.db.ranking.find_one({"ed": RANKING,'time': time})
+    timeValid = mongo.db.timehistory.find_one({'Time': time})
     if timeValid:
         print(f'Classificando time {time} em {conf}')
     else:
@@ -313,7 +319,7 @@ def def_historico(comp,ano,ouro,prata,bronze,quarto,sedes):
 @click.argument("time")
 @click.argument("pot")
 def classifica_time(time,pot):
-    timeValid = mongo.db.ranking.find_one({"ed": RANKING,'time': time})
+    timeValid = mongo.db.timehistory.find_one({'Time': time})
     if timeValid:
         print(f'Definindo para time {time} pot {pot}')
     else:
@@ -424,9 +430,9 @@ def verifica_invest():
 
 @timeCommands.cli.command("processaPat")
 @click.argument("jogos",required=False)
-@click.argument("leilao",required=False)
-def processa_pat(jogos='0',leilao=False):
-    if leilao == 'true':
+#@click.argument("leilao",required=False)
+def processa_pat(jogos='0'):
+    if jogos == '0':
         leilao = True
     else:
         leilao = False
@@ -441,8 +447,9 @@ def processa_pat(jogos='0',leilao=False):
 
 
     # Emprestimo extra inicial
-    emprestimo_ini = 300
-    debito = int((1000 + emprestimo_ini*6) / 20)
+    emprestimo_ini = 400
+    #debito = int((1000 + emprestimo_ini*6) / 18)
+    debito = 200
     if leilao:
         moedas.update_many({},{'$inc': {'saldo': emprestimo_ini}})
         moedas_log('all',"+"+str(emprestimo_ini),"",0,"Empréstimo inicial")
@@ -450,15 +457,16 @@ def processa_pat(jogos='0',leilao=False):
     # Processamento dos últimos jogos
     if jogos > 0:
         past_jogos = get_next_jogos()['past_jogos'][:jogos]
-        verify_jogos = get_next_jogos()['next_jogos'][:12]
+        #verify_jogos = get_next_jogos()['next_jogos'][:12]
 
-        # Equivale aos 20 ultimos processamentos
-        if past_jogos[0]['jid'] > 140:
+        # Equivale aos 19 ultimos processamentos
+        if past_jogos[0]['jid'] > 205:
             moedas.update_many({},{'$inc': {'saldo': -debito}})
             moedas_log('all',"-"+str(debito),"",0,"Pagamento de empréstimo")
 
         # Devolve apoios de jogos impedidos de apoiar
-        for j in (verify_jogos + past_jogos):
+        #for j in (verify_jogos + past_jogos):
+        for j in  past_jogos:
             pat1 = patrocinios.find_one({'Time': j['time1']})
             pat2 = patrocinios.find_one({'Time': j['time2']})
             if pat1 and pat2:
@@ -466,12 +474,21 @@ def processa_pat(jogos='0',leilao=False):
                     lista_apoios_1 = pat1.get('Apoiadores')
                     lista_apoios_2 = pat2.get('Apoiadores')
                     if lista_apoios_1 and lista_apoios_2:
+                        # Uma lista para remocao da lista 1 e outra para remocao da lista 2
                         remover_a = []
+                        remover_b = []
                         for a1 in lista_apoios_1:
                             apoiador = a1['nome']
                             for a2 in lista_apoios_2:
                                 if a2['nome'] == apoiador:
-                                    remover_a.append(apoiador)
+                                    if a2['valor'] > a1['valor']:
+                                        remover_a.append(apoiador)
+                                    elif a2['valor'] < a1['valor']:
+                                        remover_b.append(apoiador)
+                                    else:
+                                        remover_a.append(apoiador)
+                                        remover_b.append(apoiador)
+
                         if remover_a:
                             print(f"Jogo {j['jid']} possui apoiadores a remover: {remover_a}")
                             current_app.logger.info(f"Jogo {j['jid']} possui apoiadores a remover: {remover_a}")
@@ -482,18 +499,26 @@ def processa_pat(jogos='0',leilao=False):
                                         moedas_log(a['nome'],"x "+str(a['valor']),j['time1'],j['jid'],"Apoio duplicado impedido")
                                         lista_apoios_1.remove(a)
                                         break
+                            outdb1 = patrocinios.find_one_and_update({'Time': j['time1']},{'$set': {"Apoiadores": lista_apoios_1}})
+                            if outdb1:
+                                current_app.logger.info(f"Apoios duplicados a {j['time1']} removidos")
+                            else:
+                                current_app.logger.error(f"Erro na remoção de apoios duplicados em {j['time1']}")
+                        if remover_b:
+                            print(f"Jogo {j['jid']} possui apoiadores a remover: {remover_a}")
+                            current_app.logger.info(f"Jogo {j['jid']} possui apoiadores a remover: {remover_a}")
+                            for apoiador in remover_b:
                                 for a in lista_apoios_2:
                                     if a['nome'] == apoiador:
                                         moedas.find_one_and_update({'nome': apoiador},{'$inc':{'saldo': a['valor'],'investido': -a['valor']}})
                                         moedas_log(a['nome'],"x "+str(a['valor']),j['time2'],j['jid'],"Apoio duplicado impedido")
                                         lista_apoios_2.remove(a)
                                         break
-                            outdb1 = patrocinios.find_one_and_update({'Time': j['time1']},{'$set': {"Apoiadores": lista_apoios_1}})
                             outdb2 = patrocinios.find_one_and_update({'Time': j['time2']},{'$set': {"Apoiadores": lista_apoios_2}})
-                            if outdb1 and outdb2:
-                                current_app.logger.info(f"Apoios duplicados a {j['time1']} e {j['time2']} removidos")
+                            if outdb2:
+                                current_app.logger.info(f"Apoios duplicados a {j['time2']} removidos")
                             else:
-                                current_app.logger.error(f"Erro na remoção de apoios duplicados em {j['time1']} e {j['time2']} ")
+                                current_app.logger.error(f"Erro na remoção de apoios duplicados em {j['time2']}")
 
         # Debito de saldo parado
         # if past_jogos[0]['jid'] > 16 and past_jogos[0]['jid'] < 61:
@@ -517,7 +542,7 @@ def processa_pat(jogos='0',leilao=False):
                 print("Erro ao buscar jogo")
             elif jogoDb.get('processado'):
                 print(f"Jogo {jogo['jid']} já foi processado.")
-                quit(0)
+                break
             else:
                 if jogo['vitoria'] == 'empate':
                     lista_m = [int(jogo['moedas_em_jogo']/3),int(jogo['moedas_em_jogo']/3)]
@@ -529,7 +554,7 @@ def processa_pat(jogos='0',leilao=False):
                 lista_t = [(jogo['time1'],lista_m[0],jogo['time2']),(jogo['time2'],lista_m[1],jogo['time1'])]
                 for t,moeda_ganha,tadv in lista_t:
                     # Atualização do valor do time
-                    inc_invest = int(moeda_ganha/2)
+                    inc_invest = int(moeda_ganha/3)
                     patDb = patrocinios.find_one_and_update({'Time': t},{'$inc': {'Valor': inc_invest}})
                     # Atualizaçao nos valores de cada jogador
                     if patDb['Patrocinador'] != '-':
@@ -558,7 +583,7 @@ def processa_pat(jogos='0',leilao=False):
                                     valor_max = a['valor']
                                 # Se perda, perda no valor do patrocinio
                                 if moeda_ganha < 0:
-                                    moeda_perdida = int(moeda_ganha/2 - 1)
+                                    moeda_perdida = int(moeda_ganha/3 - 1)
                                     novo_valor_apoio = a['valor'] + moeda_perdida
                                     if novo_valor_apoio <=0:
                                         moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'investido': -a['valor']}})

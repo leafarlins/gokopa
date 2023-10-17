@@ -1,0 +1,213 @@
+Ano	Jogo	Data	Time1	desc1	p1	p2	desc2	Time2	Pais	Estadio	Grupo	tr1	tr2	pe1	pe2	Competição	Fase	peso	p_acu	percent
+23	1	04/11/2023 10:00		p1A-EUR			p2A-EUR		Ucrânia	Kiev	A-EUR					Taça Europa	1ª rodada	1	1	0.17%
+23	2	04/11/2023 10:00		p1B-EUR			p2B-EUR		Ucrânia	Carcóvia	B-EUR					Taça Europa	1ª rodada	1	2	0.34%
+23	3	04/11/2023 13:00		p1C-EUR			p2C-EUR		Ucrânia	Kiev	C-EUR					Taça Europa	1ª rodada	1	3	0.51%
+23	4	04/11/2023 13:00		p1D-EUR			p2D-EUR		Ucrânia	Carcóvia	D-EUR					Taça Europa	1ª rodada	1	4	0.68%
+23	5	04/11/2023 16:00		p1E-EUR			p2E-EUR		Ucrânia	Kiev	E-EUR					Taça Europa	1ª rodada	1	5	0.85%
+23	6	04/11/2023 16:00		p1F-EUR			p2F-EUR		Ucrânia	Carcóvia	F-EUR					Taça Europa	1ª rodada	1	6	1.02%
+23	7	05/11/2023 10:00		p1G-EUR			p2G-EUR		Ucrânia	Kiev	G-EUR					Taça Europa	1ª rodada	1	7	1.19%
+23	8	05/11/2023 10:00		p1H-EUR			p2H-EUR		Ucrânia	Carcóvia	H-EUR					Taça Europa	1ª rodada	1	8	1.36%
+23	9	05/11/2023 13:00		p1I-EUR			p2I-EUR		Ucrânia	Kiev	I-EUR					Taça Europa	1ª rodada	1	9	1.53%
+23	10	05/11/2023 13:00		p1J-EUR			p2J-EUR		Ucrânia	Carcóvia	J-EUR					Taça Europa	1ª rodada	1	10	1.70%
+23	11	05/11/2023 16:00		p1K-EUR			p2K-EUR		Ucrânia	Kiev	K-EUR					Taça Europa	1ª rodada	1	11	1.87%
+23	12	05/11/2023 16:00		p1L-EUR			p2L-EUR		Ucrânia	Carcóvia	L-EUR					Taça Europa	1ª rodada	1	12	2.04%
+23	13	06/11/2023 14:00		p1A-AME			p2A-AME		Trinidad e Tobago	Port of Spain	A-AME					Taça América	1ª rodada	1	13	2.21%
+23	14	06/11/2023 14:00		p1B-AME			p2B-AME		Trinidad e Tobago	Couva	B-AME					Taça América	1ª rodada	1	14	2.38%
+23	15	06/11/2023 17:00		p1C-AME			p2C-AME		Trinidad e Tobago	Port of Spain	C-AME					Taça América	1ª rodada	1	15	2.55%
+23	16	06/11/2023 17:00		p1D-AME			p2D-AME		Trinidad e Tobago	Couva	D-AME					Taça América	1ª rodada	1	16	2.72%
+23	17	06/11/2023 20:00		p1E-AME			p2E-AME		Trinidad e Tobago	Port of Spain	E-AME					Taça América	1ª rodada	1	17	2.89%
+23	18	06/11/2023 20:00		p1F-AME			p2F-AME		Trinidad e Tobago	Couva	F-AME					Taça América	1ª rodada	1	18	3.06%
+23	19	07/11/2023 04:00		p1A-ASO			p2A-ASO		Coréia do Norte	Rungra Island	A-ASO					Taça Ásia-Oceania	1ª rodada	1	19	3.23%
+23	20	07/11/2023 04:00		p1B-ASO			p2B-ASO		Coréia do Norte	Pyongyang	B-ASO					Taça Ásia-Oceania	1ª rodada	1	20	3.40%
+23	21	07/11/2023 07:00		p1C-ASO			p2C-ASO		Coréia do Norte	Rungra Island	C-ASO					Taça Ásia-Oceania	1ª rodada	1	21	3.57%
+23	22	07/11/2023 07:00		p1D-ASO			p2D-ASO		Coréia do Norte	Pyongyang	D-ASO					Taça Ásia-Oceania	1ª rodada	1	22	3.74%
+23	23	07/11/2023 10:00		p1A-AFR			p2A-AFR		Egito	Alexandria	A-AFR					Taça África	1ª rodada	1	23	3.91%
+23	24	07/11/2023 13:00		p1B-AFR			p2B-AFR		Egito	Alexandria	B-AFR					Taça África	1ª rodada	1	24	4.08%
+23	25	07/11/2023 13:00		p1C-AFR			p2C-AFR		Egito	Cairo	C-AFR					Taça África	1ª rodada	1	25	4.25%
+23	26	07/11/2023 16:00		p1D-AFR			p2D-AFR		Egito	Alexandria	D-AFR					Taça África	1ª rodada	1	26	4.42%
+23	27	07/11/2023 16:00		p1E-AFR			p2E-AFR		Egito	Cairo	E-AFR					Taça África	1ª rodada	1	27	4.59%
+23	28	08/11/2023 10:00		p1A-EUR			p3A-EUR		Ucrânia	Kiev	A-EUR					Taça Europa	2ª rodada	1	28	4.76%
+23	29	08/11/2023 10:00		p2B-EUR			p3B-EUR		Ucrânia	Carcóvia	B-EUR					Taça Europa	2ª rodada	1	29	4.93%
+23	30	08/11/2023 13:00		p1C-EUR			p3C-EUR		Ucrânia	Kiev	C-EUR					Taça Europa	2ª rodada	1	30	5.10%
+23	31	08/11/2023 13:00		p2D-EUR			p3D-EUR		Ucrânia	Carcóvia	D-EUR					Taça Europa	2ª rodada	1	31	5.27%
+23	32	08/11/2023 16:00		p1E-EUR			p3E-EUR		Ucrânia	Kiev	E-EUR					Taça Europa	2ª rodada	1	32	5.44%
+23	33	08/11/2023 16:00		p2F-EUR			p3F-EUR		Ucrânia	Carcóvia	F-EUR					Taça Europa	2ª rodada	1	33	5.61%
+23	34	09/11/2023 10:00		p1G-EUR			p3G-EUR		Ucrânia	Kiev	G-EUR					Taça Europa	2ª rodada	1	34	5.78%
+23	35	09/11/2023 10:00		p2H-EUR			p3H-EUR		Ucrânia	Carcóvia	H-EUR					Taça Europa	2ª rodada	1	35	5.95%
+23	36	09/11/2023 13:00		p1I-EUR			p3I-EUR		Ucrânia	Kiev	I-EUR					Taça Europa	2ª rodada	1	36	6.12%
+23	37	09/11/2023 13:00		p2J-EUR			p3J-EUR		Ucrânia	Carcóvia	J-EUR					Taça Europa	2ª rodada	1	37	6.29%
+23	38	09/11/2023 16:00		p1K-EUR			p3K-EUR		Ucrânia	Kiev	K-EUR					Taça Europa	2ª rodada	1	38	6.46%
+23	39	09/11/2023 16:00		p2L-EUR			p3L-EUR		Ucrânia	Carcóvia	L-EUR					Taça Europa	2ª rodada	1	39	6.63%
+23	40	10/11/2023 14:00		p1A-AME			p3A-AME		Trinidad e Tobago	Port of Spain	A-AME					Taça América	2ª rodada	1	40	6.80%
+23	41	10/11/2023 14:00		p2B-AME			p3B-AME		Trinidad e Tobago	Couva	B-AME					Taça América	2ª rodada	1	41	6.97%
+23	42	10/11/2023 17:00		p1C-AME			p3C-AME		Trinidad e Tobago	Port of Spain	C-AME					Taça América	2ª rodada	1	42	7.14%
+23	43	10/11/2023 17:00		p2D-AME			p3D-AME		Trinidad e Tobago	Couva	D-AME					Taça América	2ª rodada	1	43	7.31%
+23	44	10/11/2023 20:00		p1E-AME			p3E-AME		Trinidad e Tobago	Port of Spain	E-AME					Taça América	2ª rodada	1	44	7.48%
+23	45	10/11/2023 20:00		p2F-AME			p3F-AME		Trinidad e Tobago	Couva	F-AME					Taça América	2ª rodada	1	45	7.65%
+23	46	11/11/2023 04:00		p1A-ASO			p3A-ASO		Coréia do Norte	Rungra Island	A-ASO					Taça Ásia-Oceania	2ª rodada	1	46	7.82%
+23	47	11/11/2023 04:00		p2B-ASO			p3B-ASO		Coréia do Norte	Pyongyang	B-ASO					Taça Ásia-Oceania	2ª rodada	1	47	7.99%
+23	48	11/11/2023 07:00		p1C-ASO			p3C-ASO		Coréia do Norte	Rungra Island	C-ASO					Taça Ásia-Oceania	2ª rodada	1	48	8.16%
+23	49	11/11/2023 07:00		p2D-ASO			p3D-ASO		Coréia do Norte	Pyongyang	D-ASO					Taça Ásia-Oceania	2ª rodada	1	49	8.33%
+23	50	11/11/2023 10:00		p1A-AFR			p3A-AFR		Egito	Cairo	A-AFR					Taça África	2ª rodada	1	50	8.50%
+23	51	11/11/2023 13:00		p2B-AFR			p3B-AFR		Egito	Alexandria	B-AFR					Taça África	2ª rodada	1	51	8.67%
+23	52	11/11/2023 13:00		p1C-AFR			p3C-AFR		Egito	Cairo	C-AFR					Taça África	2ª rodada	1	52	8.84%
+23	53	11/11/2023 16:00		p2D-AFR			p3D-AFR		Egito	Alexandria	D-AFR					Taça África	2ª rodada	1	53	9.01%
+23	54	11/11/2023 16:00		p1E-AFR			p3E-AFR		Egito	Cairo	E-AFR					Taça África	2ª rodada	1	54	9.18%
+23	55	12/11/2023 10:00		p2A-EUR			p3A-EUR		Ucrânia	Kiev	A-EUR					Taça Europa	3ª rodada	1	55	9.35%
+23	56	12/11/2023 10:00		p1B-EUR			p3B-EUR		Ucrânia	Carcóvia	B-EUR					Taça Europa	3ª rodada	1	56	9.52%
+23	57	12/11/2023 13:00		p2C-EUR			p3C-EUR		Ucrânia	Kiev	C-EUR					Taça Europa	3ª rodada	1	57	9.69%
+23	58	12/11/2023 13:00		p1D-EUR			p3D-EUR		Ucrânia	Carcóvia	D-EUR					Taça Europa	3ª rodada	1	58	9.86%
+23	59	12/11/2023 16:00		p2E-EUR			p3E-EUR		Ucrânia	Kiev	E-EUR					Taça Europa	3ª rodada	1	59	10.03%
+23	60	12/11/2023 16:00		p1F-EUR			p3F-EUR		Ucrânia	Carcóvia	F-EUR					Taça Europa	3ª rodada	1	60	10.20%
+23	61	13/11/2023 10:00		p2G-EUR			p3G-EUR		Ucrânia	Kiev	G-EUR					Taça Europa	3ª rodada	1	61	10.37%
+23	62	13/11/2023 10:00		p1H-EUR			p3H-EUR		Ucrânia	Carcóvia	H-EUR					Taça Europa	3ª rodada	1	62	10.54%
+23	63	13/11/2023 13:00		p2I-EUR			p3I-EUR		Ucrânia	Kiev	I-EUR					Taça Europa	3ª rodada	1	63	10.71%
+23	64	13/11/2023 13:00		p1J-EUR			p3J-EUR		Ucrânia	Carcóvia	J-EUR					Taça Europa	3ª rodada	1	64	10.88%
+23	65	13/11/2023 16:00		p2K-EUR			p3K-EUR		Ucrânia	Kiev	K-EUR					Taça Europa	3ª rodada	1	65	11.05%
+23	66	13/11/2023 16:00		p1L-EUR			p3L-EUR		Ucrânia	Carcóvia	L-EUR					Taça Europa	3ª rodada	1	66	11.22%
+23	67	14/11/2023 14:00		p2A-AME			p3A-AME		Trinidad e Tobago	Port of Spain	A-AME					Taça América	3ª rodada	1	67	11.39%
+23	68	14/11/2023 14:00		p1B-AME			p3B-AME		Trinidad e Tobago	Couva	B-AME					Taça América	3ª rodada	1	68	11.56%
+23	69	14/11/2023 17:00		p2C-AME			p3C-AME		Trinidad e Tobago	Port of Spain	C-AME					Taça América	3ª rodada	1	69	11.73%
+23	70	14/11/2023 17:00		p1D-AME			p3D-AME		Trinidad e Tobago	Couva	D-AME					Taça América	3ª rodada	1	70	11.90%
+23	71	14/11/2023 20:00		p2E-AME			p3E-AME		Trinidad e Tobago	Port of Spain	E-AME					Taça América	3ª rodada	1	71	12.07%
+23	72	14/11/2023 20:00		p1F-AME			p3F-AME		Trinidad e Tobago	Couva	F-AME					Taça América	3ª rodada	1	72	12.24%
+23	73	15/11/2023 04:00		p2A-ASO			p3A-ASO		Coréia do Norte	Rungra Island	A-ASO					Taça Ásia-Oceania	3ª rodada	1	73	12.41%
+23	74	15/11/2023 04:00		p1B-ASO			p3B-ASO		Coréia do Norte	Pyongyang	B-ASO					Taça Ásia-Oceania	3ª rodada	1	74	12.59%
+23	75	15/11/2023 07:00		p2C-ASO			p3C-ASO		Coréia do Norte	Rungra Island	C-ASO					Taça Ásia-Oceania	3ª rodada	1	75	12.76%
+23	76	15/11/2023 07:00		p1D-ASO			p3D-ASO		Coréia do Norte	Pyongyang	D-ASO					Taça Ásia-Oceania	3ª rodada	1	76	12.93%
+23	77	15/11/2023 10:00		p2A-AFR			p3A-AFR		Egito	Alexandria	A-AFR					Taça África	3ª rodada	1	77	13.10%
+23	78	15/11/2023 13:00		p1B-AFR			p3B-AFR		Egito	Alexandria	B-AFR					Taça África	3ª rodada	1	78	13.27%
+23	79	15/11/2023 13:00		p2C-AFR			p3C-AFR		Egito	Cairo	C-AFR					Taça África	3ª rodada	1	79	13.44%
+23	80	15/11/2023 16:00		p1D-AFR			p3D-AFR		Egito	Alexandria	D-AFR					Taça África	3ª rodada	1	80	13.61%
+23	81	15/11/2023 16:00		p2E-AFR			p3E-AFR		Egito	Cairo	E-AFR					Taça África	3ª rodada	1	81	13.78%
+23	82	16/11/2023 13:00		8o1-EUR			9o1-EUR		Ucrânia	Kiev						Taça Europa	8vas-de-final	1	82	13.95%
+23	83	16/11/2023 13:00		5o1-EUR			12o1-EUR		Ucrânia	Carcóvia						Taça Europa	8vas-de-final	1	83	14.12%
+23	84	16/11/2023 16:00		7o1-EUR			10o1-EUR		Ucrânia	Kiev						Taça Europa	8vas-de-final	1	84	14.29%
+23	85	16/11/2023 16:00		6o1-EUR			11o1-EUR		Ucrânia	Carcóvia						Taça Europa	8vas-de-final	1	85	14.46%
+23	86	17/11/2023 17:00		4o1-AME			5o1-AME		Trinidad e Tobago	Port of Spain						Taça América	4as-de-final	1	86	14.63%
+23	87	17/11/2023 20:00		3o1-AME			6o1-AME		Trinidad e Tobago	Couva						Taça América	4as-de-final	1	87	14.80%
+23	88	18/11/2023 16:00		4o1-AFR			5o1-AFR		Egito	Cairo						Taça África	4as-de-final	1	88	14.97%
+23	89	19/11/2023 13:00		1o1-EUR			o1-EUR		Ucrânia	Kiev						Taça Europa	4as-de-final	1	89	15.14%
+23	90	19/11/2023 13:00		4o1-EUR			o2-EUR		Ucrânia	Carcóvia						Taça Europa	4as-de-final	1	90	15.31%
+23	91	19/11/2023 16:00		2o1-EUR			o3-EUR		Ucrânia	Kiev						Taça Europa	4as-de-final	1	91	15.48%
+23	92	19/11/2023 16:00		3o1-EUR			o4-EUR		Ucrânia	Carcóvia						Taça Europa	4as-de-final	1	92	15.65%
+23	93	20/11/2023 04:00		1o1-ASO			4o1-ASO		Coréia do Norte	Rungra Island						Taça Ásia-Oceania	Semi-final	2	94	15.99%
+23	94	20/11/2023 07:00		2o1-ASO			3o1-ASO		Coréia do Norte	Pyongyang						Taça Ásia-Oceania	Semi-final	2	96	16.33%
+23	95	21/11/2023 13:00		1o1-AFR			q1-AFR		Egito	Alexandria						Taça África	Semi-final	2	98	16.67%
+23	96	21/11/2023 16:00		2o1-AFR			3o1-AFR		Egito	Cairo						Taça África	Semi-final	2	100	17.01%
+23	97	22/11/2023 17:00		1o1-AME			q1-AME		Trinidad e Tobago	Port of Spain						Taça América	Semi-final	2	102	17.35%
+23	98	22/11/2023 20:00		2o1-AME			q2-AME		Trinidad e Tobago	Couva						Taça América	Semi-final	2	104	17.69%
+23	99	23/11/2023 13:00		q1-EUR			q2-EUR		Ucrânia	Kiev						Taça Europa	Semi-final	2	106	18.03%
+23	100	23/11/2023 16:00		q3-EUR			q4-EUR		Ucrânia	Carcóvia						Taça Europa	Semi-final	2	108	18.37%
+23	101	24/11/2023 07:00		s1-ASO			s2-ASO		Coréia do Norte	Rungra Island						Taça Ásia-Oceania	Final	5	113	19.22%
+23	102	24/11/2023 16:00		s1-AFR			s2-AFR		Egito	Alexandria						Taça África	Final	5	118	20.07%
+23	103	25/11/2023 20:00		s1-AME			s2-AME		Trinidad e Tobago	Port of Spain						Taça América	Final	5	123	20.92%
+23	104	26/11/2023 16:00		s1-EUR			s2-EUR		Ucrânia	Kiev						Taça Europa	Final	5	128	21.77%
+23	105	30/11/2023 20:00		EUROPA			ÁFRICA		Trinidad e Tobago	Port of Spain						Taça Mundial	Semi-final	3	131	22.28%
+23	106	30/11/2023 23:00		AMÉRICA			ASIA-OCE		Trinidad e Tobago	Couva						Taça Mundial	Semi-final	3	134	22.79%
+23	107	03/12/2023 20:00		ps1-TAC			ps2-TAC		Trinidad e Tobago	Couva						Taça Mundial	D. 3º Lugar	3	137	23.30%
+23	108	03/12/2023 23:00		s1-TAC			s2-TAC		Trinidad e Tobago	Port of Spain						Taça Mundial	Final	6	143	24.32%
+23	109	06/12/2023 14:00		p1A			p2A		Trinidad e Tobago	Port of Spain	A					Copa do Mundo	1ª rodada	3	146	24.83%
+23	110	06/12/2023 18:00		p3A			p4A		Trinidad e Tobago	Couva	A					Copa do Mundo	1ª rodada	3	149	25.34%
+23	111	07/12/2023 14:00		p1B			p2B		São Cristóvão	Basseterre	B					Copa do Mundo	1ª rodada	3	152	25.85%
+23	112	07/12/2023 16:00		p3B			p4B		Trinidad e Tobago	Arima	B					Copa do Mundo	1ª rodada	3	155	26.36%
+23	113	07/12/2023 18:00		p1C			p2C		St Vicente	Arnos Vale	C					Copa do Mundo	1ª rodada	3	158	26.87%
+23	114	07/12/2023 20:00		p3C			p4C		São Cristóvão	Charlestown	C					Copa do Mundo	1ª rodada	3	161	27.38%
+23	115	08/12/2023 12:00		p1D			p2D		Trinidad e Tobago	Couva	D					Copa do Mundo	1ª rodada	3	164	27.89%
+23	116	08/12/2023 14:00		p3D			p4D		São Cristóvão	Basseterre	D					Copa do Mundo	1ª rodada	3	167	28.40%
+23	117	08/12/2023 16:00		p1E			p2E		St Vicente	Arnos Vale	E					Copa do Mundo	1ª rodada	3	170	28.91%
+23	118	08/12/2023 18:00		p3E			p4E		Trinidad e Tobago	Marabella	E					Copa do Mundo	1ª rodada	3	173	29.42%
+23	119	08/12/2023 20:00		p1F			p2F		Trinidad e Tobago	Port of Spain	F					Copa do Mundo	1ª rodada	3	176	29.93%
+23	120	08/12/2023 22:00		p3F			p4F		St Vicente	Kingstown	F					Copa do Mundo	1ª rodada	3	179	30.44%
+23	121	09/12/2023 12:00		p1G			p2G		St Vicente	Arnos Vale	G					Copa do Mundo	1ª rodada	3	182	30.95%
+23	122	09/12/2023 14:00		p3G			p4G		Trinidad e Tobago	Marabella	G					Copa do Mundo	1ª rodada	3	185	31.46%
+23	123	09/12/2023 16:00		p1H			p2H		Trinidad e Tobago	Couva	H					Copa do Mundo	1ª rodada	3	188	31.97%
+23	124	09/12/2023 18:00		p3H			p4H		São Cristóvão	Charlestown	H					Copa do Mundo	1ª rodada	3	191	32.48%
+23	125	09/12/2023 20:00		p1I			p2I		Trinidad e Tobago	Arima	I					Copa do Mundo	1ª rodada	3	194	32.99%
+23	126	09/12/2023 22:00		p3I			p4I		St Vicente	Kingstown	I					Copa do Mundo	1ª rodada	3	197	33.50%
+23	127	10/12/2023 12:00		p1J			p2J		São Cristóvão	Basseterre	J					Copa do Mundo	1ª rodada	3	200	34.01%
+23	128	10/12/2023 14:00		p3J			p4J		Trinidad e Tobago	Arima	J					Copa do Mundo	1ª rodada	3	203	34.52%
+23	129	10/12/2023 16:00		p1K			p2K		Trinidad e Tobago	Port of Spain	K					Copa do Mundo	1ª rodada	3	206	35.03%
+23	130	10/12/2023 18:00		p3K			p4K		St Vicente	Kingstown	K					Copa do Mundo	1ª rodada	3	209	35.54%
+23	131	10/12/2023 20:00		p1L			p2L		Trinidad e Tobago	Marabella	L					Copa do Mundo	1ª rodada	3	212	36.05%
+23	132	10/12/2023 22:00		p3L			p4L		São Cristóvão	Charlestown	L					Copa do Mundo	1ª rodada	3	215	36.56%
+23	133	11/12/2023 12:00		p1A			p3A		Trinidad e Tobago	Port of Spain	A					Copa do Mundo	2ª rodada	3	218	37.07%
+23	134	11/12/2023 14:00		p2A			p4A		Trinidad e Tobago	Couva	A					Copa do Mundo	2ª rodada	3	221	37.59%
+23	135	11/12/2023 16:00		p1B			p3B		São Cristóvão	Basseterre	B					Copa do Mundo	2ª rodada	3	224	38.10%
+23	136	11/12/2023 18:00		p2B			p4B		Trinidad e Tobago	Arima	B					Copa do Mundo	2ª rodada	3	227	38.61%
+23	137	11/12/2023 20:00		p1C			p3C		St Vicente	Arnos Vale	C					Copa do Mundo	2ª rodada	3	230	39.12%
+23	138	11/12/2023 22:00		p2C			p4C		São Cristóvão	Charlestown	C					Copa do Mundo	2ª rodada	3	233	39.63%
+23	139	12/12/2023 12:00		p1D			p3D		Trinidad e Tobago	Couva	D					Copa do Mundo	2ª rodada	3	236	40.14%
+23	140	12/12/2023 14:00		p2D			p4D		São Cristóvão	Basseterre	D					Copa do Mundo	2ª rodada	3	239	40.65%
+23	141	12/12/2023 16:00		p1E			p3E		St Vicente	Arnos Vale	E					Copa do Mundo	2ª rodada	3	242	41.16%
+23	142	12/12/2023 18:00		p2E			p4E		Trinidad e Tobago	Marabella	E					Copa do Mundo	2ª rodada	3	245	41.67%
+23	143	12/12/2023 20:00		p1F			p3F		Trinidad e Tobago	Port of Spain	F					Copa do Mundo	2ª rodada	3	248	42.18%
+23	144	12/12/2023 22:00		p2F			p4F		St Vicente	Kingstown	F					Copa do Mundo	2ª rodada	3	251	42.69%
+23	145	13/12/2023 12:00		p1G			p3G		St Vicente	Arnos Vale	G					Copa do Mundo	2ª rodada	3	254	43.20%
+23	146	13/12/2023 14:00		p2G			p4G		Trinidad e Tobago	Marabella	G					Copa do Mundo	2ª rodada	3	257	43.71%
+23	147	13/12/2023 16:00		p1H			p3H		Trinidad e Tobago	Couva	H					Copa do Mundo	2ª rodada	3	260	44.22%
+23	148	13/12/2023 18:00		p2H			p4H		São Cristóvão	Charlestown	H					Copa do Mundo	2ª rodada	3	263	44.73%
+23	149	13/12/2023 20:00		p1I			p3I		Trinidad e Tobago	Arima	I					Copa do Mundo	2ª rodada	3	266	45.24%
+23	150	13/12/2023 22:00		p2I			p4I		St Vicente	Kingstown	I					Copa do Mundo	2ª rodada	3	269	45.75%
+23	151	14/12/2023 12:00		p1J			p3J		São Cristóvão	Basseterre	J					Copa do Mundo	2ª rodada	3	272	46.26%
+23	152	14/12/2023 14:00		p2J			p4J		Trinidad e Tobago	Arima	J					Copa do Mundo	2ª rodada	3	275	46.77%
+23	153	14/12/2023 16:00		p1K			p3K		Trinidad e Tobago	Port of Spain	K					Copa do Mundo	2ª rodada	3	278	47.28%
+23	154	14/12/2023 18:00		p2K			p4K		St Vicente	Kingstown	K					Copa do Mundo	2ª rodada	3	281	47.79%
+23	155	14/12/2023 20:00		p1L			p3L		Trinidad e Tobago	Marabella	L					Copa do Mundo	2ª rodada	3	284	48.30%
+23	156	14/12/2023 22:00		p2L			p4L		São Cristóvão	Charlestown	L					Copa do Mundo	2ª rodada	3	287	48.81%
+23	157	15/12/2023 14:00		p1A			p4A		Trinidad e Tobago	Port of Spain	A					Copa do Mundo	3ª rodada	4	291	49.49%
+23	158	15/12/2023 14:00		p2A			p3A		Trinidad e Tobago	Couva	A					Copa do Mundo	3ª rodada	4	295	50.17%
+23	159	15/12/2023 17:00		p1B			p4B		São Cristóvão	Basseterre	B					Copa do Mundo	3ª rodada	4	299	50.85%
+23	160	15/12/2023 17:00		p2B			p3B		Trinidad e Tobago	Arima	B					Copa do Mundo	3ª rodada	4	303	51.53%
+23	161	15/12/2023 20:00		p1C			p4C		St Vicente	Arnos Vale	C					Copa do Mundo	3ª rodada	4	307	52.21%
+23	162	15/12/2023 20:00		p2C			p3C		São Cristóvão	Charlestown	C					Copa do Mundo	3ª rodada	4	311	52.89%
+23	163	16/12/2023 14:00		p1D			p4D		Trinidad e Tobago	Couva	D					Copa do Mundo	3ª rodada	4	315	53.57%
+23	164	16/12/2023 14:00		p2D			p3D		São Cristóvão	Basseterre	D					Copa do Mundo	3ª rodada	4	319	54.25%
+23	165	16/12/2023 17:00		p1E			p4E		St Vicente	Arnos Vale	E					Copa do Mundo	3ª rodada	4	323	54.93%
+23	166	16/12/2023 17:00		p2E			p3E		Trinidad e Tobago	Marabella	E					Copa do Mundo	3ª rodada	4	327	55.61%
+23	167	16/12/2023 20:00		p1F			p4F		Trinidad e Tobago	Port of Spain	F					Copa do Mundo	3ª rodada	4	331	56.29%
+23	168	16/12/2023 20:00		p2F			p3F		St Vicente	Kingstown	F					Copa do Mundo	3ª rodada	4	335	56.97%
+23	169	17/12/2023 14:00		p1G			p4G		St Vicente	Arnos Vale	G					Copa do Mundo	3ª rodada	4	339	57.65%
+23	170	17/12/2023 14:00		p2G			p3G		Trinidad e Tobago	Marabella	G					Copa do Mundo	3ª rodada	4	343	58.33%
+23	171	17/12/2023 17:00		p1H			p4H		Trinidad e Tobago	Couva	H					Copa do Mundo	3ª rodada	4	347	59.01%
+23	172	17/12/2023 17:00		p2H			p3H		São Cristóvão	Charlestown	H					Copa do Mundo	3ª rodada	4	351	59.69%
+23	173	17/12/2023 20:00		p1I			p4I		Trinidad e Tobago	Arima	I					Copa do Mundo	3ª rodada	4	355	60.37%
+23	174	17/12/2023 20:00		p2I			p3I		St Vicente	Kingstown	I					Copa do Mundo	3ª rodada	4	359	61.05%
+23	175	18/12/2023 14:00		p1J			p4J		São Cristóvão	Basseterre	J					Copa do Mundo	3ª rodada	4	363	61.73%
+23	176	18/12/2023 14:00		p2J			p3J		Trinidad e Tobago	Arima	J					Copa do Mundo	3ª rodada	4	367	62.41%
+23	177	18/12/2023 17:00		p1K			p4K		Trinidad e Tobago	Port of Spain	K					Copa do Mundo	3ª rodada	4	371	63.10%
+23	178	18/12/2023 17:00		p2K			p3K		St Vicente	Kingstown	K					Copa do Mundo	3ª rodada	4	375	63.78%
+23	179	18/12/2023 20:00		p1L			p4L		Trinidad e Tobago	Marabella	L					Copa do Mundo	3ª rodada	4	379	64.46%
+23	180	18/12/2023 20:00		p2L			p3L		São Cristóvão	Charlestown	L					Copa do Mundo	3ª rodada	4	383	65.14%
+23	181	19/12/2023 12:00		1A			3BCFDE		Trinidad e Tobago	Port of Spain						Copa do Mundo	16-avos-de-final	5	388	65.99%
+23	182	19/12/2023 15:00		2D			2E		St Vicente	Arnos Vale						Copa do Mundo	16-avos-de-final	5	393	66.84%
+23	183	19/12/2023 18:00		1B			3ADECF		Trinidad e Tobago	Arima						Copa do Mundo	16-avos-de-final	5	398	67.69%
+23	184	19/12/2023 21:00		1C			2F		São Cristóvão	Charlestown						Copa do Mundo	16-avos-de-final	5	403	68.54%
+23	185	20/12/2023 12:00		1D			3CEFGHIAB		Trinidad e Tobago	Couva						Copa do Mundo	16-avos-de-final	5	408	69.39%
+23	186	20/12/2023 15:00		2A			2B		São Cristóvão	Basseterre						Copa do Mundo	16-avos-de-final	5	413	70.24%
+23	187	20/12/2023 18:00		1E			3ABDGHICF		Trinidad e Tobago	Marabella						Copa do Mundo	16-avos-de-final	5	418	71.09%
+23	188	20/12/2023 21:00		1F			2C		St Vicente	Kingstown						Copa do Mundo	16-avos-de-final	5	423	71.94%
+23	189	21/12/2023 12:00		1G			3nGJK		St Vicente	Arnos Vale						Copa do Mundo	16-avos-de-final	5	428	72.79%
+23	190	21/12/2023 15:00		2J			2K		Trinidad e Tobago	Port of Spain						Copa do Mundo	16-avos-de-final	5	433	73.64%
+23	191	21/12/2023 18:00		1H			3nHIL		São Cristóvão	Charlestown						Copa do Mundo	16-avos-de-final	5	438	74.49%
+23	192	21/12/2023 21:00		1I			2L		Trinidad e Tobago	Arima						Copa do Mundo	16-avos-de-final	5	443	75.34%
+23	193	22/12/2023 12:00		1J			3nGHJ		São Cristóvão	Basseterre						Copa do Mundo	16-avos-de-final	5	448	76.19%
+23	194	22/12/2023 15:00		2G			2H		Trinidad e Tobago	Couva						Copa do Mundo	16-avos-de-final	5	453	77.04%
+23	195	22/12/2023 18:00		1K			3nIKL		St Vicente	Kingstown						Copa do Mundo	16-avos-de-final	5	458	77.89%
+23	196	22/12/2023 21:00		1L			2I		Trinidad e Tobago	Marabella						Copa do Mundo	16-avos-de-final	5	463	78.74%
+23	197	23/12/2023 15:00		16a1			16a2		Trinidad e Tobago	Port of Spain						Copa do Mundo	8vas-de-final	6	469	79.76%
+23	198	23/12/2023 19:00		16a3			16a4		Trinidad e Tobago	Arima						Copa do Mundo	8vas-de-final	6	475	80.78%
+23	199	24/12/2023 15:00		16a5			16a6		Trinidad e Tobago	Couva						Copa do Mundo	8vas-de-final	6	481	81.80%
+23	200	24/12/2023 19:00		16a7			16a8		Trinidad e Tobago	Marabella						Copa do Mundo	8vas-de-final	6	487	82.82%
+23	201	25/12/2023 15:00		16a9			16a10		St Vicente	Arnos Vale						Copa do Mundo	8vas-de-final	6	493	83.84%
+23	202	25/12/2023 19:00		16a11			16a12		São Cristóvão	Charlestown						Copa do Mundo	8vas-de-final	6	499	84.86%
+23	203	26/12/2023 15:00		16a13			16a14		São Cristóvão	Basseterre						Copa do Mundo	8vas-de-final	6	505	85.88%
+23	204	26/12/2023 19:00		16a15			16a16		St Vicente	Kingstown						Copa do Mundo	8vas-de-final	6	511	86.90%
+23	205	29/12/2023 15:00		o1			o2		Trinidad e Tobago	Port of Spain						Copa do Mundo	4as-de-final	8	519	88.27%
+23	206	29/12/2023 19:00		o3			o4		São Cristóvão	Basseterre						Copa do Mundo	4as-de-final	8	527	89.63%
+23	207	30/12/2023 15:00		o5			o6		St Vicente	Arnos Vale						Copa do Mundo	4as-de-final	8	535	90.99%
+23	208	30/12/2023 19:00		o7			o8		Trinidad e Tobago	Arima						Copa do Mundo	4as-de-final	8	543	92.35%
+23	209	02/01/2024 19:00		q1			q2		Trinidad e Tobago	Port of Spain						Copa do Mundo	Semi-final	10	553	94.05%
+23	210	03/01/2024 19:00		q3			q4		St Vicente	Arnos Vale						Copa do Mundo	Semi-final	10	563	95.75%
+23	211	06/01/2024 19:00		ps1			ps2		Trinidad e Tobago	Couva						Copa do Mundo	D. 3º Lugar	10	573	97.45%
+23	212	07/01/2024 19:00		s1			s2		Trinidad e Tobago	Port of Spain						Copa do Mundo	Final	15	588	100.00%

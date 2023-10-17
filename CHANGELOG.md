@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
+## [1.5.0] - 2023-10-17
+
+### Changed
+- Updates for ranking and table 23
+- Moedasgame rules and interface for games
+
 ## [1.4.8] - 2023-04-03
 
 ### Fixed
@@ -207,7 +213,8 @@ All notable changes to this project will be documented in this file. Based on [K
 - Table from games from first season year 20
 
 
-[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.4.8...HEAD
+[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/leafarlins/gokopa/compare/v1.4.8..1.5.0/
 [1.4.8]: https://github.com/leafarlins/gokopa/compare/v1.4.7..1.4.8/
 [1.4.7]: https://github.com/leafarlins/gokopa/compare/v1.4.6..1.4.7/
 [1.4.6]: https://github.com/leafarlins/gokopa/compare/v1.4.5..1.4.6/

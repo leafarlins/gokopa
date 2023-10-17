@@ -162,7 +162,7 @@
     <h2>Patrocínios e apoios</h2>
     {% if info['patrocinados'] %}
     <div class="row">{% for t in info['patrocinados'] %}
-    <div class="card {% if t['patrocinador'] == info['username'] %}text-white bg-secondary{% else %}bg-light{% endif %} mb-3 col-12 col-sm-6 col-md-4 col-lg-6 col-xl-4" style="max-width: 25rem;">
+    <div class="card {% if t['patrocinador'] == info['username'] %}text-white bg-secondary{% else %}bg-light{% endif %} mb-3 col-12 col-sm-6 col-md-4 col-lg-6 col-xl-4" style="max-width: 25rem;" id="pat{{ t['time'] }}">
         <div class="card-header">{% if t['patrocinador'] == info['username'] %}<b>{{ t['patrocinador'] }}</b>{% else %}{{ t['patrocinador'] }}{% endif %}</div>
         <div class="card-body">
           <h5 class="card-title"><img class="flag" src="../static/img/flag/{{ t['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ t['time'] }} {{ t['valor'] }}🪙</h5>
@@ -218,8 +218,28 @@
         {% if info['jogos'] %}
         <ul class="list-group m-2">
           {% for j in info['jogos'] %}
-            <li class="list-group-item">({{ j['time1_valor'] }}🪙) {% if j['pat1'] != '-' %}<b title="{{ j['pat1'] }}">{{ j['time1'] }}</b>{% else %}{{ j['time1'] }}{% endif %} <img class="flag" src="../static/img/flag/{{ j['time1'] }}.png" onerror="this.src='../static/img/flag/default.png'"> x <img class="flag" src="../static/img/flag/{{ j['time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {% if j['pat2'] != '-' %}<b title="{{ j['pat2'] }}">{{ j['time2'] }}</b>{% else %}{{ j['time2'] }}{% endif %} ({{ j['time2_valor'] }}🪙)<br>
-            {{ j['moedas_em_jogo'] }}🪙 em jogo</li>
+            <li class="list-group-item">({{ j['time1_valor'] }}🪙) {% if j['pat1'] != '-' %}<b title="{{ j['pat1'] }}">{{ j['time1'] }}</b>{% else %}{{ j['time1'] }}{% endif %} <img class="flag" src="../static/img/flag/{{ j['time1'] }}.png" onerror="this.src='../static/img/flag/default.png'"> x <img class="flag" src="../static/img/flag/{{ j['time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {% if j['pat2'] != '-' %}<b title="{{ j['pat2'] }}">{{ j['time2'] }}</b>{% else %}{{ j['time2'] }}{% endif %} ({{ j['time2_valor'] }}🪙)
+            {% if info['userlogado'] %}<br>
+                {% if j['pat1']!='-' %}
+                    {% if j['pat1']==info['username'] %}
+                    <a href="#pat{{ j['time1'] }}"><button title="Adicionar patrocínio" class="btn btn-outline-warning btn-sm">+</button></a><abbr title="Patrocinando">(pat)</abbr>
+                    {% else %}
+                    <a href="#pat{{ j['time1'] }}"><button title="Adicionar apoio" class="btn btn-outline-warning btn-sm">+</button></a>({{ j['meuapo1'] }}🪙)
+                    {% endif %}
+                {% else %}<abbr title="Sem patrocinador">( - )</abbr>
+                {% endif %}
+                 x <!-- <img class="miniflag" src="../static/img/flag/{{ j['time1'] }}.png" onerror="this.src='../static/img/flag/default.png'"> x <img class="miniflag" src="../static/img/flag/{{ j['time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> -->
+                {% if j['pat2']!='-' %}
+                    {% if j['pat2']==info['username'] %}
+                    <abbr title="Patrocinando">(pat)</abbr><a href="#pat{{ j['time2'] }}"><button title="Adicionar patrocínio" class="btn btn-outline-warning btn-sm">+</button></a>
+                    {% else %}
+                    ({{ j['meuapo2'] }}🪙)<a href="#pat{{ j['time2'] }}"><button title="Adicionar apoio" class="btn btn-outline-warning btn-sm">+</button></a>
+                    {% endif %}
+                {% else %}<abbr title="Sem patrocinador">( - )</abbr>
+                {% endif %}
+            {% endif %}
+            <br>{{ j['moedas_em_jogo'] }}🪙 em jogo
+            </li>
           {% endfor %}
         </ul>
         {% else %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="sectionj">
+
+
+    <main class="form-signin text-center">
+        <form action="/validagokopa" method="POST">
+            <h2>Login</h2>
+
+            {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
+            <div class="alert alert-{{ category }} text-center" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %} {% endif %} {% endwith %}
+
+            <p>Estamos iniciando a nova edição da Gokopa. Para participar, clique no botão abaixo e garanta sua vaga no campeonato!</p>
+            <p>Você tem até o dia {{ datamax }} para garantir sua participação.</p>
+
+            <button class="w-100 btn btn-lg btn-primary m-3" type="submit">Quero Participar!</button>
+        </form>
+    </main>
+
+</div>
+{% endblock %}
