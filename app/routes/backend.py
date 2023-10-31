@@ -383,20 +383,20 @@ def frequency():
     freq = [0,0,0,0,0,0,0,0,0,0,0]
     totalb = 0
     # Comentar ate gk22
-    freq = [294,0,17,0,57,48,17,34,0,0,28]
-    totalb = 495
-    # for jogo in lista_jogos:
-    #     idjogo = jogo["Jogo"]
-    #     aposta = mongo.db.apostas22.find_one_or_404({"Jogo": idjogo})
-    #     for user in get_all_users():
-    #         b1 = aposta.get(str(user + "_p1"))
-    #         b2 = aposta.get(str(user + "_p2"))
-    #         vit = aposta.get(str(user + "_vit"))
-    #         if b1 != None and b2 != None:
-    #             if jogo['p1'] != "" or jogo['p1'] != None:
-    #                 score = get_score_game2(jogo,b1,b2,vit)
-    #                 freq[score] += 1
-    #                 totalb += 1
+    #freq = [294,0,17,0,57,48,17,34,0,0,28]
+    #totalb = 495
+    for jogo in lista_jogos:
+        idjogo = jogo["Jogo"]
+        aposta = mongo.db.apostas22.find_one_or_404({"Jogo": idjogo})
+        for user in get_all_users():
+            b1 = aposta.get(str(user + "_p1"))
+            b2 = aposta.get(str(user + "_p2"))
+            vit = aposta.get(str(user + "_vit"))
+            if b1 != None and b2 != None:
+                if jogo['p1'] != "" or jogo['p1'] != None:
+                    score = get_score_game2(jogo,b1,b2,vit)
+                    freq[score] += 1
+                    totalb += 1
     freq1j = [u/totalb for u in freq]
     freq2j = [0 for i in range(21)]
     for i in range(11):

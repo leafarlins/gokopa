@@ -429,7 +429,7 @@ def add_news(titulo,noticia,img="",link="",linkname=""):
     if img == 'youtube':
         mensagem+="\n\nhttps://www.youtube.com/watch?v=" + link
     else:
-        mensagem+="\n\n➡️ Todas as notícias em: https://gokopa.leafarlins.com/noticias"
+        mensagem+="\n\n➡️ Todas as notícias em: https://gokopa.leafarlins.com/noticias23"
     print("Preparando mensagem para envio")
     print(mensagem)
     if TELEGRAM and titulo != 'Jogos recentes':

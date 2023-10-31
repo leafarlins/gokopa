@@ -1,5 +1,5 @@
 import re
-from app.routes.backend import get_user_name, progress_data,get_aposta,get_score_game,get_rank, make_score_board,read_config_ranking,probability,get_ranking
+from app.routes.backend import get_next_jogos, get_user_name, progress_data,get_aposta,get_score_game,get_rank, make_score_board,read_config_ranking,probability,get_ranking
 from array import array
 from datetime import datetime, time
 from typing import Collection
@@ -244,10 +244,9 @@ def gerar_tabela(ano):
         last_game = progress_data()['last_game']
         for torneio in competicao:
             adicionar = False
-            if torneio == 'Copa do Mundo':
-                if last_game > 108 and last_game < 198:
-                    adicionar = True
-            elif last_game > 1 and last_game < 91:
+            if torneio == 'Copa do Mundo' and last_game > 108 and last_game < 209:
+                adicionar = True
+            elif torneio != 'Copa do Mundo' and last_game > 1 and last_game < 91:
                 adicionar = True
             if adicionar:
                 classificados = {
@@ -283,16 +282,39 @@ def gerar_tabela(ano):
 
                 # Definiçao de melhores 2os e 3os
                 if torneio == 'Copa do Mundo':
+                    times_1 = []
+                    times_2 = []
                     times_3 = []
+                    times_4 = []
                     for g in classificados['grupos']:
+                        times_1.append(g['times'][0])
+                        times_2.append(g['times'][1])
                         times_3.append(g['times'][2])
+                        times_4.append(g['times'][3])
+                    grupo_1 = {
+                        'nome': 'Primeiros',
+                        'times': sorted(sorted(sorted(sorted(times_1, key=lambda k: k['rnk']), key=lambda k: k['gol'],reverse=True), key=lambda k: k['sal'],reverse=True), key=lambda k: k['pts'],reverse=True)
+                    }
+                    grupo_2 = {
+                        'nome': 'Segundos',
+                        'times': sorted(sorted(sorted(sorted(times_2, key=lambda k: k['rnk']), key=lambda k: k['gol'],reverse=True), key=lambda k: k['sal'],reverse=True), key=lambda k: k['pts'],reverse=True)
+                    }
                     grupo_3 = {
                         'nome': 'Terceiros',
                         'times': sorted(sorted(sorted(sorted(times_3, key=lambda k: k['rnk']), key=lambda k: k['gol'],reverse=True), key=lambda k: k['sal'],reverse=True), key=lambda k: k['pts'],reverse=True)
                     }
+                    grupo_4 = {
+                        'nome': 'Quartos',
+                        'times': sorted(sorted(sorted(sorted(times_4, key=lambda k: k['rnk']), key=lambda k: k['gol'],reverse=True), key=lambda k: k['sal'],reverse=True), key=lambda k: k['pts'],reverse=True)
+                    }
+                    # Colore de amarelo os melhores terceiros colocados
                     for i in range(8):
                        grupo_3['times'][i]['cor'] = 'copa'
+                    # Adiciona a lista de 4 grupos na tabela de classificaçao
+                    classificados['grupos'].append(grupo_1)
+                    classificados['grupos'].append(grupo_2)
                     classificados['grupos'].append(grupo_3)
+                    classificados['grupos'].append(grupo_4)
                 elif torneio in ['Taça Ásia-Oceania','Taça América','Taça Europa','Taça África']:
                     if torneio == 'Taça África':
                         range_2o = 3
@@ -300,15 +322,22 @@ def gerar_tabela(ano):
                         range_2o = 8
                     else:
                         range_2o = 4
+                    times_1 = []
                     times_2 = []
                     for g in classificados['grupos']:
+                        times_1.append(g['times'][0])
                         times_2.append(g['times'][1])
+                    grupo_1 = {
+                        'nome': 'Primeiros',
+                        'times': sorted(sorted(sorted(sorted(times_1, key=lambda k: k['rnk']), key=lambda k: k['gol'],reverse=True), key=lambda k: k['sal'],reverse=True), key=lambda k: k['pts'],reverse=True)
+                    }
                     grupo_2 = {
                         'nome': 'Segundos',
                         'times': sorted(sorted(sorted(sorted(times_2, key=lambda k: k['rnk']), key=lambda k: k['gol'],reverse=True), key=lambda k: k['sal'],reverse=True), key=lambda k: k['pts'],reverse=True)
                     }
                     for i in range(range_2o):
                         grupo_2['times'][i]['cor'] = 'copa'
+                    classificados['grupos'].append(grupo_1)
                     classificados['grupos'].append(grupo_2)
 
                 competicao[torneio]['classificados'] = classificados
@@ -597,6 +626,7 @@ def return_team_history(team1):
     #print(pos_copa,pos_rank)
     return pos_copa,pos_rank
 
+@cache.memoize(3600)
 @gokopa.route('/historico',methods=["GET","POST"])
 def historico():
     time_1 = dict()
@@ -605,6 +635,8 @@ def historico():
     #print(lista_times)
     lista_jogos = []
     vev=[]
+    nextgameid = progress_data()['last_game']+1
+    lastgames = get_anoX_games(ANO,nextgameid,nextgameid+19)
     if request.method == "POST":
         time_1["nome"] = request.values.get("time1")
         time_2["nome"] = request.values.get("time2")
@@ -615,9 +647,20 @@ def historico():
             time_2["hc"],time_2["hr"] = return_team_history(time_2["nome"])
         else:
             flash(f'Times não encontrados na base.','danger')
-        #time1=""
-    #print(f"lista_jogos={lista_jogos},vev={vev},time1={time_1},time2={time_2},lista_times=get_team_list()")
-    return render_template('historico.html',menu='Gokopa',lista_jogos=lista_jogos,vev=vev,time1=time_1,time2=time_2,lista_times=lista_times)
+    new_lastgames = []
+    for jogo in lastgames:
+        if jogo.get('Time1') and jogo.get('Time2'):
+            listaj,jvev = return_historic_duels(jogo['Time1'],jogo['Time2'])
+            jogo['vev'] = jvev
+            new_lastgames.append(jogo)
+    data2t = {
+        'lista_jogos': lista_jogos,
+        'vev': vev,
+        'time1': time_1,
+        'time2': time_2,
+        'lista_times': lista_times
+    }
+    return render_template('historico.html',menu='Gokopa',data2t=data2t,lastgames=new_lastgames)
 
 @cache.memoize(3600*2)
 def getDossieTime(time):
