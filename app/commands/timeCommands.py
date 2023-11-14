@@ -563,10 +563,34 @@ def exec():
     #mongo.db.patrocinio.find_one_and_update({'Time': 'Holanda'},{'$set': {"Patrocinador" : "-"}})
     #mongo.db.tentarpat.find_one_and_update({'valor':500},{'$set': {'valor':0}})
     #mongo.db.patrocinio.find_and_modify({'Time': 'Holanda'},{'$set': {'Patrocinador': "-"}})
-    mongo.db.jogos.find_one_and_update({'Ano': 22, 'Jogo': 94},{'$set': {'desc1':'s1-EUR','desc2':'s2-EUR'}})
-    mongo.db.jogos.find_one_and_update({'Ano': 22, 'Jogo': 95},{'$set': {'desc1':'s1-AME','desc2':'s2-AME'}})
+    #mongo.db.jogos.find_one_and_update({'Ano': 22, 'Jogo': 94},{'$set': {'desc1':'s1-EUR','desc2':'s2-EUR'}})
+    #mongo.db.jogos.find_one_and_update({'Ano': 22, 'Jogo': 95},{'$set': {'desc1':'s1-AME','desc2':'s2-AME'}})
     #for t in [u for u in mongo.db.patrocinio.find()]:
     #    print(t['Time'])
+    nome = "zcaroli"
+    valor = 77
+    t = "Italia"
+    mongo.db.moedas.find_one_and_update({'nome': nome},{'$inc':{'investido': -valor}})
+    moedas_log(nome,str(-valor),t,70,"Ajuste da derrota do time")
+    nome = "pupu"
+    mongo.db.moedas.find_one_and_update({'nome': nome},{'$inc':{'investido': -valor}})
+    moedas_log(nome,str(-valor),t,70,"Ajuste da derrota do time")
+    valor = 8
+    nome = "capote"
+    t = "Azerbaijão"
+    mongo.db.moedas.find_one_and_update({'nome': nome},{'$inc':{'investido': -valor}})
+    moedas_log(nome,str(-valor),t,70,"Ajuste da derrota do time")
+    valor = 29
+    t = "Bélgica"
+    mongo.db.moedas.find_one_and_update({'nome': nome},{'$inc':{'investido': -valor}})
+    moedas_log(nome,str(-valor),t,70,"Ajuste da derrota do time")
+    nome = "putz"
+    mongo.db.moedas.find_one_and_update({'nome': nome},{'$inc':{'investido': -valor}})
+    moedas_log(nome,str(-valor),t,70,"Ajuste da derrota do time")
+    nome = "ernani"
+    mongo.db.moedas.find_one_and_update({'nome': nome},{'$inc':{'investido': -valor}})
+    moedas_log(nome,str(-valor),t,70,"Ajuste da derrota do time")
+    
 
 
 #def processa_jogos():
