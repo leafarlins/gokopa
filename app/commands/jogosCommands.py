@@ -236,7 +236,7 @@ def report(jogos,proximos,texto=""):
     #recentes = [u for u in jogosdb.find({'Ano': ANO, "Jogo": {'$gt': jogos_list[0], '$lt': jogos_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
     #next_games = [u for u in jogosdb.find({'Ano': 20, "Jogo": {'$gt': next_list[0], '$lt': next_list[1] }}).sort("Jogo",pymongo.ASCENDING)]
     if jogos_list:
-        mensagem="⚽ Gokopa 22 - Jogos recentes\n"
+        mensagem="⚽ Gokopa " + str(ANO) + " - Jogos recentes\n"
         for j in jogos_list:
             #mensagem+=" ".join([j['Competição'],"-",j['Fase']])+"\n"
             placar = str(j['p1']) + "x" + str(j['p2'])
