@@ -1,4 +1,7 @@
+from asyncio import sleep
+import time
 import json
+import random
 from re import T
 import sys
 from bson.objectid import ObjectId
@@ -196,12 +199,13 @@ def calc_ranking(j_i,j_f):
         times[jogo['Time1']]['pts'] += ptsg1
         times[jogo['Time2']]['pts'] += ptsg2
         #print(f'ptsg1: {ptsg1} ptsg2: {ptsg2}')
-            
+    
+    pontosano = "p"+str(ANO)
     for t in times:
         pts = times[t]['pts']
         if pts > 0:
             print(f'Time {t} = +{pts}')
-            mongo.db.timehistory.find_one_and_update({'Time': t},{'$inc': {'p22': pts}})
+            mongo.db.timehistory.find_one_and_update({'Time': t},{'$inc': {pontosano: pts}})
     
 @timeCommands.cli.command("loadEmojis")
 @click.argument("csv_file")
@@ -247,10 +251,16 @@ def get_rank(rank):
 @timeCommands.cli.command("editTime")
 @click.argument("desc")
 @click.argument("time")
+def editTime(desc,time):
+    edit_time(desc,time)
+
 def edit_time(desc,time):
     timeValid = mongo.db.timehistory.find_one({'Time': time})
     if timeValid:
         print(f'Definindo time {time} em {desc}')
+    elif time == "zera":
+        print(f'Zerando posicao {desc}')
+        time = ""
     else:
         print(f'Time {time} nao valido.')
         exit()
@@ -271,9 +281,9 @@ def edit_time(desc,time):
 
 # Para classificação da copa de acordo com confederação
 @timeCommands.cli.command("classificaTime")
-@click.argument("time")
 @click.argument("conf")
-def classifica_time(time,conf):
+@click.argument("time")
+def classifica_time(conf,time):
     timeValid = mongo.db.timehistory.find_one({'Time': time})
     if timeValid:
         print(f'Classificando time {time} em {conf}')
@@ -285,9 +295,182 @@ def classifica_time(time,conf):
     classificado['Ano'] = ANO
     classificado['nome'] = time
     classificado['conf'] = conf
+    classificado['pot'] = conf
 
     mongo.db.pot.insert([classificado])
+    copaname = "c" + str(ANO)
+    mongo.db.timehistory.find_one_and_update({"Time": time},{'$set': {copaname: 'c'}})
     print("Finalizado.")
+
+# Seta time como cabeça de chave
+@timeCommands.cli.command("setPot")
+@click.argument("potname")
+@click.argument("time")
+def set_pot(potname,time):
+    timeValid = mongo.db.timehistory.find_one({'Time': time})
+    if timeValid:
+        print(f'Setando time {time} como pot {potname}')
+    else:
+        print(f'Time {time} nao valido.')
+        exit()
+
+    mongo.db.pot.find_one_and_update({"nome": time, 'Ano': ANO},{'$set': {'pot': potname}})
+
+# Realiza sorteio dos times da copa ãõ
+@timeCommands.cli.command("sorteiaCopa")
+@click.argument("teste",required=False)
+def sorteia_copa(teste=""):
+    sleeptime=3
+    if teste:
+        APLICA = False
+    else:
+        APLICA = True
+    print("Iniciando sorteio da Copa do Mundo")
+    std_groups = ['A','B','C','D','E','F','G','H','I','J','K','L']
+    # Inicia com cabeças de chave
+    times_c = [u['nome'] for u in mongo.db.pot.find({"Ano": ANO, 'pot': 'Cabeças'})]
+    cabeca_group = std_groups.copy()
+    gr_ceur = []
+    gr_came = []
+    gr_casa = ["J","G","A"]
+    for t in ['Trinidad e Tobago','St Vicente','São Cristóvão']:
+        g = gr_casa.pop()
+        posic = "p1" + g
+        print(f"flask time editTime {posic} {t}")
+        cabeca_group.remove(g)
+        times_c.remove(t)
+        gr_came.append(g)
+        if APLICA:
+            time.sleep(sleeptime)
+            edit_time(posic,t)
+            mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": t},{'$set': {'sorteado': True}})
+    #print(cabeca_group)
+    random.shuffle(times_c)
+    #print(times_c)
+    for g in cabeca_group:
+        posic = "p1" + g
+        t = times_c.pop()
+        print(f"flask time editTime {posic} {t}")
+        conf = mongo.db.pot.find_one({"Ano": ANO, "nome": t})['conf']
+        if conf == "AME":
+            gr_came.append(g)
+        else:
+            gr_ceur.append(g)
+        if APLICA:
+            time.sleep(sleeptime)
+            edit_time(posic,t)
+            mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": t},{'$set': {'sorteado': True}})
+
+    ordemg = {
+        'A': [2,3,4],
+        'B': [2,3,4],
+        'C': [2,3,4],
+        'D': [2,3,4],
+        'E': [2,3,4],
+        'F': [2,3,4],
+        'G': [2,3,4],
+        'H': [2,3,4],
+        'I': [2,3,4],
+        'J': [2,3,4],
+        'K': [2,3,4],
+        'L': [2,3,4]
+    }
+
+    # Sorteio dos grupos ASO e AFR
+    gr_aso = []
+    gr_afr = []
+    times_aso = [u['nome'] for u in mongo.db.pot.find({"Ano": ANO, 'pot': 'ASO'})]
+    times_afr = [u['nome'] for u in mongo.db.pot.find({"Ano": ANO, 'pot': 'AFR'})]
+    times_2r = times_aso + times_afr
+    random.shuffle(times_2r)
+    input("Iniciando segunda rodada do sorteio...")
+    #print(times_2r)
+    for g in std_groups:
+        random.shuffle(ordemg[g])
+        posic = "p" + str(ordemg.get(g).pop()) + g
+        t = times_2r.pop()
+        print(f"flask time editTime {posic} {t}")
+        conf = mongo.db.pot.find_one({"Ano": ANO, "nome": t})['conf']
+        if t in times_aso:
+            gr_aso.append(g)
+        else:
+            gr_afr.append(g)
+        if APLICA:
+            time.sleep(sleeptime)
+            edit_time(posic,t)
+            mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": t},{'$set': {'sorteado': True}})
+    #print(ordemg)
+    #print(gr_ceur)
+    #print(gr_came)
+
+    # Sorteio dos grupos AME + EUR
+    input("Iniciando terceira rodada do sorteio...")
+    times_ame = [u['nome'] for u in mongo.db.pot.find({"Ano": ANO, 'pot': 'AME'})]
+    times_eur = [u['nome'] for u in mongo.db.pot.find({"Ano": ANO, 'pot': 'EUR'})]
+    times_tasoafr = [u['nome'] for u in mongo.db.pot.find({"Ano": ANO, 'pot': 'TopASOAFR'})]
+    random.shuffle(times_ame)
+    random.shuffle(times_eur)
+    random.shuffle(times_tasoafr)
+    for g in gr_ceur:
+        posic = "p" + str(ordemg.get(g).pop()) + g
+        t = times_ame.pop()
+        print(f"flask time editTime {posic} {t}")
+        if APLICA:
+            time.sleep(sleeptime)
+            edit_time(posic,t)
+            mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": t},{'$set': {'sorteado': True}})
+    gr_came.sort()
+    for g in gr_came:
+        posic = "p" + str(ordemg.get(g).pop()) + g
+        t = times_eur.pop()
+        print(f"flask time editTime {posic} {t}")
+        if APLICA:
+            time.sleep(sleeptime)
+            edit_time(posic,t)
+            mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": t},{'$set': {'sorteado': True}})
+
+    #print(times_eur)
+    #print(times_tasoafr)
+    #print(ordemg)
+    
+    # Sorteio dos grupos TopASOSFR + EUR
+    input("Iniciando quarta e última rodada do sorteio...")
+    random.shuffle(gr_aso)
+    random.shuffle(gr_afr)
+    for t in times_tasoafr:
+        conf = mongo.db.pot.find_one({"Ano": ANO, "nome": t})['conf']
+        if conf == "ASO":
+            g = gr_afr.pop()
+        else:
+            g = gr_aso.pop()
+        posic = "p" + str(ordemg.get(g).pop()) + g
+        print(f"flask time editTime {posic} {t}")
+        if APLICA:
+            time.sleep(sleeptime)
+            edit_time(posic,t)
+            mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": t},{'$set': {'sorteado': True}})
+    # Restantes dos europeus
+    gr_4r = gr_aso + gr_afr
+    gr_4r.sort()
+    for g in gr_4r:
+        posic = "p" + str(ordemg.get(g).pop()) + g
+        t = times_eur.pop()
+        print(f"flask time editTime {posic} {t}")
+        if APLICA:
+            time.sleep(sleeptime)
+            edit_time(posic,t)
+            mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": t},{'$set': {'sorteado': True}})
+ 
+    print("Sorteio finalizado.")
+
+@timeCommands.cli.command("zeraGrupos")
+def zera_grupos():
+    std_groups = ['A','B','C','D','E','F','G','H','I','J','K','L']
+    for g in std_groups:
+        for i in range(1,5):
+            posic = "p" + str(i) + g
+            edit_time(posic,"zera")
+    mongo.db.pot.update_many({"Ano": ANO},{'$set': {'sorteado': False}})
 
 @timeCommands.cli.command("defHist")
 @click.argument("comp")

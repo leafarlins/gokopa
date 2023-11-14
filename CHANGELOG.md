@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
+## [1.5.2] - 2023-11-13
+
+### Added
+- Page for sorteio
+
+### Fixes
+- Small fixes in some functions
+
 ## [1.5.1] - 2023-10-31
 
 ### Changed
@@ -221,7 +229,8 @@ All notable changes to this project will be documented in this file. Based on [K
 - Table from games from first season year 20
 
 
-[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.5.1...HEAD
+[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.5.2...HEAD
+[1.5.2]: https://github.com/leafarlins/gokopa/compare/v1.5.1..1.5.2/
 [1.5.1]: https://github.com/leafarlins/gokopa/compare/v1.5.0..1.5.1/
 [1.5.0]: https://github.com/leafarlins/gokopa/compare/v1.4.8..1.5.0/
 [1.4.8]: https://github.com/leafarlins/gokopa/compare/v1.4.7..1.4.8/

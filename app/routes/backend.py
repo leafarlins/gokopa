@@ -600,14 +600,22 @@ def get_next_jogos():
                     moedas_em_jogo = int(t2['Valor']*percent/100)
                 #print(t1,t2)
                 patdb1 = lista_pat.find_one({'Time': time1})
-                patdb2 = lista_pat.find_one({'Time': time2})
                 pat1 = patdb1['Patrocinador']
+                if patdb1:
+                    apo1 = patdb1.get('Apoiadores')
+                else:
+                    apo1 = ""
+                patdb2 = lista_pat.find_one({'Time': time2})
                 pat2 = patdb2['Patrocinador']
-                apo1 = patdb1.get('Apoiadores')
-                apo2 = patdb2.get('Apoiadores')
+                if patdb2:
+                    apo2 = patdb2.get('Apoiadores')
+                else:
+                    apo2 = ""
             else:
                 pat1 = "-"
                 pat2 = "-"
+                apo1 = ""
+                apo2 = ""
                 moedas_em_jogo = 0
                 percent=0
                 t1v = 0
@@ -683,6 +691,7 @@ def get_pat_teams():
             else:
                 busca = False
             j=0
+            # Set True for test purposes in hml
             apoio_liberado = False
             moedas_do_jogo = 0
             t1 = "-"

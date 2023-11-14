@@ -212,10 +212,20 @@ def gerar_tabela(ano):
                 competicao[torneio]['grupos'][grupoj]['jogos'].append(j)
                 if j['Time1'] not in competicao[torneio]['grupos'][grupoj]['tabela']['times']:
                     competicao[torneio]['grupos'][grupoj]['tabela']['times'].append(j['Time1'])
-                    competicao[torneio]['grupos'][grupoj]['tabela']['pontos'][j['Time1']] = [0,0,0]
+                    trank = get_rank(j['Time1'])
+                    if trank:
+                        time_rank = trank['posicao']
+                    else:
+                        time_rank = "-"
+                    competicao[torneio]['grupos'][grupoj]['tabela']['pontos'][j['Time1']] = [0,0,0,time_rank]
                 if j['Time2'] not in competicao[torneio]['grupos'][grupoj]['tabela']['times']:
                     competicao[torneio]['grupos'][grupoj]['tabela']['times'].append(j['Time2'])
-                    competicao[torneio]['grupos'][grupoj]['tabela']['pontos'][j['Time2']] = [0,0,0]
+                    trank = get_rank(j['Time2'])
+                    if trank:
+                        time_rank = trank['posicao']
+                    else:
+                        time_rank = "-"
+                    competicao[torneio]['grupos'][grupoj]['tabela']['pontos'][j['Time2']] = [0,0,0,time_rank]
                 if j['p1'] == 0 or (j['p1'] != None and j['p1']):
                     p1 = int(j['p1'])
                     p2 = int(j['p2'])
@@ -357,6 +367,30 @@ def tabelaano(ano):
         ano = str(ANO)
     dados = gerar_tabela(ano)
     return render_template('tabela.html',menu="Tabela",dados=dados)
+
+@gokopa.route('/sorteio')
+def sorteio():
+    dados = gerar_tabela(str(ANO))
+    potdata = [u for u in mongo.db.pot.find({'Ano': ANO})]
+    pots = []
+    for time in potdata:
+        #pot = time['pot']
+        time.pop('_id',None)
+        time['rank'] = get_rank(time["nome"])['posicao']
+        #time['rank'] = 10
+    #print(potdata)
+    for potname in ["Cabeças","ASO","AFR","AME","TopASOAFR","EUR"]:
+        times_do_pot = []
+        for time in potdata:
+            if time['pot'] == potname:
+                times_do_pot.append(time)
+        pots.append(
+            {'potname': potname,
+            'times': times_do_pot}) 
+    
+    print(pots)
+
+    return render_template('sorteio.html',menu="Tabela",dados=dados,pots=pots)
 
 @gokopa.route('/tabelahis')
 @cache.memoize(3600*720)
