@@ -121,10 +121,9 @@ def edit_aposta():
         validUser = mongo.db.users.find_one({"username": session["username"]})
         apostador = validUser["name"]
         jogoid = int(request.values.get("jogoid"))
-        # Faixa no ano22 de jogos que precisa indicar vencedor
-        faixa_j = [9,10,34,35,59,60,25,50]
-        faixa_j = faixa_j + [u for u in range(75,100)]
-        faixa_j = faixa_j + [u for u in range(172,204)]
+        # Faixa no ano23 de jogos que precisa indicar vencedor
+        faixa_j = [u for u in range(82,103)]
+        faixa_j = faixa_j + [u for u in range(181,213)]
         if jogoid in faixa_j:
             faixavit = True
         else:
