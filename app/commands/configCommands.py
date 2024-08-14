@@ -393,9 +393,8 @@ def addEnquete(filerec):
 
 @configCommands.cli.command("setEnqueteEnd")
 @click.argument("enquete")
-@click.argument("game")
-def setEnqueteEnd(enquete,game):
-    outdb = mongo.db.enquete.find_one_and_update({'ano': ANO, 'nome': enquete},{"$set": {'game': int(game)}})
+def setEnqueteEnd(enquete):
+    outdb = mongo.db.enquete.find_one_and_update({'nome': enquete},{"$set": {'andamento': False }})
     if outdb:
         print("Enquete alterada com sucesso.")
     else:

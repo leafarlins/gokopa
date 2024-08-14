@@ -445,20 +445,16 @@ def get_historic_copa(comp):
     #print(medal_count)
     return historia,medal_count
 
-@gokopa.route('/api/get_enquete')
-def getEnquete():
-    enq = [u for u in mongo.db.enquete.find()]
+@gokopa.route('/api/get_enquete<ano>')
+def getEnquete(ano):
+    enq = [u for u in mongo.db.enquete.find({"ano": int(ano)})]
     andamento = []
     finalizadas = []
-    last_game = progress_data()['last_game']
+    #last_game = progress_data()['last_game']
     for u in enq:
         u.pop('_id',None)
         u['optqtd'] = len(u['opcoes'])
-        if u['ano'] != ANO:
-            finalizadas.append(u)
-        elif last_game >= u['game']:
-            finalizadas.append(u)
-        else:
+        if u.get("andamento"):
             if session.get("username"):
                 nome = get_user_name(session["username"])
                 u['meuvoto'] = u['votos'].get(nome)
@@ -474,6 +470,8 @@ def getEnquete():
             else:
                 u['votos'] = {}
             andamento.append(u)
+        else:
+            finalizadas.append(u)
 
     for u in finalizadas:
         mapa_id = []
@@ -563,13 +561,14 @@ def estadios(ano):
     }
     return render_template("estadios.html",menu="Gokopa",dados = dados)
 
-@gokopa.route('/enquete')
+@gokopa.route('/enquete<ano>')
 #@cache.cached(timeout=2*60)
-def enquete():
-    return render_template("enquete.html",menu="Gokopa",dados=getEnquete())
+def enquete(ano):
+    return render_template("enquete.html",menu="Gokopa",dados=getEnquete(ano))
 
 @gokopa.route('/enquete/votar',methods=["POST"])
 def votar():
+    anoenq=24
     if "username" in session:
         apostador = get_user_name(session["username"])
         opcoes = []
@@ -584,6 +583,7 @@ def votar():
         if len(opcoes) == len(opcoesset):
             enqdb = mongo.db.enquete.find_one({'nome': enquete})
             votos = enqdb['votos']
+            anoenq=enqdb["ano"]
             votos[apostador] = opcoes
             outdb = mongo.db.enquete.find_one_and_update({'nome': enquete},{'$set': {'votos': votos}})
             if outdb:
@@ -597,7 +597,7 @@ def votar():
     else:
         flash(f'Usuário não logado.','danger')
     
-    return redirect(url_for('gokopa.enquete'))
+    return redirect(url_for('gokopa.enquete',ano=str(anoenq)))
 
 @gokopa.route('/ranking')
 #@cache.cached(timeout=600)

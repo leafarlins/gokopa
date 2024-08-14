@@ -119,12 +119,6 @@ def load_csv(csv_file):
 @click.argument("time")
 @click.argument("status")
 def set_copa_pos(ano,time,status):
-    # content = requests.get('http://127.0.0.1:5000/api/get_tabela22')
-    # tabela = json.loads(content.text)
-    # for t in tabela['competicao']['Copa do Mundo']['classificados']['grupos']:
-    #     #print(f'grupo {t["nome"]}')
-    #     for time in t['times']:
-    #         print(f'flask time set_copa_pos 22 {time["time"]}')
     ca = "c" + ano
     outdb = mongo.db.timehistory.find_one_and_update({"Time": time},{'$set': {ca: status}})
     if outdb:
