@@ -35,6 +35,6 @@ s3transfer==0.10.2
 setuptools==72.2.0
 six==1.16.0
 twilio==9.2.3
-urllib3==2.2.2
+urllib3==1.26.19
 Werkzeug==3.0.3
 yarl==1.9.4
