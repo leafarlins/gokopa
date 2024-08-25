@@ -9,7 +9,7 @@ from ..cache import cache
 
 moedas = Blueprint('moedas',__name__)
 
-ANO=23
+ANO=24
 MAX_LOG_PAGE=100
 
 @cache.memoize(10)
@@ -110,7 +110,7 @@ def addpat():
                 'time': time,
                 'timestamp': now
             }
-            mongo.db.tentarpat.insert(patrocinio)
+            mongo.db.tentarpat.insert_one(patrocinio)
             novo_saldo = saldo_atual - valor
             bloqueado = valor + moedasDb['bloqueado']
             outdb = mongo.db.moedas.find_one_and_update({'nome': apostador},{'$set':{'saldo': novo_saldo,'bloqueado': bloqueado}})

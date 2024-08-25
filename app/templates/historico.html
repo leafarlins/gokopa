@@ -84,6 +84,8 @@
   
   </div>
 
+{% set anoatual = 24 %}
+
 {% if data2t['vev'] %}
   <div class="row scoll-pane justify-content-md-center">
 
@@ -93,7 +95,7 @@
       <table class="tab_gokopa tabp5">
         <tr>
           <td>Edição:</td>
-          {% for i in range(0,22)|reverse %}
+          {% for i in range(0,anoatual)|reverse %}
           <td>
             {{ i+1 }}
           </td>
@@ -103,7 +105,7 @@
           <td>
             <img class="flag" src="../static/img/flag/{{ data2t['time1']['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ data2t['time1']['nome'] }}
           </td>
-          {% for i in range(0,22)|reverse %}
+          {% for i in range(0,anoatual)|reverse %}
           <td>
             {% if data2t['time1']['hc'][i]|int != 0 %}<b>{{ data2t['time1']['hc'][i] }}</b>
             {% else %}{{ data2t['time1']['hc'][i] }}
@@ -115,7 +117,7 @@
           <td>
             <img class="flag" src="../static/img/flag/{{ data2t['time2']['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ data2t['time2']['nome'] }}
           </td>
-          {% for i in range(0,22)|reverse %}
+          {% for i in range(0,anoatual)|reverse %}
           <td>
             {% if data2t['time2']['hc'][i]|int != 0 %}<b>{{ data2t['time2']['hc'][i] }}</b>
             {% else %}{{ data2t['time2']['hc'][i] }}
@@ -132,7 +134,7 @@
         <div width="99%" height="40vh"><canvas id="grafico" style="position: relative; text-align: center; display: unset;"></canvas></div>
         <script>
 
-          var labelsgr = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22'];
+          var labelsgr = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24'];
           const colors = ['#3e95cd','#d19c2a'];
           let nomes = {{ times | safe }}; 
           let datagr = {{ datag | safe }};

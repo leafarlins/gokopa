@@ -48,7 +48,7 @@ def create_user(username,name):
             "pago": False,
             "passwordActive": False
         }
-        userCollection.insert(user)
+        userCollection.insert_one(user)
         print('Usuário cadastrado com sucesso')
         print("Você foi cadastrado no sistema da Gokopa! Acesse pelo link: https://gokopa.leafarlins.com/")
         print(f'Usuário: {username}')
@@ -153,7 +153,7 @@ def init_moedas(nome,moedas):
             "bloqueado": 0,
             "investido": 0
         }
-        moedaColl.insert(novo_user)
+        moedaColl.insert_one(novo_user)
         print(f"Inserido user {nome} com {moedas} moedas na base.")
 
 

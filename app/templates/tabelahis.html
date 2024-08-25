@@ -2,11 +2,12 @@
 {% block content %}
 
 <h2>Tabelas Histórias</h2>
-<p class="center">Um resumo de todas as fases finais das copas do mundo, do Ano 1 ao ano 20.</p>
+{% set anofim = lista_jogos[-1][0]['Ano'] %}
+<p class="center">Um resumo de todas as fases finais das copas do mundo, do Ano 1 ao ano {{ anofim }}.</p>
 
 <div class=".container-fluid">
 
-{% for i in range(0,20)|reverse %}
+{% for i in range(0,anofim)|reverse %}
 <h3 id="Copa">Gokopa {{ i+1 }}</h2>
 
     <div class="row scoll-pane">

@@ -4,7 +4,6 @@ from xmlrpc.client import boolean
 import requests
 import click
 import pymongo
-
 from app.commands.configCommands import add_news
 from ..extentions.database import mongo
 from flask import Blueprint
@@ -14,8 +13,8 @@ from random import randrange
 #from twilio.rest import Client
 
 SEPARADOR_CSV="\t"
-ANO=23
-APOSTADB='apostas23'
+ANO=24
+APOSTADB='apostas24'
 TELEGRAM_TOKEN=os.getenv('TELEGRAM_TKN')
 TELEGRAM_CHAT_ID=os.getenv('TELEGRAM_CHAT_ID')
 TELEGRAM=os.getenv('TELEGRAM')
@@ -52,12 +51,9 @@ def load_csv(csv_file):
 
         if not data:
             return None
-        
-        #print(data)
-    
     
     jogosCollection = mongo.db.jogos
-    jogosCollection.insert(data)
+    jogosCollection.insert_many(data)
     print("Dados inseridos")
     
 
@@ -195,10 +191,10 @@ def print_random_editgame(jogoi,jogof,tr):
         else:
             print(f'flask jogos editJogo {ANO} {jogo} placar {p1} {p2}')
 
-@jogosCommands.cli.command("initApostas23")
+@jogosCommands.cli.command("initApostas")
 def init_apostas23():
     JOGOS=212
-    apostas = mongo.db.apostas23
+    apostas = mongo.db["apostas"+str(ANO)]
     if apostas.count_documents({}) > 0:
         print("Base já existente.")
     else:

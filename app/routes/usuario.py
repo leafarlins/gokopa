@@ -9,9 +9,9 @@ from ..extentions.database import mongo
 
 usuario = Blueprint('usuario',__name__)
 
-ANOSTR='23'
-DATAMAX='03/11/2023'
-data_limite = datetime.strptime("04/11/2023 02:00","%d/%m/%Y %H:%M")
+ANOSTR='24'
+DATAMAX='04/10/2024'
+data_limite = datetime.strptime("05/10/2024 02:00","%d/%m/%Y %H:%M")
 
 @usuario.route('/login', methods=['GET','POST'])
 def login():
@@ -91,7 +91,7 @@ def validagokopa():
                             "bloqueado": 0,
                             "investido": 0
                     }
-                    mongo.db.moedas.insert(novo_user)
+                    mongo.db.moedas.insert_one(novo_user)
                     flash(f'Usuário ativado na gokopa!','success')
                     current_app.logger.info(f"Usuário {validUser} ativado na gokopa")
                     return redirect(url_for('bolao.apostas',ano=ANOSTR))

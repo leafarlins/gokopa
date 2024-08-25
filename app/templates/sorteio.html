@@ -11,7 +11,11 @@
 
 <div class="container">
 
-{% set torneios = ['Copa do Mundo'] %}
+{% if pots[0]['potname'] == "Cabeças" %}
+    {% set torneios = ['Copa do Mundo'] %}
+{% else %}
+    {% set torneios = ['Taça Europa','Taça América','Taça Ásia-Oceania','Taça África'] %}
+{% endif %}
 {% for torneio in torneios %}
 {% if dados['competicao'][torneio] %}
 

@@ -1,0 +1,8 @@
+flask config set_bolao_users 23 "pupu gillis capote zcaroli putz didi ernani economist"
+flask jogos initApostas
+flask jogos loadCsv executar/jogos24.csv
+flask config migrate160
+flask time zera_rank_pts 24
+flask time set_rank_upts 23
+for u in gillis capote zcaroli putz didi economist pupu; do flask user activeUser $u gokopa false; done
+flask time loadPatrocinio dataset/patrocinio.csv

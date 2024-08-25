@@ -19,7 +19,7 @@ from ..extentions.database import mongo
 from flask import Blueprint,current_app
 
 SEPARADOR_CSV="\t"
-ANO=23
+ANO=24
 #RANKING='20-4'
 TELEGRAM_TOKEN=os.getenv('TELEGRAM_TKN')
 TELEGRAM_CHAT_ID=os.getenv('TELEGRAM_CHAT_ID')
@@ -60,7 +60,7 @@ def load_csv(csv_file):
     
     
     timeCollection = mongo.db.ranking
-    timeCollection.insert(data)
+    timeCollection.insert_many(data)
     print("Dados inseridos")
     # question = input(f'Deseja inserir os dados impressos? (S/N) ')
     # if question.upper() == "S":
@@ -109,7 +109,7 @@ def load_csv(csv_file):
     if outdb:
         print("Base já existe, reescrevendo.")
         timeCollection.drop()
-    timeCollection.insert(data)
+    timeCollection.insert_many(data)
     print("Dados inseridos")
     # else:
     #     exit()
@@ -228,7 +228,7 @@ def load_emoji(csv_file):
         print(data)
     
     timeCollection = mongo.db.emoji
-    timeCollection.insert(data)
+    timeCollection.insert_many(data)
 
 
 @timeCommands.cli.command("getRank")
@@ -291,26 +291,96 @@ def classifica_time(conf,time):
     classificado['conf'] = conf
     classificado['pot'] = conf
 
-    mongo.db.pot.insert([classificado])
+    mongo.db.pot.insert_one(classificado)
     copaname = "c" + str(ANO)
     mongo.db.timehistory.find_one_and_update({"Time": time},{'$set': {copaname: 'c'}})
     print("Finalizado.")
 
-# Seta time como cabeça de chave
+# Seta time no pot de sorteio
 @timeCommands.cli.command("setPot")
 @click.argument("potname")
 @click.argument("time")
 def set_pot(potname,time):
     timeValid = mongo.db.timehistory.find_one({'Time': time})
     if timeValid:
-        print(f'Setando time {time} como pot {potname}')
+        print(f'Setando time {time} como pot {potname}:',end=" ")
     else:
         print(f'Time {time} nao valido.')
         exit()
 
-    mongo.db.pot.find_one_and_update({"nome": time, 'Ano': ANO},{'$set': {'pot': potname}})
+    outdb = mongo.db.pot.find_one_and_update({"nome": time, 'Ano': ANO},{'$set': {'pot': potname}})
+    if outdb:
+        print("Time atualizado na base")
+    else:
+        print("Inserindo time novo na base")
+        classificado = dict()
+        classificado['Ano'] = ANO
+        classificado['nome'] = time
+        classificado['conf'] = "-"
+        classificado['pot'] = potname
+        mongo.db.pot.insert_one(classificado)
 
-# Realiza sorteio dos times da copa ãõ
+# Realiza sorteio dos times das tacas
+@timeCommands.cli.command("sorteiaTaca")
+@click.argument("teste",required=False)
+def sorteia_copa(teste=""):
+    sleeptime=3
+    if teste:
+        APLICA = False
+    else:
+        APLICA = True
+    print("Iniciando sorteio das Taças")
+    std_group_ori = ['A','B','C','D','E','F','G','H','I','J','K','L']
+    std_groups = {
+        "EUR": std_group_ori,
+        "AFR": std_group_ori[:5],
+        "AME": std_group_ori[:6],
+        "ASO": std_group_ori[:4]
+    }
+    ordemg = {}
+    
+    for conf_name in ["EUR","AFR","AME","ASO"]:
+        print(f"Iniciando sorteio da Taça {conf_name}")
+        input("")
+        tsede = mongo.db.pot.find_one({"Ano": ANO, 'pot': "S-"+conf_name})["nome"]
+        #gr_cabecas = std_groups.copy()
+        posic = "p1A-"+conf_name
+        #gr_cabecas.remove("A")
+        print(f"flask time editTime {posic} '{tsede}'")
+        if APLICA:
+            time.sleep(sleeptime)
+            edit_time(posic,tsede)
+            mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": tsede},{'$set': {'sorteado': True}})
+        times_c = [u['nome'] for u in mongo.db.pot.find({"Ano": ANO, 'pot': 'A-'+conf_name})]
+        random.shuffle(times_c)
+        # Para o restante dos grupos de cabeças, exceto A
+        for g in std_groups[conf_name][1:]:
+            posic = "p1" + g + "-" + conf_name
+            t = times_c.pop()
+            print(f"flask time editTime {posic} '{t}'")
+            if APLICA:
+                time.sleep(sleeptime)
+                edit_time(posic,t)
+                mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": t},{'$set': {'sorteado': True}})
+        
+        for g in std_groups[conf_name]:
+            ordemg[g] = [2,3]
+        times_2r = [u['nome'] for u in mongo.db.pot.find({"Ano": ANO, 'pot': 'B-'+conf_name})]
+        times_3r = [u['nome'] for u in mongo.db.pot.find({"Ano": ANO, 'pot': 'C-'+conf_name})]
+        for times_r in [times_2r,times_3r]:
+            random.shuffle(times_r)
+            for g in std_groups[conf_name]:
+                random.shuffle(ordemg[g])
+                posic = "p" + str(ordemg.get(g).pop()) + g + "-" + conf_name
+                t = times_r.pop()
+                print(f"flask time editTime {posic} '{t}'")
+                if APLICA:
+                    time.sleep(sleeptime)
+                    edit_time(posic,t)
+                    mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": t},{'$set': {'sorteado': True}})
+
+
+# Realiza sorteio dos times da copa
 @timeCommands.cli.command("sorteiaCopa")
 @click.argument("teste",required=False)
 def sorteia_copa(teste=""):
@@ -548,7 +618,7 @@ def load_patrocinio(csv_file):
     
     
     jogosCollection = mongo.db.patrocinio
-    jogosCollection.insert(data)
+    jogosCollection.insert_many(data)
     print("Dados inseridos")
 
 @timeCommands.cli.command("exec")

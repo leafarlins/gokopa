@@ -10,8 +10,8 @@ from ..cache import cache
 
 bolao = Blueprint('bolao',__name__)
 
-ANO=23
-APOSTADB='apostas23'
+ANO=24
+APOSTADB='apostas' + str(ANO)
 
 @cache.memoize(3600)
 def get_history_data(results,ano):
@@ -91,9 +91,9 @@ def get_bolao_data(ano,apostador=""):
 @bolao.route('/bolao<ano>')
 def apostas(ano):
     #ano = '2022'
-    if ano not in ['23','22','2022','21','20']:
+    if ano not in ['24','23','22','2022','21','20']:
         flash(f'Página do bolao {ano} não encontrada.','danger')
-        ano = '23'
+        ano = str(ANO)
 
     if session.get('username') == None:
         dados = get_bolao_data(ano)
@@ -121,7 +121,7 @@ def edit_aposta():
         validUser = mongo.db.users.find_one({"username": session["username"]})
         apostador = validUser["name"]
         jogoid = int(request.values.get("jogoid"))
-        # Faixa no ano23 de jogos que precisa indicar vencedor
+        # Faixa no ano de jogos que precisa indicar vencedor
         faixa_j = [u for u in range(82,103)]
         faixa_j = faixa_j + [u for u in range(181,213)]
         if jogoid in faixa_j:

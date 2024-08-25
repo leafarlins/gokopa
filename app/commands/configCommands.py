@@ -11,7 +11,7 @@ from flask import Blueprint,current_app
 from app.routes.backend import get_aposta,get_users,get_games,make_score_board,get_bet_results2,get_score_results,getBolaoUsers
 
 configCommands = Blueprint('config',__name__)
-ANO=23
+ANO=24
 TELEGRAM_TOKEN=os.getenv('TELEGRAM_TKN')
 TELEGRAM_CHAT_ID=os.getenv('TELEGRAM_CHAT_ID')
 TELEGRAM=os.getenv('TELEGRAM')
@@ -92,7 +92,7 @@ def set_history(edition):
         print("Valor atualizado.")
     else:
         print("Config não existe na base, definindo...")
-        mongo.db.settings.insert({"config": "ranking", "edition": edition})
+        mongo.db.settings.insert_one({"config": "ranking", "edition": edition})
 
 @configCommands.cli.command("setHl")
 @click.argument("team")
@@ -102,7 +102,7 @@ def set_hl(team):
         print("Valor atualizado.")
     else:
         print("Config não existe na base, definindo...")
-        mongo.db.settings.insert({"config": "highlight", "time": team})
+        mongo.db.settings.insert_one({"config": "highlight", "time": team})
 
 @configCommands.cli.command("set_bolao_users")
 @click.argument("ano")
@@ -114,7 +114,7 @@ def set_bolao_users(ano,users):
         print("Valor atualizado.")
     else:
         print("Config não existe na base, definindo...")
-        mongo.db.settings.insert({"config": "bolao_u","ano": int(ano),"users": u_arr })
+        mongo.db.settings.insert_one({"config": "bolao_u","ano": int(ano),"users": u_arr })
 
 # def getBolaoUsers(ano):
 #     b_users = mongo.db.settings.find_one({"config": "bolao_u","ano": int(ano)})
@@ -319,6 +319,57 @@ def migrate147():
         mongo.db.estadiolist.insert_many(estadiolist)
     print("Finalizado.")
 
+
+def reset_base_moedas():
+    mongo.db.moedas.drop()
+    mongo.db.moedaslog.drop()
+    mongo.db.patrocinio.drop()
+    novo_user = {
+            "nome": "ernani",
+            "saldo": 1000,
+            "bloqueado": 0,
+            "investido": 0
+    }
+    mongo.db.moedas.insert_one(novo_user)
+    print(f"Reiniciando base de moedas")
+
+@configCommands.cli.command("cadastra_estadio")
+def cadastra_estadio():
+    estadiolist = [{
+        'ano': ANO,
+        'games': [109,212],
+        'nome': 'Estádios da Copa do Mundo',
+        'cidades': ['Alexandria','Ondurman','Cairo','Cartum','New Administrative Capital','Wad Madani','Suez','Atbara']
+    },{
+        'ano': ANO,
+        'games': [1,108],
+        'nome': 'Estádios das Taças Regionais e Mundial',
+        'cidades': ['Ondurman','Cartum','Amsterdam','Rotterdam','Kingston','Trelawny','Ba','Suva']
+    }]
+    with open('executar/estadios24','r') as file:
+        estadios = json.load(file)
+    outdb = mongo.db.estadios.find_one({'cidade': 'Ondurman'})
+    if outdb:
+        print("Estádios já cadastrados.")
+    else:
+        mongo.db.estadios.insert_many(estadios)
+        mongo.db.estadiolist.insert_many(estadiolist)
+    print("Finalizado.")
+
+@configCommands.cli.command("migrate160")
+def migrate160():
+    reset_base_moedas()
+    print("Setando posições no ranking atual")
+    cname = "c" + str(ANO)
+    mongo.db.timehistory.update_many({},{'$set':{cname: '-'}})
+    listat_gokopa = ["Egito","Sudão","Nigéria","Marrocos","Tunísia","Camarões","Argélia","Costa do Marfim","Zâmbia","Congo","Níger","Guiné","Angola","África do Sul","Ruanda","Botsuana","Holanda","França","Alemanha","Tcheca","Portugal","Espanha","Sérvia","Italia","Rússia","Bélgica","Croácia","Suécia","Ucrânia","Bulgária","Inglaterra","Suiça","Dinamarca","Finlândia","Escócia","Polônia","Gales","Áustria","Islândia","Bósnia","Belarus","Hungria","Albania","Romênia","Geórgia","Irlanda do Norte","Moldávia","Letônia","San Marino","Chipre","Andorra","Liechenstein","Jamaica","Brasil","Argentina","Trinidad e Tobago","Equador","Panamá","Estados Unidos","Colômbia","Uruguai","Chile","México","Costa Rica","Honduras","Venezuela","Bolívia","Guatemala","Nicarágua","Paraguai","Fiji","Coréia do Sul","Austrália","Japão","Irã","Hong Kong","Arábia Saudita","Vietnã","Taiti","Vanuatu","Iraque","Bahrein"]
+    listac_gokopa = ["Egito","Sudão"]
+    for time in listat_gokopa:
+        mongo.db.timehistory.find_one_and_update({'Time': time},{'$set': {cname: 't'}})
+    for time in listac_gokopa:
+        mongo.db.timehistory.find_one_and_update({'Time': time},{'$set': {cname: 'c'}})
+    cadastra_estadio()
+
 @configCommands.cli.command("migrate150")
 def migrate150():
     mongo.db.moedas.drop()
@@ -330,7 +381,7 @@ def migrate150():
             "bloqueado": 0,
             "investido": 0
     }
-    mongo.db.moedas.insert(novo_user)
+    mongo.db.moedas.insert_one(novo_user)
     print(f"Reiniciando base de moedas")
     # Mudança de nome da Rep Tcheca para Tcheca
     print("Mudança de nome da Tcheca e Belarus")

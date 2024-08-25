@@ -15,7 +15,7 @@ from ..cache import cache
 
 gokopa = Blueprint('gokopa',__name__)
 
-ANO=23
+ANO=24
 
 @cache.memoize(600)
 def get_classificados():
@@ -65,12 +65,12 @@ def get_classificados():
 @gokopa.route('/api/get_news<anon>')
 #@cache.cached(timeout=2*60)
 def getNews(anon=str(ANO)):
-    news23 = [u for u in mongo.db.news.find({'ano':int(anon)}).sort('nid',pymongo.DESCENDING)]
-    if len(news23) < 6:
+    news_do_ano = [u for u in mongo.db.news.find({'ano':int(anon)}).sort('nid',pymongo.DESCENDING)]
+    if len(news_do_ano) < 6:
         newsold = [u for u in mongo.db.news.find({'ano':int(anon)-1}).sort('nid',pymongo.DESCENDING)]
-        news = news23 + newsold[0:6]
+        news = news_do_ano + newsold[0:6]
     else:
-        news = news23
+        news = news_do_ano
     for u in news:
         u.pop('_id',None)
         u['texto'] = u['texto'].replace('\\n','<br/>')
@@ -97,11 +97,7 @@ def index():
                 next_jogos.append(n)
 
     lista_bolao = make_score_board(ANO)
-    #pot_table = get_tabela_pot()
-
-
-    #tabelas_label = ['A','B','C','D','E','F','G','H']
-    #tabelas = get_tabelas_copa()
+    
     return render_template("inicio.html",menu="Home",past_jogos=past_jogos[:21],next_jogos=next_jogos[:15],classificados=classificados,total=lista_bolao,progress_data=progress_data(),probabilidade=probability(),news=getNews()['news'][:6])
 
 @gokopa.route('/noticias<anon>')
@@ -153,6 +149,7 @@ def gerar_tabela(ano):
         ano_jogos[32]['Time1'] = 'Qatar'
     descs = {
         '2022': 'Esta é a tabela da Copa do Mundo de 2022, no Qatar.',
+        '24': 'O ano 24 será ao redor do Nilo, no Egito e no Sudão. A mesma tabela da temporada anterior, com taças regionais, taça mundial e a copa de 48 times.',
         '23': 'O ano 23 será no Caribe, com mesma sequência do ano anterior: taças regionais, classificando para as finais das taças e para a gokopa de 48 times. Mais um recorde de jogos, com 212 na temporada.',
         '22': 'O ano 22 terá taças regionais, classificando para as finais das taças e para a gokopa de 48 times. A maior gokopa de todos os tempos até aqui, com 104 jogos em 12 grupos de 4.',
         '21': 'O ano 21 é a Gokopa simulada em homenagem à Copa do Mundo de 2022, com a mesma tabela.',
@@ -250,7 +247,7 @@ def gerar_tabela(ano):
                 competicao[torneio]['eliminatorias'][fase]['jogos'].append(j)
         else:
             outros.append(j)
-    if ano == '23':
+    if ano == str(ANO):
         last_game = progress_data()['last_game']
         for torneio in competicao:
             adicionar = False
@@ -329,9 +326,11 @@ def gerar_tabela(ano):
                     if torneio == 'Taça África':
                         range_2o = 3
                     elif torneio == 'Taça Europa':
-                        range_2o = 8
+                        range_2o = 9
+                    elif torneio == 'Taça América':
+                        range_2o = 5
                     else:
-                        range_2o = 4
+                        range_2o = 3
                     times_1 = []
                     times_2 = []
                     for g in classificados['grupos']:
@@ -360,7 +359,7 @@ def gerar_tabela(ano):
     }            
 
 @gokopa.route('/tabela<ano>')
-#@cache.cached(timeout=60*2)
+@cache.cached(timeout=60*2)
 def tabelaano(ano):
     if ano not in ['2022'] and int(ano) not in range(1,ANO+1):
         flash(f'Tabela do ano {ano} não disponível.','danger')
@@ -377,9 +376,13 @@ def sorteio():
         #pot = time['pot']
         time.pop('_id',None)
         time['rank'] = get_rank(time["nome"])['posicao']
-        #time['rank'] = 10
     #print(potdata)
-    for potname in ["Cabeças","ASO","AFR","AME","TopASOAFR","EUR"]:
+    last_game = progress_data()['last_game']
+    if last_game < 80:
+        list_pots = ["A-EUR","B-EUR","C-EUR","A-AME","B-AME","C-AME","A-ASO","B-ASO","C-ASO","A-AFR","B-AFR","C-AFR"]
+    else:
+        list_pots = ["Cabeças","ASO","AFR","AME","TopASOAFR","EUR"]
+    for potname in list_pots:
         times_do_pot = []
         for time in potdata:
             if time['pot'] == potname:
@@ -388,7 +391,7 @@ def sorteio():
             {'potname': potname,
             'times': times_do_pot}) 
     
-    print(pots)
+    #print(pots)
 
     return render_template('sorteio.html',menu="Tabela",dados=dados,pots=pots)
 
@@ -396,7 +399,7 @@ def sorteio():
 @cache.memoize(3600*720)
 def tabela_his():
     fase_final = []
-    for i in range(21):
+    for i in range(ANO-1):
         jogos = [u for u in mongo.db.jogos.find({"Ano": i+1, "Competição": "Copa do Mundo", '$or': [{"Fase": "8vas-de-final"},{"Fase": "4as-de-final"},{"Fase": "Semi-final"},{"Fase": "D. 3º Lugar"},{"Fase": "Final"}]}).sort('Jogo',pymongo.ASCENDING)]
         if i == 0:
             jogos = [0,0,0,0,0,0,0,0] + jogos
@@ -568,7 +571,7 @@ def enquete(ano):
 
 @gokopa.route('/enquete/votar',methods=["POST"])
 def votar():
-    anoenq=24
+    anoenq=ANO
     if "username" in session:
         apostador = get_user_name(session["username"])
         opcoes = []
@@ -783,24 +786,24 @@ def dossie():
     return render_template('dossie.html',menu='Gokopa',dados=dados)
 
 
-def get_tabela_pot():
-    tabela_pot = []
-    for i in range(4):
-        times = []
-        times_pot = [u for u in mongo.db.pot.find({"Ano": ANO,"pot": int(i+1)}).sort('nome',pymongo.ASCENDING)]
-        tabela_pot.append(times_pot)
-    #print(tabela_pot)
+# def get_tabela_pot():
+#     tabela_pot = []
+#     for i in range(4):
+#         times = []
+#         times_pot = [u for u in mongo.db.pot.find({"Ano": ANO,"pot": int(i+1)}).sort('nome',pymongo.ASCENDING)]
+#         tabela_pot.append(times_pot)
+#     #print(tabela_pot)
 
-    pot_trans = []
-    for i in range(10):
-        pot_trans.append([dict(),dict(),dict(),dict()])
-    #print(pot_trans)
-    for i in range(10):
-        for j in range(4):
-            #print("pegando",tabela_pot[i][j])
-            if len(tabela_pot[j]) > i:
-                #print("pegando",tabela_pot[j][i])
-                time = tabela_pot[j][i]
-                time['rank'] = get_rank(time['nome'])
-                pot_trans[i][j] = time
-    return pot_trans
+#     pot_trans = []
+#     for i in range(10):
+#         pot_trans.append([dict(),dict(),dict(),dict()])
+#     #print(pot_trans)
+#     for i in range(10):
+#         for j in range(4):
+#             #print("pegando",tabela_pot[i][j])
+#             if len(tabela_pot[j]) > i:
+#                 #print("pegando",tabela_pot[j][i])
+#                 time = tabela_pot[j][i]
+#                 time['rank'] = get_rank(time['nome'])
+#                 pot_trans[i][j] = time
+#     return pot_trans
