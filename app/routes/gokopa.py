@@ -259,18 +259,24 @@ def gerar_tabela(ano):
                 classificados = {
                     'grupos': []
                 }
+                dono_casa = "Sudão"
+                torneio_sede = "Taça África"
                 for g in competicao[torneio]['grupos']:
                     #sorted(g, key=lambda k: k['pc'],reverse=True))
                     times = []
                     for i in range(len(competicao[torneio]['grupos'][g]['tabela']['times'])):
                         time = competicao[torneio]['grupos'][g]['tabela']['times'][i]
+                        if time == dono_casa:
+                            cor_time = 'copa'
+                        else:
+                            cor_time = 'des'
                         newt = {
                             'time': time,
                             'pts': competicao[torneio]['grupos'][g]['tabela']['pontos'][time][0],
                             'sal': competicao[torneio]['grupos'][g]['tabela']['pontos'][time][1],
                             'gol': competicao[torneio]['grupos'][g]['tabela']['pontos'][time][2],
                             'rnk': get_rank(time)['posicao'],
-                            'cor': 'des'
+                            'cor': cor_time
                         }
                         times.append(newt)
                     grupo = {
@@ -324,7 +330,7 @@ def gerar_tabela(ano):
                     classificados['grupos'].append(grupo_4)
                 elif torneio in ['Taça Ásia-Oceania','Taça América','Taça Europa','Taça África']:
                     if torneio == 'Taça África':
-                        range_2o = 3
+                        range_2o = 2
                     elif torneio == 'Taça Europa':
                         range_2o = 9
                     elif torneio == 'Taça América':
@@ -336,6 +342,10 @@ def gerar_tabela(ano):
                     for g in classificados['grupos']:
                         times_1.append(g['times'][0])
                         times_2.append(g['times'][1])
+                        # Para expansao da vaga
+                        if torneio == torneio_sede:
+                            if g['times'][0]['time'] == dono_casa:
+                                range_2o += 1
                     grupo_1 = {
                         'nome': 'Primeiros',
                         'times': sorted(sorted(sorted(sorted(times_1, key=lambda k: k['rnk']), key=lambda k: k['gol'],reverse=True), key=lambda k: k['sal'],reverse=True), key=lambda k: k['pts'],reverse=True)
@@ -344,7 +354,14 @@ def gerar_tabela(ano):
                         'nome': 'Segundos',
                         'times': sorted(sorted(sorted(sorted(times_2, key=lambda k: k['rnk']), key=lambda k: k['gol'],reverse=True), key=lambda k: k['sal'],reverse=True), key=lambda k: k['pts'],reverse=True)
                     }
+                    if torneio == torneio_sede:
+                        for t in grupo_2['times']:
+                            if t['time'] == dono_casa:
+                                t['cor'] = 'copa'
                     for i in range(range_2o):
+                        if torneio == torneio_sede:
+                            if grupo_2['times'][i]['cor'] == 'copa':
+                                i -= 1
                         grupo_2['times'][i]['cor'] = 'copa'
                     classificados['grupos'].append(grupo_1)
                     classificados['grupos'].append(grupo_2)

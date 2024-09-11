@@ -592,15 +592,27 @@ def get_next_jogos():
                 t2v = t2['Valor']
                 if proporcao < 1:
                     proporcao = t2['Valor'] / t1['Valor']
-                if proporcao > 6:
-                    percent = 100
+                if proporcao > 10:
+                    percent1 = 100
+                    percent2 = 100
+                elif proporcao > 6:
+                    percent1 = 100
+                    percent2 = int(9*proporcao+11)
                 else:
-                    percent = int(12*proporcao+28)
+                    percent1 = int(12*proporcao+28)
+                    percent2 = int(9*proporcao+11)
                 if t2['Valor'] > t1['Valor']:
-                    moedas_em_jogo = int(t1['Valor']*percent/100)
+                    moedas_em_jogo1 = int(t1['Valor']*percent1/100)
+                    moedas_em_jogo2 = int(t1['Valor']*percent2/100+100)
                 else:
-                    moedas_em_jogo = int(t2['Valor']*percent/100)
-                #print(t1,t2)
+                    moedas_em_jogo1 = int(t2['Valor']*percent1/100)
+                    moedas_em_jogo2 = int(t2['Valor']*percent2/100+100)
+                # moedas em jogo sera o menor valor entre os dois
+                if moedas_em_jogo1 < moedas_em_jogo2:
+                    moedas_em_jogo = moedas_em_jogo1
+                else:
+                    moedas_em_jogo = moedas_em_jogo2
+                
                 patdb1 = lista_pat.find_one({'Time': time1})
                 pat1 = patdb1['Patrocinador']
                 if patdb1:
@@ -613,13 +625,19 @@ def get_next_jogos():
                     apo2 = patdb2.get('Apoiadores')
                 else:
                     apo2 = ""
+                # cards allin
+                list_users = [u for u in mongo.db.moedasdeck.find({"tipo": "allin","jogo": str(n['Jogo'])})]
+                list_allin = []
+                #nome, jogo, card
+                for u in list_users:
+                    list_allin.append(u["nome"])
             else:
                 pat1 = "-"
                 pat2 = "-"
                 apo1 = ""
                 apo2 = ""
                 moedas_em_jogo = 0
-                percent=0
+                list_allin = []
                 t1v = 0
                 t2v = 0
             jogo = {
@@ -629,8 +647,8 @@ def get_next_jogos():
                 'time2': time2,
                 'time1_valor': t1v,
                 'time2_valor': t2v,
-                'percent': percent,
                 'moedas_em_jogo': moedas_em_jogo,
+                'allin': list_allin,
                 'apo1': apo1,
                 'apo2': apo2,
                 'pat1': pat1, 
@@ -685,7 +703,7 @@ def get_pat_teams():
                         'nome': item['nome'],
                         'valor': item['valor']
                     })
-                    valor = item['valor']
+                    valor = int(item['valor']*1.1)
             lista_livres.append({'time': t["Time"],'valor': valor})
         if t['Patrocinador'] != "-":
             if jogos:
@@ -693,8 +711,9 @@ def get_pat_teams():
             else:
                 busca = False
             j=0
-            # Set True for test purposes in hml
             apoio_liberado = False
+            # Set True for test purposes in hml
+            #apoio_liberado = True
             moedas_do_jogo = 0
             t1 = "-"
             t2 = "-"

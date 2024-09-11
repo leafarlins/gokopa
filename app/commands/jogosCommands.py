@@ -81,29 +81,41 @@ def get_aposta(jogo):
 @jogosCommands.cli.command("editJogo")
 @click.argument("ano")
 @click.argument("jogo")
-@click.argument("campo")
-@click.argument("valor1")
-@click.argument("valor2")
-def edit_jogo(ano,jogo,campo,valor1,valor2):
+#@click.argument("campo")
+@click.argument("p1")
+@click.argument("p2")
+@click.argument("tr1",required=False)
+@click.argument("tr2",required=False)
+@click.argument("pe1",required=False)
+@click.argument("pe2",required=False)
+def edit_jogo(ano,jogo,p1,p2,tr1,tr2,pe1,pe2):
     jogo = mongo.db.jogos.find_one({"Ano": int(ano),"Jogo": int(jogo)})
     #jogo = [u for u in jogosCollection.find({"Ano": ano,"Jogo": jogo})]
     if jogo:
-        print("Jogo encontrado: ",jogo)
+        #print("Jogo encontrado: ",jogo)
         idJogo = jogo["_id"]
-        if campo == "placar":
-            campo1 = "p1"
-            campo2 = "p2"
-        elif campo == "tr":
-            campo1 = "tr1"
-            campo2 = "tr2"
-        elif campo == "pe":
-            campo1 = "pe1"
-            campo2 = "pe2"
+        # if campo == "placar":
+        #     campo1 = "p1"
+        #     campo2 = "p2"
+        # elif campo == "tr":
+        #     campo1 = "tr1"
+        #     campo2 = "tr2"
+        # elif campo == "pe":
+        #     campo1 = "pe1"
+        #     campo2 = "pe2"
+        # else:
+        #     print("Forneca os valores de campo: placar, tr, pe.")
+        #     exit()
+        if tr1 and tr2:
+            if pe1 and pe2:
+                print(f'Editando jogo {jogo}: {p1}x{p2} tr:{tr1}x{tr2} pe:{pe1}x{pe2}')
+                mongo.db.jogos.find_one_and_update({'_id': idJogo},{'$set': {"p1": int(p1), "p2": int(p2), "tr1": int(tr1), "tr2": int(tr2), "pe1": int(pe1), "pe2": int(pe2)}})
+            else:
+                print(f'Editando jogo {jogo}: {p1}x{p2} tr:{tr1}x{tr2}')
+                mongo.db.jogos.find_one_and_update({'_id': idJogo},{'$set': {"p1": int(p1), "p2": int(p2), "tr1": int(tr1), "tr2": int(tr2)}})
         else:
-            print("Forneca os valores de campo: placar, tr, pe.")
-            exit()
-        print(f'Editando campo {campo1}: {valor1} e {campo2}: {valor2}')
-        mongo.db.jogos.find_one_and_update({'_id': idJogo},{'$set': {campo1: int(valor1), campo2: int(valor2)}})
+            print(f'Editando jogo {jogo}: {p1}x{p2}')
+            mongo.db.jogos.find_one_and_update({'_id': idJogo},{'$set': {"p1": int(p1), "p2": int(p2)}})
         print("Finalizado.")
 
     else:

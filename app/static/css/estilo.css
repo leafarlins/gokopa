@@ -317,6 +317,10 @@ td.des {
 	max-height:20px;
 }
 
+.moedacard {
+	max-width:60px;
+}
+
 .miniflag {
 	max-width:15px;
 	max-height:10px;

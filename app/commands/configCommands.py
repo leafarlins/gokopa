@@ -324,13 +324,15 @@ def reset_base_moedas():
     mongo.db.moedas.drop()
     mongo.db.moedaslog.drop()
     mongo.db.patrocinio.drop()
-    novo_user = {
-            "nome": "ernani",
-            "saldo": 1000,
-            "bloqueado": 0,
-            "investido": 0
-    }
-    mongo.db.moedas.insert_one(novo_user)
+    mongo.db.moedasdeck.drop()
+    for i in range(1,5):
+        novo_user = {
+                "nome": "ze"+str(i),
+                "saldo": 0,
+                "bloqueado": 0,
+                "investido": 0
+        }
+        mongo.db.moedas.insert_one(novo_user)
     print(f"Reiniciando base de moedas")
 
 @configCommands.cli.command("cadastra_estadio")
@@ -356,6 +358,14 @@ def cadastra_estadio():
         mongo.db.estadiolist.insert_many(estadiolist)
     print("Finalizado.")
 
+
+@configCommands.cli.command("migrate170")
+def migrate170():
+    reset_base_moedas()
+    for i in range(1,40):
+        mongo.db.jogos.find_one_and_update({'Ano': 24, 'Jogo': i},{'$set': {"processado": False}})
+
+
 @configCommands.cli.command("migrate160")
 def migrate160():
     reset_base_moedas()
@@ -368,7 +378,12 @@ def migrate160():
         mongo.db.timehistory.find_one_and_update({'Time': time},{'$set': {cname: 't'}})
     for time in listac_gokopa:
         mongo.db.timehistory.find_one_and_update({'Time': time},{'$set': {cname: 'c'}})
-    cadastra_estadio()
+
+@configCommands.cli.command("fixbase")
+def fixbase():
+    times = [u for u in mongo.db.timehistory.find()]
+    for t in times:
+        print("db.timehistory.findOneAndUpdate({'Time': '",t["Time"],"'},{'$set': {'r23': ",t["r23"],"}})",sep="")
 
 @configCommands.cli.command("migrate150")
 def migrate150():

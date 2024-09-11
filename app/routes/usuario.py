@@ -10,8 +10,8 @@ from ..extentions.database import mongo
 usuario = Blueprint('usuario',__name__)
 
 ANOSTR='24'
-DATAMAX='04/10/2024'
-data_limite = datetime.strptime("05/10/2024 02:00","%d/%m/%Y %H:%M")
+DATAMAX='02/10/2024'
+data_limite = datetime.strptime("02/10/2024 18:00","%d/%m/%Y %H:%M")
 
 @usuario.route('/login', methods=['GET','POST'])
 def login():
@@ -87,7 +87,7 @@ def validagokopa():
                     userName = get_user_name(validUser)
                     novo_user = {
                             "nome": userName,
-                            "saldo": 1000,
+                            "saldo": 0,
                             "bloqueado": 0,
                             "investido": 0
                     }

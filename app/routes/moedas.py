@@ -6,6 +6,7 @@ from ..extentions.database import mongo
 from datetime import date, datetime
 from operator import itemgetter
 from ..cache import cache
+import random
 
 moedas = Blueprint('moedas',__name__)
 
@@ -16,6 +17,7 @@ MAX_LOG_PAGE=100
 def get_moedas_info():
     jogos = get_next_jogos()
     board = get_moedas_board()
+
     logs = [u for u in mongo.db.moedaslog.find().sort('lid',pymongo.DESCENDING)]
 
 
@@ -32,7 +34,7 @@ def gamemoedas():
         userLogado=False
     else:
         validUser = mongo.db.users.find_one_or_404({'username': session["username"]})
-        if validUser["gokopa"]:
+        if validUser["gokopa"] or validUser["name"] == "rlins":
             userLogado = True
             info['username'] = validUser['name']
             user_info['lista_leilao'] = lista_pat.get('lista_leilao')
@@ -45,13 +47,26 @@ def gamemoedas():
             user_info['meus_avenda'] = meus_avenda
             user_info["nome"] = validUser['name']
             moedas_user = mongo.db.moedas.find_one({'nome': validUser['name']})
-            user_info['saldo'] = moedas_user['saldo']
+            if validUser["name"] == "rlins":
+                user_info['saldo'] = 0
+            else:
+                user_info['saldo'] = moedas_user['saldo']
             user_info['tentarpat'] = [u for u in mongo.db.tentarpat.find({'nome': validUser['name']})]
             meus_pat = []
             for item in lista_pat.get('patrocinados'):
                 if item.get('patrocinador') == validUser['name']:
                     meus_pat.append(item)
             user_info['meus_pat'] = meus_pat
+            # Decks e cards
+            # { "tipo": "deck", "user": user['nome'], "deck": deck, "pool": [], "processa": [] }
+            if validUser["name"] == "rlins":
+                all_decks = [u for u in mongo.db.moedasdeck.find({"tipo": "deck"})]
+                if all_decks:
+                    user_info['cards'] = all_decks
+            else:
+                decks_user = mongo.db.moedasdeck.find_one({'user': validUser['name'],"tipo": "deck"})
+                if decks_user:
+                    user_info['cards'] = decks_user
             # Escreve nos dados de jogos meu apoio, caso exista, para cada time
             for j in info['jogos']:
                 if j['pat1'] != '-':
@@ -294,6 +309,150 @@ def addvalorpat():
             else:
                 flash(f'Erro na atualização da base.','danger')
                 current_app.logger.error(f"Erro na atualização da base: {apostador} add valor pat de {valor} ao time {time}")
+    else:
+        flash(f'Usuário não logado.','danger')
+    return redirect(url_for('moedas.gamemoedas'))
+
+
+# Decks e cards
+# { "tipo": "deck", "user": user['nome'], "deck": deck, "pool": [], "processa": [] }
+# card: { "id": 7, "freq": 1, "card": "Destituir patrocinador", "desc": "Remove patrocinador do time e devolve ao pool do bolão." }
+@moedas.route('/gk/moedas/usecard',methods=["POST"])
+def usecard():
+    if "username" in session:
+        validUser = mongo.db.users.find_one({"username": session["username"]})
+        apostador = validUser["name"]
+        card = eval(request.values.get("card"))
+        moedas_deck = mongo.db.moedasdeck.find_one({"tipo": "deck","user": apostador})
+        #moedasDb = mongo.db.moedas.find_one({'nome': apostador})
+        card_pool = moedas_deck['pool']
+        processar = moedas_deck['processa']
+        if card not in card_pool:
+            flash(f'Card não presente nas cartas disponíveis.','danger')
+        else:
+            card_pool.remove(card)
+            if card["id"] in [1,9]: # Ganhe 10 # Ganhe 15
+                outdb = mongo.db.moedas.find_one_and_update({'nome': apostador},{'$inc': {'saldo': card["saldo"]}})
+                outdb2 = mongo.db.moedasdeck.find_one_and_update({"tipo": "deck","user": apostador},{'$set': {"pool": card_pool}})
+                if outdb and outdb2:
+                    flash(f'Card {card["card"]} utilizado.',"success")
+                    moedas_log(apostador,'+'+str(card["saldo"]),"card"+str(card["id"]),0,f"Card +{card['saldo']}")
+                else:
+                    flash(f'Erro na atualização da base.','danger')
+                    current_app.logger.error(f"Erro na atualização da base: {apostador} card add +{card['saldo']} moedas")
+            elif card["id"] == 2: # Peça 50
+                processar.append({
+                    "card": card["card"],
+                    "cardid": card["id"],
+                    "prazo": random.randint(1,4),
+                    "saldo": 50
+                })
+                outdb2 = mongo.db.moedasdeck.find_one_and_update({"tipo": "deck","user": apostador},{'$set': {"pool": card_pool,"processa": processar}})
+                if outdb2:
+                    flash(f'Card {card["card"]} utilizado.',"success")
+                else:
+                    flash(f'Erro na atualização da base.','danger')
+                    current_app.logger.error(f"Erro na atualização da base: {apostador} card +50")
+            elif card["id"] in [3,10]: # Empréstimo a jato
+                if card['id'] == 3:
+                    prazo = 6
+                    divida = card['saldo']
+                else:
+                    prazo = 60 + random.randint(0,40)
+                    divida = int(card['saldo']*1.1)
+                processar.append({
+                    "card": card["card"],
+                    "cardid": card["id"],
+                    "prazo": prazo,
+                    "saldo": -divida
+                })
+                outdb = mongo.db.moedas.find_one_and_update({'nome': apostador},{'$inc': {'saldo': card['saldo']}})
+                outdb2 = mongo.db.moedasdeck.find_one_and_update({"tipo": "deck","user": apostador},{'$set': {"pool": card_pool,"processa": processar}})
+                if outdb and outdb2:
+                    flash(f'Card {card["card"]} utilizado.',"success")
+                    current_app.logger.info(f"Jogador {apostador} utiliza acao {card['card']}")
+                    moedas_log(apostador,'+'+str(card["saldo"]),"card"+str(card["id"]),0,f"Empréstimo +{card['saldo']}")
+                else:
+                    flash(f'Erro na atualização da base.','danger')
+                    current_app.logger.error(f"Erro na atualização da base: {apostador} card +50")
+            elif card["id"] == 4: # All-in
+                jogo_alvo = request.values.get("jogoAlvo")
+                if jogo_alvo and int(jogo_alvo) > 0:
+                    outdb = mongo.db.moedasdeck.insert_one({
+                        "tipo": "allin",
+                        "nome": apostador,
+                        "jogo": jogo_alvo,
+                        "card": card
+                    })
+                    outdb2 = mongo.db.moedasdeck.find_one_and_update({"tipo": "deck","user": apostador},{'$set': {"pool": card_pool}})
+                    if outdb and outdb2:
+                        flash(f'Card {card["card"]} utilizado.',"success")
+                        current_app.logger.info(f"Jogador {apostador} utiliza acao {card['card']} em jogo {jogo_alvo}")
+                    else:
+                        flash(f'Erro na atualização da base.','danger')
+                        current_app.logger.error(f"Erro na atualização da base: {apostador} card {card['card']}")
+                else:
+                    flash(f'Jogo inválido para All-in',"danger")
+            elif card["id"] in [5,7]: # Depreciar time # Destituir patrocinador
+                time_alvo = request.values.get("timeAlvo")
+                processar.append({
+                    "card": card["card"],
+                    "cardid": card["id"],
+                    "prazo": random.randint(0,2),
+                    "alvo": time_alvo
+                })
+                outdb2 = mongo.db.moedasdeck.find_one_and_update({"tipo": "deck","user": apostador},{'$set': {"pool": card_pool,"processa": processar}})
+                if outdb2:
+                    flash(f'Card {card["card"]} utilizado.',"success")
+                    current_app.logger.info(f"Jogador {apostador} utiliza acao {card['card']} em alvo {time_alvo}")
+                else:
+                    flash(f'Erro na atualização da base.','danger')
+                    current_app.logger.error(f"Erro na atualização da base: {apostador} card {card['card']}")
+            elif card["id"] == 6: # Processa jogador
+                jogador_alvo = request.values.get("jogadorAlvo")
+                processar.append({
+                    "card": card["card"],
+                    "cardid": card["id"],
+                    "prazo": 4,
+                    "saldo": -50,
+                    "alvo": jogador_alvo
+                })
+                outdb2 = mongo.db.moedasdeck.find_one_and_update({"tipo": "deck","user": apostador},{'$set': {"pool": card_pool,"processa": processar}})
+                if outdb2:
+                    flash(f'Card {card["card"]} utilizado.',"success")
+                    current_app.logger.info(f"Jogador {apostador} acaba de aplicar multa em jogador {jogador_alvo}")
+                else:
+                    flash(f'Erro na atualização da base.','danger')
+                    current_app.logger.error(f"Erro na atualização da base: {apostador} card {card['card']}")
+            elif card["id"] == 8: # Remix
+                processar.append({
+                    "card": card["card"],
+                    "cardid": card["id"],
+                    "prazo": 0
+                })
+                outdb2 = mongo.db.moedasdeck.find_one_and_update({"tipo": "deck","user": apostador},{'$set': {"pool": card_pool,"processa": processar}})
+                if outdb2:
+                    flash(f'Card {card["card"]} utilizado.',"success")
+                    current_app.logger.info(f"Jogador {apostador} usou remix")
+                    moedas_log(apostador,'--',"card"+str(card["id"]),0,f"Card remix")
+                else:
+                    flash(f'Erro na atualização da base.','danger')
+                    current_app.logger.error(f"Erro na atualização da base: {apostador} card {card['card']}")
+            elif card["id"] == 11: # Procurar
+                novo_deck = moedas_deck['deck']
+                if len(novo_deck) > 1:
+                    novo_pool = [novo_deck.pop(),novo_deck.pop(),novo_deck.pop()]
+                    outdb2 = mongo.db.moedasdeck.find_one_and_update({"tipo": "deck","user": apostador},{'$set': {"pool": novo_pool,"deck": novo_deck}})
+                    if outdb2:
+                        flash(f'Card {card["card"]} utilizado.',"success")
+                        current_app.logger.info(f"Jogador {apostador} usou remix")
+                        moedas_log(apostador,'--',"card"+str(card["id"]),0,f"Card procurar")
+                    else:
+                        flash(f'Erro na atualização da base.','danger')
+                        current_app.logger.error(f"Erro na atualização da base: {apostador} card {card['card']}")
+                else:
+                    flash(f'Sem cartas suficientes no baralho','warning')
+
     else:
         flash(f'Usuário não logado.','danger')
     return redirect(url_for('moedas.gamemoedas'))

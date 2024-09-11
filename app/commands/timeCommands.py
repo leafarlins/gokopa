@@ -14,7 +14,7 @@ from flask_pymongo import BSONObjectIdConverter
 import pymongo
 from pymongo.collection import ReturnDocument
 
-from app.routes.backend import get_moedas_board, get_next_jogos, get_pat_teams, moedas_log, get_ranking
+from app.routes.backend import get_moedas_board, get_next_jogos, get_pat_teams, moedas_log, get_ranking, progress_data
 from ..extentions.database import mongo
 from flask import Blueprint,current_app
 
@@ -698,6 +698,110 @@ def verifica_invest():
         else:
             print(f"Usuário {u['nome']} XX - investimento incompatível, {u['investido']} x {valor_verificado} ({valor_verificado-u['investido']})")
 
+@timeCommands.cli.command("geraBaralho")
+# Gera baralho para jogadores das moedas
+def geraBaralho():
+    cartas = [{
+        "id": 0,
+        "freq": 40,
+        "card": "Dia de folga",
+        "desc": "Nenhuma ação por hoje, use outras cartas ou descanse."
+    },{
+        "id": 1,
+        "freq": 30,
+        "card": "Ganhe 10",
+        "saldo": 10,
+        "desc": "Ganhe imediatamente 10 moedas em seu saldo."
+    },{
+        "id": 9,
+        "freq": 10,
+        "card": "Ganhe 15",
+        "saldo": 15,
+        "desc": "Ganhe imediatamente 15 moedas em seu saldo."
+    },{
+        "id": 2,
+        "freq": 8,
+        "card": "Peça 50",
+        "desc": "Faça um pedido por 50 moedas que chegará em até dois dias."
+    },{
+        "id": 10,
+        "freq": 2,
+        "saldo": 500,
+        "card": "Empréstimo longo",
+        "desc": 'Peça um empréstimo de 500 moedas, pague 550 entre 30 e 50 dias.'
+    },{
+        "id": 3,
+        "freq": 8,
+        "card": "Empréstimo a jato",
+        "saldo": 200,
+        "desc": "Peça por 200 moedas agora, que serão debitadas em 3 dias."
+    },{
+        "id": 4,
+        "freq": 7,
+        "card": "All-in",
+        "desc": "Adicione a carta a um dos jogos apoiados ou patrocinados para dobrar ganhos, mas dobrar perdas caso haja derrota."
+    },{
+        "id": 5,
+        "freq": 3,
+        "card": "Depreciar time",
+        "desc": "Deprecia valor do time em até 50 moedas."
+    },{
+        "id": 6,
+        "freq": 3,
+        "card": "Processa jogador",
+        "desc": "Multa jogador alvo em 50 moedas, pagas em 2 dias."
+    },{
+        "id": 7,
+        "freq": 1,
+        "card": "Compra time",
+        "desc": "Remove patrocinador e compra o time. Pague o time em 3x nos próximos dias."
+    },{
+        "id": 8,
+        "freq": 3,
+        "card": "Remix",
+        "desc": "No próximo processamento, devolve mão para o deck, embaralha e compra 2 cartas."
+    },{
+        "id": 11,
+        "freq": 5,
+        "card": "Procurar",
+        "desc": "Descarte a mão atual e compre 3 cartas."
+    }]
+    deck = []
+    for card in cartas:
+        for f in range(card["freq"]):
+            deck.append(card)
+    print(f"Criado deck com {len(deck)} cartas, atribuindo a jogadores.")
+    mongo.db.moedasdeck.insert_one({
+        "tipo": "cartas",
+        "cartas": cartas
+    })
+
+    moedas = [u for u in mongo.db.moedas.find()]
+    pool_inicial = []
+    for i in range(5):
+        pool_inicial.append({
+        "id": 10,
+        "freq": 2,
+        "saldo": 500,
+        "card": "Empréstimo longo",
+        "desc": "Peça um empréstimo de 500 moedas, pague 550 entre 30 e 50 dias."
+    })
+    processa_inicial = [{
+        "card": "Remix inicial do jogo, embaralha a mão no deck",
+        "cardid": 8,
+        "prazo": 0
+    }]
+    for user in moedas:
+        random.shuffle(deck)
+        print(f"Adicionando deck para {user["nome"]}")
+        mongo.db.moedasdeck.insert_one({
+            "tipo": "deck",
+            "user": user['nome'],
+            "deck": deck,
+            "pool": pool_inicial,
+            "processa": processa_inicial
+        })
+
 
 @timeCommands.cli.command("processaPat")
 @click.argument("jogos",required=False)
@@ -717,23 +821,31 @@ def processa_pat(jogos='0'):
     moedas = mongo.db.moedas
 
 
-    # Emprestimo extra inicial
-    emprestimo_ini = 400
-    #debito = int((1000 + emprestimo_ini*6) / 18)
-    debito = 200
-    if leilao:
-        moedas.update_many({},{'$inc': {'saldo': emprestimo_ini}})
-        moedas_log('all',"+"+str(emprestimo_ini),"",0,"Empréstimo inicial")
+    # # Emprestimo extra inicial
+    # emprestimo_ini = 400
+    # #debito = int((1000 + emprestimo_ini*6) / 18)
+    # debito = 200
+    # if leilao:
+    #     moedas.update_many({},{'$inc': {'saldo': emprestimo_ini}})
+    #     moedas_log('all',"+"+str(emprestimo_ini),"",0,"Empréstimo inicial")
 
     # Processamento dos últimos jogos
     if jogos > 0:
         past_jogos = get_next_jogos()['past_jogos'][:jogos]
+        prop_derrota = 0.4
         #verify_jogos = get_next_jogos()['next_jogos'][:12]
 
         # Equivale aos 19 ultimos processamentos
-        if past_jogos[0]['jid'] > 205:
-            moedas.update_many({},{'$inc': {'saldo': -debito}})
-            moedas_log('all',"-"+str(debito),"",0,"Pagamento de empréstimo")
+        # if past_jogos[0]['jid'] > 205:
+        #     moedas.update_many({},{'$inc': {'saldo': -debito}})
+        #     moedas_log('all',"-"+str(debito),"",0,"Pagamento de empréstimo")
+        # Cobra juros se negativo, 5%+1
+        users_serasa = [u for u in moedas.find({'saldo': {'$lt': 0}})]
+        for user in users_serasa:
+            saldo = user['saldo']
+            debito = int(saldo*0.05) - 1
+            moedas.find_one_and_update({'nome': user['nome']},{'$inc': {'saldo': debito}})
+            moedas_log(user['nome'],str(debito),"gkbank",0,"Juros")
 
         # Devolve apoios de jogos impedidos de apoiar
         #for j in (verify_jogos + past_jogos):
@@ -776,8 +888,8 @@ def processa_pat(jogos='0'):
                             else:
                                 current_app.logger.error(f"Erro na remoção de apoios duplicados em {j['time1']}")
                         if remover_b:
-                            print(f"Jogo {j['jid']} possui apoiadores a remover: {remover_a}")
-                            current_app.logger.info(f"Jogo {j['jid']} possui apoiadores a remover: {remover_a}")
+                            print(f"Jogo {j['jid']} possui apoiadores a remover: {remover_b}")
+                            current_app.logger.info(f"Jogo {j['jid']} possui apoiadores a remover: {remover_b}")
                             for apoiador in remover_b:
                                 for a in lista_apoios_2:
                                     if a['nome'] == apoiador:
@@ -790,21 +902,6 @@ def processa_pat(jogos='0'):
                                 current_app.logger.info(f"Apoios duplicados a {j['time2']} removidos")
                             else:
                                 current_app.logger.error(f"Erro na remoção de apoios duplicados em {j['time2']}")
-
-        # Debito de saldo parado
-        # if past_jogos[0]['jid'] > 16 and past_jogos[0]['jid'] < 61:
-        #     debito_parado = int(past_jogos[0]['jid']*2-30)
-        # else:
-        #     debito_parado = 0
-        # if debito_parado > 0:
-        #     lista_moedas = [u for u in moedas.find()]
-        #     for user in lista_moedas:
-        #         if user['saldo'] > 0:
-        #             deb_saldo = debito_parado
-        #             if deb_saldo > user['saldo']:
-        #                 deb_saldo = user['saldo']
-        #             moedas.find_one_and_update({'nome': user['nome']},{'$inc': {'saldo': -deb_saldo}})
-        #             moedas_log(user['nome'],"-"+str(deb_saldo),"",0,"Débido de saldo parado")
 
         # Processamento dos jogos
         for jogo in past_jogos:
@@ -825,10 +922,11 @@ def processa_pat(jogos='0'):
                 lista_t = [(jogo['time1'],lista_m[0],jogo['time2']),(jogo['time2'],lista_m[1],jogo['time1'])]
                 for t,moeda_ganha,tadv in lista_t:
                     # Atualização do valor do time
-                    inc_invest = int(moeda_ganha/3)
+                    inc_invest = int(moeda_ganha*prop_derrota)
                     patDb = patrocinios.find_one_and_update({'Time': t},{'$inc': {'Valor': inc_invest}})
                     # Atualizaçao nos valores de cada jogador
                     if patDb['Patrocinador'] != '-':
+                        lista_apoios = patDb.get('Apoiadores')
                         if moeda_ganha > 0:
                             moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'investido': inc_invest,'saldo': moeda_ganha}})
                             moedas_log(patDb['Patrocinador'],"+"+str(moeda_ganha),t,jogo['jid'],"Jogo de time patrocinado")
@@ -836,8 +934,32 @@ def processa_pat(jogos='0'):
                         else:
                             moedas.find_one_and_update({'nome': patDb['Patrocinador']},{'$inc':{'investido': inc_invest}})
                             moedas_log(patDb['Patrocinador'],"i"+str(inc_invest),t,jogo['jid'],"Perda de valor patrocinado")
+                        # Se all-in
+                        if jogo['allin']:
+                            if moeda_ganha > 0:
+                                moeda_allin = moeda_ganha
+                                moeda_str = "+" + str(moeda_allin)
+                            else:
+                                moeda_allin = int(prop_derrota*moeda_ganha)
+                                moeda_str = str(moeda_allin)
+                            nomes_apoios = []
+                            max_allin = [{patDb['Patrocinador']: 1}]
+                            if lista_apoios:
+                                for ap in lista_apoios:
+                                    nomes_apoios.append(ap['nome'])
+                                    if ap['valor'] >= jogo['moedas_em_jogo']:
+                                        proporc = 1
+                                    else:
+                                        proporc = ap['valor']/jogo['moedas_em_jogo']
+                                    max_allin.append({ap['nome']: proporc})
+                            # Selecao dos que apostaram no patrocinador
+                            for apost in jogo['allin']:
+                                if apost == patDb['Patrocinador'] or apost in nomes_apoios:
+                                    moeda_allin = int(max_allin[apost]*moeda_allin)
+                                    moedas.find_one_and_update({'nome': apost},{'$inc':{'saldo': moeda_allin}})
+                                    moedas_log(apost,moeda_str,"card4",jogo['jid'],"Card All-in")
+                                    mongo.db.moedasdeck.find_one_and_delete({"tipo": "allin","nome": apost})
                         # Processamento da lista de apoios
-                        lista_apoios = patDb.get('Apoiadores')
                         if lista_apoios:
                             apoios_taxa =  0
                             # Calculo da taxa de apoio
@@ -854,7 +976,7 @@ def processa_pat(jogos='0'):
                                     valor_max = a['valor']
                                 # Se perda, perda no valor do patrocinio
                                 if moeda_ganha < 0:
-                                    moeda_perdida = int(moeda_ganha/3 - 1)
+                                    moeda_perdida = int(moeda_ganha*prop_derrota - 1)
                                     novo_valor_apoio = a['valor'] + moeda_perdida
                                     if novo_valor_apoio <=0:
                                         moedas.find_one_and_update({'nome': a['nome']},{'$inc':{'investido': -a['valor']}})
@@ -986,6 +1108,178 @@ def processa_pat(jogos='0'):
         print("Sem patrocinadores novos hoje.")
     if jogos > 0:
         ranking_moedas()
+
+    # Secao deck e cards
+    if jogos > 0:
+        processa_cards()
+
+@timeCommands.cli.command("processaCards")
+def processaCards():
+    processa_cards()
+
+def processa_cards():
+    lista_deck = [u for u in mongo.db.moedasdeck.find({"tipo": "deck"})]
+    mensagemc = ""
+    last_game = progress_data()['last_game']
+    #print(lista_deck)
+    # { "tipo": "deck", "user": user['nome'], "deck": deck, "pool": [], "processa": [] }
+    for d in lista_deck:
+        usuario = d["user"]
+        deck = d["deck"]
+        new_card = deck.pop()
+        pool = d["pool"]
+        pool.append(new_card)
+        # pool.append({
+        #     "id": 4,
+        #     "freq": 7,
+        #     "card": "All-in",
+        #     "desc": "Adicione a carta a um dos jogos apoiados ou patrocinados para dobrar ganhos, mas perder todo o valor em jogo caso haja derrota."
+        # })
+        if len(pool) > 5:
+            card_descartado = pool.pop(0)
+            id_card = card_descartado['id']
+            if id_card > 0:
+                moedas_log(usuario,"x","card"+str(id_card),0,"Card descartado")
+        processar = d["processa"]
+        divida_add = 0
+        remix =  False
+        for c in processar:
+            if last_game >= 212:
+                c['prazo'] = -1
+            else:
+                c['prazo'] -= 1
+            # Executa acao
+            if c['prazo'] < 0:
+                if c["cardid"] == 2: # Peça 50
+                    mongo.db.moedas.find_one_and_update({'nome': usuario},{'$inc':{'saldo': c['saldo']}})
+                    moedas_log(usuario,"+"+str(c['saldo']),"card"+str(c["cardid"]),0,f"Card +{c['saldo']}")
+                elif c["cardid"] in [3,10,77]: # Empréstimo a jato # Emprestimo longo # destituir pat
+                    mongo.db.moedas.find_one_and_update({'nome': usuario},{'$inc':{'saldo': c['saldo']}})
+                    moedas_log(usuario,str(c['saldo']),"card"+str(c["cardid"]),0,"Card empréstimo")
+                elif c["cardid"] == 5: # Depreciar time
+                    time_alvo = c['alvo']
+                    #{"Time" : "Coréia do Sul", "Valor" : 272, "Patrocinador" : "-", "Apoiadores": [] }
+                    patrocinio = mongo.db.patrocinio.find_one({"Time": time_alvo})
+                    if patrocinio:
+                        patrocinador = patrocinio["Patrocinador"]
+                        #apoiadores = patrocinio.get("Apoiadores")
+                        valor = patrocinio["Valor"]
+                        if valor > 100:
+                            novo_valor = valor - 50
+                        else:
+                            novo_valor = int(valor/2)
+                        mongo.db.patrocinio.find_one_and_update({"Time": time_alvo},{'$set': {"Valor": novo_valor}})
+                        if patrocinador != "-":
+                            mongo.db.moedas.find_one_and_update({'nome': patrocinador},{'$inc':{'investido': novo_valor - valor}})
+                            moedas_log(patrocinador,"i"+str(novo_valor - valor),time_alvo,0,f"Card de {usuario} deprecia patrocinio")
+                            user = mongo.db.users.find_one({"active": True,"gokopa": True, "name": usuario})
+                            if user.get("telegram"):
+                                user1 = user.get("telegram")
+                            else:
+                                user1 = usuario
+                            userp = mongo.db.users.find_one({"active": True,"gokopa": True, "name": patrocinador})
+                            if userp.get("telegram"):
+                                user2 = userp.get("telegram")
+                            else:
+                                user2 = patrocinador
+                            mensagemc += f"\n💥💸 O time {time_alvo} perdeu valor, um ataque de {user1} a {user2}"
+                elif c["cardid"] == 6: # Processa jogador
+                    jogador_alvo = c['alvo']
+                    mongo.db.moedas.find_one_and_update({'nome': jogador_alvo},{'$inc':{'saldo': c['saldo']}})
+                    moedas_log(jogador_alvo,str(c['saldo']),"card"+str(c["cardid"]),0,f"Jogador {usuario} processou multa")
+                    user = mongo.db.users.find_one({"active": True,"gokopa": True, "name": usuario})
+                    if user.get("telegram"):
+                        user1 = user.get("telegram")
+                    else:
+                        user1 = usuario
+                    usert = mongo.db.users.find_one({"active": True,"gokopa": True, "name": jogador_alvo})
+                    if usert.get("telegram"):
+                        user2 = usert.get("telegram")
+                    else:
+                        user2 = jogador_alvo
+                    mensagemc += f"\n💥💰 Jogador {user1} aplicou multa a {user2}"
+                elif c["cardid"] == 8: # Remix
+                    remix = True
+                elif c["cardid"] == 7: # Destituir patrocinador
+                    time_alvo = c['alvo']
+                    #{"Time" : "Coréia do Sul", "Valor" : 272, "Patrocinador" : "-", "Apoiadores": [] }
+                    patrocinio = mongo.db.patrocinio.find_one({"Time": time_alvo})
+                    if patrocinio:
+                        patrocinador = patrocinio["Patrocinador"]
+                        valor = patrocinio["Valor"]
+                        apoiadores = patrocinio.get("Apoiadores")
+                        # Troca patrocinador
+                        if patrocinador != "-":
+                            if apoiadores:
+                                if usuario in apoiadores:
+                                    # Devolve apoio do usuario
+                                    mongo.db.moedas.find_one_and_update({'nome': usuario},{'$inc':{'saldo': valor, 'investido': -valor}})
+                                    moedas_log(usuario,"x "+str(valor),time_alvo,0,"Devolução de apoio")
+                                    apoiadores.remove(usuario)
+                            mongo.db.patrocinio.find_one_and_update({"Time": time_alvo},{'$set': {"Patrocinador": usuario,"Apoiadores": apoiadores}})
+                            mongo.db.moedas.find_one_and_update({'nome': patrocinador},{'$inc':{'investido': -valor, 'saldo': valor}})
+                            moedas_log(patrocinador,"x "+str(valor),time_alvo,0,f"Card de {usuario} destitui patrocinio")
+                            mongo.db.moedas.find_one_and_update({'nome': usuario},{'$inc':{'investido': valor}})
+                            moedas_log(usuario,"i "+str(valor),time_alvo,0,f"Card comprou patrocinio")
+                            user = mongo.db.users.find_one({"active": True,"gokopa": True, "name": usuario})
+                            divida_add += valor
+                            if user.get("telegram"):
+                                user1 = user.get("telegram")
+                            else:
+                                user1 = usuario
+                            usert = mongo.db.users.find_one({"active": True,"gokopa": True, "name": patrocinador})
+                            if usert.get("telegram"):
+                                user2 = usert.get("telegram")
+                            else:
+                                user2 = patrocinador
+                            mensagemc += f"\n💥🚫 Jogador {user1} destituiu patrocinador {user2} de time {time_alvo}!"
+        if divida_add > 0:
+            # 3 parcelas da divida do time
+            processar.append({
+                "card": "Destituição de time",
+                "cardid": 77,
+                "prazo": random.randint(2,8),
+                "saldo": int(- divida_add / 3) - (divida_add % 3)
+            })
+            processar.append({
+                "card": "Destituição de time",
+                "cardid": 77,
+                "prazo": random.randint(9,14),
+                "saldo": int(- divida_add / 3)
+            })
+            processar.append({
+                "card": "Destituição de time",
+                "cardid": 77,
+                "prazo": random.randint(15,20),
+                "saldo": int(- divida_add / 3)
+            })
+        # Limpar cartas gastas
+        for c in processar:
+            if c['prazo'] < 0:
+                processar.remove(c)
+        if remix:
+            deck = deck + pool
+            random.shuffle(deck)
+            pool = [deck.pop(),deck.pop()]
+        mongo.db.moedasdeck.find_one_and_update({"tipo": "deck","user": usuario},{'$set': {"deck": deck, "pool": pool, "processa": processar}})
+
+    # Envia mensagem final
+    if mensagemc:
+        envia_msg = "⚽♠️ Cartas de ação" + mensagemc
+        print(envia_msg)
+        if TELEGRAM:
+            print("Enviando mensagem via telegram")
+            params = {
+                'chat_id': TELEGRAM_CHAT_ID,
+                'text': envia_msg
+            }
+            url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+            r = requests.get(url, params=params)
+            if r.status_code == 200:
+                print(json.dumps(r.json(), indent=2))
+            else:
+                r.raise_for_status()
+
 
 #@timeCommands.cli.command("rankingMoedas")
 def ranking_moedas():
