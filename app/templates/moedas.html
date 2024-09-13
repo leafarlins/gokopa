@@ -243,24 +243,51 @@
 <div class="row scoll-pane">
     <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-4">
         <h3>Resultado geral</h3>
-        <table class="tab_gokopa tabp5">
+        <table class="tab_gokopa tabp5 mb-3">
             <tr>
                 <th title="Posição">#</th>
                 <th style="min-width: 100px;">Nome</th>
-                <th style="min-width: 50px;">Total</th>
-                <th title="Investimento" style="min-width: 50px;">Inv.</th>
-                <th title="Saldo" style="min-width: 50px;">Saldo</th>
+                <th style="min-width: 80px;">Total</th>
             </tr>
             {% for item in info['moedas_board'] %}
             <tr>
                 <td>{{ item['pos'] }}</td>
                 <td>{{ item['nome'] }}</td>
                 <td>{{ item['total'] }} 🪙</td>
-                <td>{{ item['investido'] }} 🪙</td>
-                <td>{{ item['saldo'] }} 🪙</td>
             </tr>
             {% endfor %}
         </table>
+        {% if info["userlogado"] %}
+        {% for item in info['moedas_board'] %}
+        {% if item['nome'] == info["username"] or info["username"] == "rlins" %}
+        <h3>Detalhado: {{ item['nome'] }}</h3>
+        <table class="tab_gokopa tabp5 mb-3">
+            <tr>
+                <th>Descrição</th>
+                <th>Valor</th>
+            </tr>
+            <tr>
+                <td>Score total</td>
+                <td>{{ item['total'] }}</td>
+            </tr>
+            <tr>
+                <td>Saldo livre</td>
+                <td>{{ item['saldo_livre'] }}</td>
+            </tr>
+            <tr>
+                <td>Saldo bloqueado</td>
+                <td>{{ item['saldo'] - item['saldo_livre'] }}</td>
+            </tr>
+            <tr>
+                <td>Investimentos</td>
+                <td>{{ item['investido'] }}</td>
+            </tr>
+            <tr>
+                <td>Dívidas</td>
+                <td>{{ item['divida'] }}</td>
+            </tr>
+        </table>
+        {% endif %}{% endfor %}{% endif %}
     </div>
     <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 smallt center">
         <h3>Jogos próximos</h3>

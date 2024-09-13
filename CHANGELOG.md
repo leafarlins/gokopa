@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
+## [1.6.1] - 2024-09-13
+
+### Modified
+- Moedas game with decks and cards
+
 ## [1.6.0] - 2024-08-25
 
 ### Modified
@@ -245,7 +250,8 @@ All notable changes to this project will be documented in this file. Based on [K
 - Table from games from first season year 20
 
 
-[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.6.0...HEAD
+[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.6.1...HEAD
+[1.6.1]: https://github.com/leafarlins/gokopa/compare/v1.6.0..1.6.1/
 [1.6.0]: https://github.com/leafarlins/gokopa/compare/v1.5.4..1.6.0/
 [1.5.4]: https://github.com/leafarlins/gokopa/compare/v1.5.3..1.5.4/
 [1.5.3]: https://github.com/leafarlins/gokopa/compare/v1.5.2..1.5.3/

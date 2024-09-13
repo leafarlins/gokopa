@@ -1,4 +1,5 @@
 from datetime import datetime
+from app.commands.timeCommands import geraBaralho
 from app.routes.backend import get_user_name
 from flask import Blueprint, current_app, render_template, session, request, url_for, flash
 from werkzeug.utils import redirect
@@ -10,8 +11,8 @@ from ..extentions.database import mongo
 usuario = Blueprint('usuario',__name__)
 
 ANOSTR='24'
-DATAMAX='02/10/2024'
-data_limite = datetime.strptime("02/10/2024 18:00","%d/%m/%Y %H:%M")
+DATAMAX='04/10/2024'
+data_limite = datetime.strptime("05/10/2024 02:00","%d/%m/%Y %H:%M")
 
 @usuario.route('/login', methods=['GET','POST'])
 def login():
@@ -89,9 +90,11 @@ def validagokopa():
                             "nome": userName,
                             "saldo": 0,
                             "bloqueado": 0,
-                            "investido": 0
+                            "investido": 0,
+                            "divida": 0
                     }
                     mongo.db.moedas.insert_one(novo_user)
+                    geraBaralho(novo_user)
                     flash(f'Usuário ativado na gokopa!','success')
                     current_app.logger.info(f"Usuário {validUser} ativado na gokopa")
                     return redirect(url_for('bolao.apostas',ano=ANOSTR))

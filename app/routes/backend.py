@@ -535,10 +535,10 @@ def get_moedas_board():
     lista_users = []
     for item in moedasDb:
         saldo = item['saldo']+item['bloqueado']
-        total = saldo + item['investido']
+        total = saldo + item['investido'] + item.get('divida')
         getdb = mongo.db.users.find_one({'name': item['nome']})
         if getdb and getdb['active']:
-            lista_users.append({'nome': item['nome'],'saldo': saldo, 'investido': item['investido'],'total': total})
+            lista_users.append({'nome': item['nome'],'saldo_livre': item['saldo'],'saldo': saldo, 'investido': item['investido'], 'divida': item['divida'], 'total': total})
     lista_users = sorted(lista_users, key=lambda k: k['total'],reverse=True)
     p = 1
     last_total = lista_users[0]['total']
@@ -713,7 +713,7 @@ def get_pat_teams():
             j=0
             apoio_liberado = False
             # Set True for test purposes in hml
-            #apoio_liberado = True
+            apoio_liberado = True
             moedas_do_jogo = 0
             t1 = "-"
             t2 = "-"
