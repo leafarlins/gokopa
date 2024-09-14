@@ -713,7 +713,7 @@ def get_pat_teams():
             j=0
             apoio_liberado = False
             # Set True for test purposes in hml
-            apoio_liberado = True
+            #apoio_liberado = True
             moedas_do_jogo = 0
             t1 = "-"
             t2 = "-"

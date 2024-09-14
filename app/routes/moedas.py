@@ -51,7 +51,10 @@ def gamemoedas():
                 user_info['saldo'] = 0
             else:
                 user_info['saldo'] = moedas_user['saldo']
-            user_info['tentarpat'] = [u for u in mongo.db.tentarpat.find({'nome': validUser['name']})]
+            if validUser['name'] == 'rlins':
+                user_info['tentarpat'] = [u for u in mongo.db.tentarpat.find()]
+            else:
+                user_info['tentarpat'] = [u for u in mongo.db.tentarpat.find({'nome': validUser['name']})]
             meus_pat = []
             for item in lista_pat.get('patrocinados'):
                 if item.get('patrocinador') == validUser['name']:

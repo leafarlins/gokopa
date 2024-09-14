@@ -94,7 +94,7 @@ def validagokopa():
                             "divida": 0
                     }
                     mongo.db.moedas.insert_one(novo_user)
-                    geraBaralho(novo_user)
+                    geraBaralho(userName)
                     flash(f'Usuário ativado na gokopa!','success')
                     current_app.logger.info(f"Usuário {validUser} ativado na gokopa")
                     return redirect(url_for('bolao.apostas',ano=ANOSTR))

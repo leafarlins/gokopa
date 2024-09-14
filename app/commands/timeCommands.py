@@ -679,7 +679,7 @@ def verifica_invest():
         else:
             print(f"Usuário {u['nome']} XX - investimento incompatível, {u['investido']} x {valor_verificado} ({valor_verificado-u['investido']})")
 
-@timeCommands.cli.command("gera_aralho")
+@timeCommands.cli.command("gera_baralho")
 # Gera baralho para jogadores das moedas
 @click.argument("user")
 def gera_baralho(user):

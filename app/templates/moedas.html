@@ -84,11 +84,13 @@
     <ul class="list-group text-center">
         {% for item in user_info['tentarpat'] %}
         <li class="list-group-item">{{ item['valor'] }}🪙 <img class="flag" src="../static/img/flag/{{ item['time'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ item['time'] }} 
+            {% if info["username"] == "rlins" %}{{ item['nome'] }}{% else %}
             <form style="display: inline" action="{{ url_for('moedas.removepat') }}" method="post">
             <button type="submit" class="btn btn-outline-danger btn-sm">X</button>
             <input type="hidden" name="time_pat" value="{{ item['time'] }}" id="time_pat">
             <input type="hidden" name="valor_pat" value="{{ item['valor'] }}" id="valor_pat">
-            </form></li>
+            </form>{% endif %}
+        </li>
         {% endfor %}
     </ul>
     {% endif %}
