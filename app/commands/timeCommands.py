@@ -308,7 +308,7 @@ def set_pot(potname,time):
         print(f'Time {time} nao valido.')
         exit()
 
-    outdb = mongo.db.pot.find_one_and_update({"nome": time, 'Ano': ANO},{'$set': {'pot': potname}})
+    outdb = mongo.db.pot.find_one_and_update({"nome": time, 'Ano': ANO},{'$set': {'pot': potname,'sorteado': False}})
     if outdb:
         print("Time atualizado na base")
     else:
@@ -323,7 +323,7 @@ def set_pot(potname,time):
 # Realiza sorteio dos times das tacas
 @timeCommands.cli.command("sorteiaTaca")
 @click.argument("teste",required=False)
-def sorteia_copa(teste=""):
+def sorteia_taca(teste=""):
     sleeptime=3
     if teste:
         APLICA = False
@@ -384,10 +384,11 @@ def sorteia_copa(teste=""):
 @timeCommands.cli.command("sorteiaCopa")
 @click.argument("teste",required=False)
 def sorteia_copa(teste=""):
-    sleeptime=3
     if teste:
+        sleeptime=2
         APLICA = False
     else:
+        sleeptime=1
         APLICA = True
     print("Iniciando sorteio da Copa do Mundo")
     std_groups = ['A','B','C','D','E','F','G','H','I','J','K','L']
@@ -396,14 +397,16 @@ def sorteia_copa(teste=""):
     cabeca_group = std_groups.copy()
     gr_ceur = []
     gr_came = []
-    gr_casa = ["J","G","A"]
-    for t in ['Trinidad e Tobago','St Vicente','São Cristóvão']:
+    gr_aso = []
+    gr_cafr = []
+    gr_casa = ["A","G"]
+    for t in ['Sudão','Egito']:
         g = gr_casa.pop()
         posic = "p1" + g
         print(f"flask time editTime {posic} {t}")
         cabeca_group.remove(g)
         times_c.remove(t)
-        gr_came.append(g)
+        gr_cafr.append(g)
         if APLICA:
             time.sleep(sleeptime)
             edit_time(posic,t)
@@ -441,24 +444,37 @@ def sorteia_copa(teste=""):
     }
 
     # Sorteio dos grupos ASO e AFR
-    gr_aso = []
-    gr_afr = []
     times_aso = [u['nome'] for u in mongo.db.pot.find({"Ano": ANO, 'pot': 'ASO'})]
     times_afr = [u['nome'] for u in mongo.db.pot.find({"Ano": ANO, 'pot': 'AFR'})]
+    r2_groups = std_groups.copy()
+    random.shuffle(times_aso)
+    random.shuffle(times_afr)
+    input("Iniciando segunda rodada do sorteio...")
+
+    for g in ['A','G']:
+        random.shuffle(ordemg[g])
+        posic = "p" + str(ordemg.get(g).pop()) + g
+        t = times_aso.pop()
+        print(f"flask time editTime {posic} {t}")
+        conf = mongo.db.pot.find_one({"Ano": ANO, "nome": t})['conf']
+        gr_aso.append(g)
+        r2_groups.remove(g)
+        if APLICA:
+            time.sleep(sleeptime)
+            edit_time(posic,t)
+            mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": t},{'$set': {'sorteado': True}})
     times_2r = times_aso + times_afr
     random.shuffle(times_2r)
-    input("Iniciando segunda rodada do sorteio...")
-    #print(times_2r)
-    for g in std_groups:
+
+    for g in r2_groups:
         random.shuffle(ordemg[g])
         posic = "p" + str(ordemg.get(g).pop()) + g
         t = times_2r.pop()
         print(f"flask time editTime {posic} {t}")
         conf = mongo.db.pot.find_one({"Ano": ANO, "nome": t})['conf']
-        if t in times_aso:
+        #print(f'conf: {conf}')
+        if conf == 'ASO':
             gr_aso.append(g)
-        else:
-            gr_afr.append(g)
         if APLICA:
             time.sleep(sleeptime)
             edit_time(posic,t)
@@ -475,18 +491,21 @@ def sorteia_copa(teste=""):
     random.shuffle(times_ame)
     random.shuffle(times_eur)
     random.shuffle(times_tasoafr)
-    for g in gr_ceur:
+    gr_came.sort()
+    r3_groups = std_groups.copy()
+    random.shuffle(gr_cafr)
+    for g in gr_came + [gr_cafr.pop()]:
         posic = "p" + str(ordemg.get(g).pop()) + g
-        t = times_ame.pop()
+        t = times_eur.pop()
         print(f"flask time editTime {posic} {t}")
+        r3_groups.remove(g)
         if APLICA:
             time.sleep(sleeptime)
             edit_time(posic,t)
             mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": t},{'$set': {'sorteado': True}})
-    gr_came.sort()
-    for g in gr_came:
+    for g in r3_groups:
         posic = "p" + str(ordemg.get(g).pop()) + g
-        t = times_eur.pop()
+        t = times_ame.pop()
         print(f"flask time editTime {posic} {t}")
         if APLICA:
             time.sleep(sleeptime)
@@ -499,26 +518,22 @@ def sorteia_copa(teste=""):
     
     # Sorteio dos grupos TopASOSFR + EUR
     input("Iniciando quarta e última rodada do sorteio...")
-    random.shuffle(gr_aso)
-    random.shuffle(gr_afr)
-    for t in times_tasoafr:
-        conf = mongo.db.pot.find_one({"Ano": ANO, "nome": t})['conf']
-        if conf == "ASO":
-            g = gr_afr.pop()
+    r4_aso = []
+    r4_eur = []
+    print(gr_aso)
+    for g in std_groups:
+        if g in gr_aso:
+            r4_eur.append(g)
         else:
-            g = gr_aso.pop()
+            r4_aso.append(g)
+    print(r4_aso)
+    print(r4_eur)
+    random.shuffle(r4_aso)
+    r4_groups = r4_aso[0:2] + sorted(r4_aso[2:] + r4_eur)
+    r4_times = times_eur + times_tasoafr
+    for g in r4_groups:
         posic = "p" + str(ordemg.get(g).pop()) + g
-        print(f"flask time editTime {posic} {t}")
-        if APLICA:
-            time.sleep(sleeptime)
-            edit_time(posic,t)
-            mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": t},{'$set': {'sorteado': True}})
-    # Restantes dos europeus
-    gr_4r = gr_aso + gr_afr
-    gr_4r.sort()
-    for g in gr_4r:
-        posic = "p" + str(ordemg.get(g).pop()) + g
-        t = times_eur.pop()
+        t = r4_times.pop()
         print(f"flask time editTime {posic} {t}")
         if APLICA:
             time.sleep(sleeptime)
@@ -526,6 +541,11 @@ def sorteia_copa(teste=""):
             mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": t},{'$set': {'sorteado': True}})
  
     print("Sorteio finalizado.")
+
+
+@timeCommands.cli.command("limpaPots")
+def limpa_pots():
+    mongo.db.pot.delete_many({'Ano': ANO})
 
 @timeCommands.cli.command("zeraGrupos")
 def zera_grupos():
@@ -573,7 +593,7 @@ def classifica_time(time,pot):
         print(f'Time {time} nao valido.')
         exit()
 
-    itemdb = mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": time},{'$set': {"pot": int(pot),"sorteado": False}})
+    itemdb = mongo.db.pot.find_one_and_update({"Ano": ANO, "nome": time},{'$set': {"pot": pot,"sorteado": False}})
     if itemdb:
         print("Atualizado.")
     else:
@@ -629,11 +649,17 @@ def exec():
     #mongo.db.patrocinio.find_and_modify({'Time': 'Holanda'},{'$set': {'Patrocinador': "-"}})
     #mongo.db.jogos.find_one_and_update({'Ano': 22, 'Jogo': 94},{'$set': {'desc1':'s1-EUR','desc2':'s2-EUR'}})
     #mongo.db.jogos.find_one_and_update({'Ano': 22, 'Jogo': 95},{'$set': {'desc1':'s1-AME','desc2':'s2-AME'}})
-    #for t in [u for u in mongo.db.patrocinio.find()]:
-    #    print(t['Time'])
-    users = [u for u in mongo.db.moedas.find()]
-    for u in users:
-        mongo.db.moedas.find_one_and_update({'nome': u['nome']},{'$inc':{'divida': 0}})
+    for t in [u for u in mongo.db.patrocinio.find()]:
+        print(t['Time'])
+    # for t in ['Brasil','Argentina']:
+    #     mongo.db.pot.find_one_and_delete({'Ano': 24, 'nome': t, 'pot': 'AME'})
+    # for t in ['França','Alemanha','Tcheca','Portugal','Espanha','Sérvia','Bélgica','Suécia']:
+    #     mongo.db.pot.find_one_and_delete({'Ano': 24, 'nome': t, 'pot': 'EUR'})
+
+
+    # users = [u for u in mongo.db.moedas.find()]
+    # for u in users:
+    #     mongo.db.moedas.find_one_and_update({'nome': u['nome']},{'$inc':{'divida': 0}})
     # nome = "ernani"
     # mongo.db.moedas.find_one_and_update({'nome': nome},{'$inc':{'investido': -valor}})
     # moedas_log(nome,str(-valor),t,70,"Ajuste da derrota do time")

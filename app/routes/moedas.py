@@ -369,7 +369,7 @@ def usecard():
                     "prazo": prazo,
                     "saldo": -divida
                 })
-                outdb = mongo.db.moedas.find_one_and_update({'nome': apostador},{'$inc': {'saldo': card['saldo'],'divida': -card['divida']}})
+                outdb = mongo.db.moedas.find_one_and_update({'nome': apostador},{'$inc': {'saldo': card['saldo'],'divida': -divida}})
                 outdb2 = mongo.db.moedasdeck.find_one_and_update({"tipo": "deck","user": apostador},{'$set': {"pool": card_pool,"processa": processar}})
                 if outdb and outdb2:
                     flash(f'Card {card["card"]} utilizado.',"success")
