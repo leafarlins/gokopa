@@ -33,10 +33,12 @@ docker_build() {
 }
 
 VERSAO=$1
+REBUILD="$2"
 HOJE=$(date "+%Y-%m-%d")
+[ $REBUILD == "rebuild" ] && apenas_build=true || apenas_build=""
 
 echo "Construindo versao $VERSAO"
 
-edit_changelog
-commit_tag
+[ $apenas_build ] || edit_changelog
+[ $apenas_build ] || commit_tag
 docker_build

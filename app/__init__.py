@@ -1,3 +1,4 @@
+import logging
 from flask import Flask
 from .routes.usuario import usuario
 from .routes.bolao import bolao
@@ -28,6 +29,8 @@ def create_app(config_object="app.settings"):
     
     cache.init_app(app)
     database.init_app(app)
+    LOGLEVEL = app.config.get('LOGLEVEL')
+    app.logger.setLevel(LOGLEVEL)
 
     
     return app
