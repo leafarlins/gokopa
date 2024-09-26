@@ -26,9 +26,10 @@ def create_app(config_object="app.settings"):
     app.register_blueprint(timeCommands)
     app.register_blueprint(configCommands)
     app.register_blueprint(emailCommands)
-    
+
     cache.init_app(app)
     database.init_app(app)
+    #LOGLEVEL = os.environ.get('LOGLEVEL', 'info')
     LOGLEVEL = app.config.get('LOGLEVEL')
     app.logger.setLevel(LOGLEVEL)
 
