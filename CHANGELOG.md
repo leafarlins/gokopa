@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file. Based on [K
 ## [1.6.3] - 2024-09-26
 ## [1.6.3] - 2024-09-26
 ## [1.6.3] - 2024-09-26
+## [1.6.3] - 2024-09-26
 
 ### Added
 - Page regrasmoedas
@@ -266,6 +267,7 @@ All notable changes to this project will be documented in this file. Based on [K
 
 
 [unreleased]: https://github.com/leafarlins/gokopa/compare/v1.6.3...HEAD
+[1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.3..1.6.3/
 [1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.3..1.6.3/
 [1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.3..1.6.3/
 [1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.2..1.6.3/
