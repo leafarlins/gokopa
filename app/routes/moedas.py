@@ -17,11 +17,13 @@ MAX_LOG_PAGE=100
 def get_moedas_info():
     jogos = get_next_jogos()
     board = get_moedas_board()
-
     logs = [u for u in mongo.db.moedaslog.find().sort('lid',pymongo.DESCENDING)]
-
-
     return {'moedas_board': board['moedas_board'], 'jogos': jogos['next_jogos'][:16], 'ultimos_jogos': jogos['past_jogos'][:16],'logs': logs,'logsindex': 0,'logspages': int(len(logs)/MAX_LOG_PAGE)+1}
+
+@moedas.route('/regrasmoedas',methods=['GET'])
+def regrasmoedas():
+    outdb = mongo.db.moedasdeck.find_one({"tipo": "cartas"})
+    return render_template('regrasmoedas.html',menu='Moedas',cartas=outdb['cartas'])
 
 @moedas.route('/moedas',methods=['GET','POST'])
 def gamemoedas():

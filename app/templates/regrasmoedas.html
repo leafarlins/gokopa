@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container-sm">
+
+    <div class="texto col-12">
+        <h2 class="center">Regras do Jogo das Moedas</h2>
+        <h4>Fase de leilões iniciais</h4>
+        <p>1. Processamento: nos dias iniciais antes dos jogos apenas a fase de processamento (rodada) de leilões será realizada, uma vez ao dia.</p>
+        <p>2. Lances: vá a área de jogador e dê o lance inicial para patrocinar um time. Existe um lance mínimo para cada time, e você pode dar um lance de acordo com seu saldo livre.</p>
+        <p>3. No processamento, os lances vão para uma lista pública. Outros jogadores podem cobrir o lance, que será processado na próxima rodada.</p>
+        <p>4. Caso nenhum jogador cubra o lance, você ganhará o patrocínio do time na próxima rodada e ele aparecerá na lista de times como patrocinado por você.</p>
+        <h4>Fase de processamento de jogos</h4>
+        <p>1. Processamento (rodadas): depois do início dos jogos, teremos 2 rodadas por dia. Os últimos jogos serão processados e os leilões continuarão acontecendo como no início enquanto houver times disponíveis, dessa vez 2x ao dia.</p>
+        <p>2. A cada rodada os últimos jogos são processados, ou seja, os ganhos e perda de moedas são realizados.</p>
+        <p>3. Quando um time é desclassificado, no próximo processamento, será excluído do jogo das moedas e os investimentos realizados a este time serão devolvidos ao saldo livre de cada jogador.</p>
+        <h4>Patrocínio vs. Apoios</h4>
+        <p>1. O jogador pode atuar patrocinando uma equipe ou apoiando livremente a equipe. Esses apoios serão considerados no processamento dos jogos.</p>
+        <p>2. Cada jogo terá uma quantidade de moedas em jogo, descrita na lista de jogos. Este é o valor máximo de moedas que um jogador pode ganhar na partida. O valor é definido de acordo com o valor de cada um dos dois times.</p>
+        <p>3. Um jogador pode imediatamente injetar moedas em um time que patrocina ou excluir e adicionar moedas como um apoiador livre a um outro time de terceiro.</p>
+        <p>4. Patrocinador: o patrocinador ganhará a cada jogo o valor de moedas em jogo e o seu time irá valorizar em 40% desse valor em caso de vitórias. Em caso de derrotas, o time irá desvalorizar em 40%. Além disso, o patrocinador ganhará uma taxa de apoios de acordo com o número de apoiadores.</p>
+        <p>5. Apoiador: O apoiador ganhará o valor de moedas em jogo em caso de vitórias, e perderá 40% desse valor em caso de derrota. Caso apoie os dois times, o maior valor será considerado e o menor devolvido ao saldo.</p>
+        <h4>Deck de cartas de ações</h4>
+        <p>A Gokopa 24 introduz ao jogo das moedas um deck de cartas que será embaralhado para cada jogador. São 5 cartas iniciais, 1 processamento inicial e um deck de 120 cartas.</p>
+    </div>
+  
+
+<div class="row justify-content-center scoll-pane">
+  <h3>Descrição das cartas</h3>
+{% for card in cartas | sort(attribute='freq') %}
+  <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-4 mb-3">
+    <div class="card mb-3">
+      <h4 class="card-header">{{ card['card'] }}</h4>
+      <div class="card-body">
+        <h5 class="card-title">{{ card['desc'] }}</h5>
+        <h6 class="card-subtitle text-muted">{{ card['freq'] }} carta(s) no deck</h6>
+      </div>
+      <img src="../static/img/data/logo/card{{ card['id'] }}.png" onerror="this.src='../static/img/flag/default.png'" style="align-self: center; max-width:120px;">
+      <div class="card-body">
+        <p class="card-text">{{ card['uso'] }}</p>
+      </div>
+    </div>
+      
+  </div>
+{% endfor %}
+</div>
+</div>
+{% endblock %}

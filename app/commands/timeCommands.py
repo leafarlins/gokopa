@@ -388,7 +388,7 @@ def sorteia_copa(teste=""):
         sleeptime=2
         APLICA = False
     else:
-        sleeptime=1
+        sleeptime=15
         APLICA = True
     print("Iniciando sorteio da Copa do Mundo")
     std_groups = ['A','B','C','D','E','F','G','H','I','J','K','L']
@@ -705,6 +705,98 @@ def verifica_invest():
         else:
             print(f"Usuário {u['nome']} XX - investimento incompatível, {u['investido']} x {valor_verificado} ({valor_verificado-u['investido']})")
 
+
+@timeCommands.cli.command("setaCartas")
+def setaCartas():
+    cartas = [{
+        "id": 0,
+        "freq": 40,
+        "card": "Dia de folga",
+        "desc": "Nenhuma ação por hoje, use outras cartas ou descanse.",
+        "uso": "Esta carta não realiza nenhuma ação. Ao comprar cartas, caso tenha mais de 5 em mãos, a mais antiga será descartada. O acúmulo dessa carta fará com que cartas mais antigas sejam descartadas. Não há ações para realizar nessa rodada."
+    },{
+        "id": 1,
+        "freq": 30,
+        "card": "Ganhe 10",
+        "saldo": 10,
+        "desc": "Ganhe imediatamente 10 moedas em seu saldo.",
+        "uso": "Use essa carta para adicionar imediatamente esta quantidade de moedas em seu saldo livre."
+    },{
+        "id": 9,
+        "freq": 10,
+        "card": "Ganhe 15",
+        "saldo": 15,
+        "desc": "Ganhe imediatamente 15 moedas em seu saldo.",
+        "uso": "Use essa carta para adicionar imediatamente esta quantidade de moedas em seu saldo livre."
+    },{
+        "id": 2,
+        "freq": 8,
+        "card": "Peça 50",
+        "desc": "Faça um pedido por 50 moedas que chegará em até dois dias.",
+        "uso": "Use essa carta para realizar um pedido de moedas que chegara em até 4 rodadas e será incluída em seu saldo livre. A ação será adicionada à lista de cards processando."
+    },{
+        "id": 10,
+        "freq": 2,
+        "saldo": 500,
+        "card": "Empréstimo longo",
+        "desc": 'Peça um empréstimo de 500 moedas, pague 550 entre 30 e 50 dias.',
+        "uso": "Use essa carta para realizar um empréstimo longo. Você receberá imediatamente moedas em seu saldo livre e deverá pagar no prazo estabelecido e adicionado à lista de cards processando. No início do jogo, cada jogador começa com uma mão inicial com essas cartas. Seu uso é opcional, e caso não utilise todas, as cartas retornarão ao deck no começo do jogo por causa do efeito do remix inicial."
+    },{
+        "id": 3,
+        "freq": 8,
+        "card": "Empréstimo a jato",
+        "saldo": 200,
+        "desc": "Peça por 200 moedas agora, que serão debitadas em 3 dias.",
+        "uso": "Receba imediatamente o valor de moedas em seu saldo livre. O card irá gerar uma ação em processamento de débito, de mesmo valor, na quantidade indicada de turnos."
+    },{
+        "id": 4,
+        "freq": 7,
+        "card": "All-in",
+        "desc": "Adicione a carta a um dos jogos apoiados ou patrocinados para dobrar ganhos, mas dobrar perdas caso haja derrota.",
+        "uso": "Escolha um dos próximos jogos, que você apoie ou patrocine algum time, e use esta carta. No processamento do jogo, os ganhos serão dobrados, mas as perdas também serão dobradas. Use em jogos em que esteja mais confiante do resultado."
+    },{
+        "id": 5,
+        "freq": 3,
+        "card": "Depreciar time",
+        "desc": "Deprecia valor do time em até 50 moedas.",
+        "uso": "Essa carta diminui o valor do time alvo. É considerado um ataque ao patrocinador do time, uma vez que ele perderá valor em investimento por causa da perda de valor do time."
+    },{
+        "id": 6,
+        "freq": 3,
+        "card": "Processa jogador",
+        "desc": "Multa jogador alvo em 50 moedas, pagas em 2 dias.",
+        "uso": "Escolha um jogador alvo: esse card ataca esse jogador diretamente, aplicando uma multa em seu saldo livre, em 4 rodadas."
+    },{
+        "id": 7,
+        "freq": 1,
+        "card": "Compra time",
+        "desc": "Remove patrocinador e compra o time. Pague o time em 3x nos próximos dias.",
+        "uso": "Força a compra de um time que já possui um patrocinador. Você passa a patrocinar o time, o antigo dono recebe seu valor no saldo livre, e você pagará em 3 parcelas ao longo das próximas rodadas. O card é processado em uma das próximas rodadas."
+    },{
+        "id": 8,
+        "freq": 3,
+        "card": "Remix",
+        "desc": "No próximo processamento, devolve mão para o deck, embaralha e compra 2 cartas.",
+        "uso": "Esse card reembaralha sua mão no deck e compra 2 cartas, efeito imediato. Esta ação pode ser usada caso não queira utilisar no momento sua mão atual, dando uma chance para buscar novas ações. Seu efeito é adicionado a cards em processamento na próxima rodada. Um remix inicial é programado para o jogo das moedas após a fase de leilões, antes dos jogos."
+    },{
+        "id": 11,
+        "freq": 5,
+        "card": "Procurar",
+        "desc": "Descarte a mão atual e compre 3 cartas.",
+        "uso": "Descarta a mão imediatamente e compra 3 cartas. Use após analisar a mão e ter certeza que não deseja mais as cartas que estão disponíveis, pois essa ação não poderá ser revertida."
+    }]
+    outdb = mongo.db.moedasdeck.find_one_and_update({"tipo": "cartas"},{'$set': {
+        "cartas": cartas
+    }})
+    if outdb:
+        current_app.logger.info(f"Editado deck de cartas.")
+    else:
+        mongo.db.moedasdeck.insert_one({
+            "tipo": "cartas",
+            "cartas": cartas
+        })
+        current_app.logger.info(f"Inserido deck de cartas.")
+
 @timeCommands.cli.command("gera_baralho")
 # Gera baralho para jogadores das moedas
 @click.argument("user")
@@ -804,19 +896,21 @@ def geraBaralho(user):
     }]
     current_app.logger.info(f"Criado deck com {len(deck)} cartas, atribuindo a {user}.")
     random.shuffle(deck)
-    outdb = mongo.db.moedasdeck.insert_one({
-        "tipo": "deck",
-        "user": user,
-        "deck": deck,
-        "pool": pool_inicial,
-        "processa": processa_inicial
-    })
-    if outdb:
-        current_app.logger.info(f"Deck criado com sucesso para {user}.")
+    checkdb = mongo.db.moedasdeck.find_one({"tipo": "deck","user": user})
+    if checkdb:
+        current_app.logger.info(f"Deck já existe para {user}.")
     else:
-        current_app.logger.error(f"Erro na criação do deck.")
-
-
+        outdb = mongo.db.moedasdeck.insert_one({
+            "tipo": "deck",
+            "user": user,
+            "deck": deck,
+            "pool": pool_inicial,
+            "processa": processa_inicial
+        })
+        if outdb:
+            current_app.logger.info(f"Deck criado com sucesso para {user}.")
+        else:
+            current_app.logger.error(f"Erro na criação do deck.")
 
 @timeCommands.cli.command("processaPat")
 @click.argument("jogos",required=False)
