@@ -296,6 +296,10 @@ def migrate142():
 
     print("Finalizado.")
 
+@configCommands.cli.command("migrate164")
+def migrate164():
+    mongo.db.moedas.update_many({},{'$set': {'lock': False}})
+
 @configCommands.cli.command("migrate147")
 def migrate147():
     estadiolist = [{

@@ -912,6 +912,18 @@ def geraBaralho(user):
         else:
             current_app.logger.error(f"Erro na criação do deck.")
 
+def lock_all_users():
+    return mongo.db.moedas.update_many(
+        {'lock': False},  # Only lock users who aren't already locked
+        {'$set': {'lock': True}}
+    )
+
+def unlock_all_users():
+    return mongo.db.moedas.update_many(
+        {},  # Unlock all users
+        {'$set': {'lock': False}}
+    )
+
 @timeCommands.cli.command("processaPat")
 @click.argument("jogos",required=False)
 #@click.argument("leilao",required=False)
@@ -1223,7 +1235,24 @@ def processa_pat(jogos='0'):
 
     # Secao deck e cards
     if jogos > 0:
-        processa_cards()
+        lock_all_users()
+        try:
+            processa_cards()
+        except:
+            current_app.logger.error("Erro no processamento de cartas.")
+            if TELEGRAM:
+                params = {
+                'chat_id': TELEGRAM_CHAT_ID,
+                'text': "🚨⚠️ Erro ao processar moedas, verificar."
+                }
+                url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+                r = requests.get(url, params=params)
+                if r.status_code == 200:
+                    print(json.dumps(r.json(), indent=2))
+                else:
+                    r.raise_for_status()
+        finally:
+            unlock_all_users()
         ranking_moedas()
 
 @timeCommands.cli.command("processaCards")

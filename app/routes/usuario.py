@@ -91,7 +91,8 @@ def validagokopa():
                             "saldo": 0,
                             "bloqueado": 0,
                             "investido": 0,
-                            "divida": 0
+                            "divida": 0,
+                            "lock": False
                     }
                     mongo.db.moedas.insert_one(novo_user)
                     geraBaralho(userName)
