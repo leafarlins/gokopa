@@ -51,7 +51,7 @@
         <th title="Total"><img class="flag" src="../static/img/total.png"></th>
       </tr>
       {% set ns = namespace(last_p=1,last_ouro=1,last_prata=1,last_bronze=1) %}
-      {% for time in copa_med | sort(attribute='bronze', reverse = True) | sort(attribute='prata', reverse = True) | sort(attribute='ouro', reverse = True) %}
+      {% for time in list_and_medal["Copa do Mundo"]["comp_medal"] | sort(attribute='bronze', reverse = True) | sort(attribute='prata', reverse = True) | sort(attribute='ouro', reverse = True) %}
       <tr>
         <td>
           {% if loop.index == 1 %}{{ loop.index }}
@@ -82,7 +82,7 @@
         <th title="quarto">4º</th>
         <th>sede</th>
       </tr>
-      {% for ano in copa_his %}
+      {% for ano in list_and_medal["Copa do Mundo"]["comp_list"] %}
       <tr>
         <td>{{ ano['Ano'] }}</td>
         <td class="text-nowrap tp2"><img class="flag" src="../static/img/flag/{{ ano['ouro'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ ano['ouro'] }}</td>
@@ -99,118 +99,70 @@
       {% endfor %}
     </table>
 
-    <br><h3>Campeões da Taça Mundial</h3>
-    <p class="text-center">Quadro geral de medalhas</p>
-    <table class="tab_gokopa quadro mb-3">
-      <tr>
-        <th title="Posição">#</th>
-        <th>Time</th>
-        <th title="Ouro"><img class="flag" src="../static/img/ouro.png"></th>
-        <th title="Prata"><img class="flag" src="../static/img/prata.png"></th>
-        <th title="Bronze"><img class="flag" src="../static/img/bronze.png"></th>
-        <th title="Total"><img class="flag" src="../static/img/total.png"></th>
-      </tr>
-      {% set ns = namespace(last_p=1,last_ouro=1,last_prata=1,last_bronze=1) %}
-      {% for time in taca_med | sort(attribute='bronze', reverse = True) | sort(attribute='prata', reverse = True) | sort(attribute='ouro', reverse = True) %}
-      <tr>
-        <td>
-          {% if loop.index == 1 %}{{ loop.index }}
-          {% elif ns.last_ouro == time['ouro'] and ns.last_prata == time['prata'] and ns.last_bronze == time['bronze'] %}{{ ns.last_p }}
-          {% else %}{{ loop.index }}
-            {% set ns.last_p = loop.index %}
-            {% set ns.last_ouro = time['ouro'] %}
-            {% set ns.last_prata = time['prata'] %}
-            {% set ns.last_bronze = time['bronze'] %}
-          {% endif %}
-        </td>
-        <td class="tp2"><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</td>
-        <td>{{ time['ouro'] }}</td>
-        <td>{{ time['prata'] }}</td>
-        <td>{{ time['bronze'] }}</td>
-        <td>{{ time['total'] }}</td>
-      </tr>
-      {% endfor %}
-    </table>
-    <p class="text-center">Histórico de conquistas na Taça Mundial</p>
+    <br><h3>Campeões das Taças</h3>
 
-    <table class="tab_gokopa quadro mb-3">
-      <tr>
-        <th title="Ano">A</th>
-        <th><img class="flag" src="../static/img/ouro.png"> Campeão</th>
-        <th title="segundo"><img class="flag" src="../static/img/prata.png"></th>
-        <th title="terceiro"><img class="flag" src="../static/img/bronze.png"></th>
-        <th title="quarto">4º</th>
-        <th>sede</th>
-      </tr>
-      {% for ano in taca_his %}
-      <tr>
-        <td>{{ ano['Ano'] }}</td>
-        <td class="tp2"><img class="flag" src="../static/img/flag/{{ ano['ouro'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ ano['ouro'] }}</td>
-        <td><img class="flag" src="../static/img/flag/{{ ano['prata'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['prata'] }}"></td>
-        <td><img class="flag" src="../static/img/flag/{{ ano['bronze'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['bronze'] }}"></td>
-        <td><img class="flag" src="../static/img/flag/{{ ano['quarto'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['quarto'] }}"></td>
-        <td><img class="flag" src="../static/img/flag/{{ ano['sedes'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['sedes'] }}"></td>
-      </tr>
-      {% endfor %}
-    </table>
+    {% for competicao in ["Taça Mundial","Taça América", "Taça Europa", "Taça Ásia-Oceania", "Taça África"] %}
+      <h4 class="text-center">{{ competicao }}</h4>
+      <p class="text-center"><a id="medtac{{ competicao }}" href="javascript:toggle('toggle{{ competicao }}','medtac{{ competicao }}');">mostrar mais</a></p>
+      <div id="toggle{{ competicao }}" style="display: none" class=".container-fluid">
+        <p class="text-center">Quadro geral de medalhas</p>
+        <table class="tab_gokopa quadro mb-3">
+          <tr>
+            <th title="Posição">#</th>
+            <th>Time</th>
+            <th title="Ouro"><img class="flag" src="../static/img/ouro.png"></th>
+            <th title="Prata"><img class="flag" src="../static/img/prata.png"></th>
+            <th title="Bronze"><img class="flag" src="../static/img/bronze.png"></th>
+            <th title="Total"><img class="flag" src="../static/img/total.png"></th>
+          </tr>
+          {% set ns = namespace(last_p=1,last_ouro=1,last_prata=1,last_bronze=1) %}
+          {% for time in list_and_medal[competicao]["comp_medal"] | sort(attribute='bronze', reverse = True) | sort(attribute='prata', reverse = True) | sort(attribute='ouro', reverse = True) %}
+          <tr>
+            <td>
+              {% if loop.index == 1 %}{{ loop.index }}
+              {% elif ns.last_ouro == time['ouro'] and ns.last_prata == time['prata'] and ns.last_bronze == time['bronze'] %}{{ ns.last_p }}
+              {% else %}{{ loop.index }}
+                {% set ns.last_p = loop.index %}
+                {% set ns.last_ouro = time['ouro'] %}
+                {% set ns.last_prata = time['prata'] %}
+                {% set ns.last_bronze = time['bronze'] %}
+              {% endif %}
+            </td>
+            <td class="text-nowrap tp2"><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</td>
+            <td>{{ time['ouro'] }}</td>
+            <td>{{ time['prata'] }}</td>
+            <td>{{ time['bronze'] }}</td>
+            <td>{{ time['total'] }}</td>
+          </tr>
+          {% endfor %}
+        </table>
 
-    <h3>Campeões das Taças Regionais</h3>
-    <p class="text-center">Quadro geral de medalhas <a id="medtacr" href="javascript:toggle('medtacrtoggle','medtacr');">mostrar mais</a></p>
-    <div id="medtacrtoggle" style="display: none" class=".container-fluid">
-    <table class="tab_gokopa quadro mb-3">
-      <tr>
-        <th title="Posição">#</th>
-        <th>Time</th>
-        <th title="Ouro"><img class="flag" src="../static/img/ouro.png"></th>
-        <th title="Prata"><img class="flag" src="../static/img/prata.png"></th>
-        <th title="Bronze"><img class="flag" src="../static/img/bronze.png"></th>
-        <th title="Total"><img class="flag" src="../static/img/total.png"></th>
-      </tr>
-      {% set ns = namespace(last_p=1,last_ouro=1,last_prata=1,last_bronze=1) %}
-      {% for time in tacas_med | sort(attribute='bronze', reverse = True) | sort(attribute='prata', reverse = True) | sort(attribute='ouro', reverse = True) %}
-      <tr>
-        <td>
-          {% if loop.index == 1 %}{{ loop.index }}
-          {% elif ns.last_ouro == time['ouro'] and ns.last_prata == time['prata'] and ns.last_bronze == time['bronze'] %}{{ ns.last_p }}
-          {% else %}{{ loop.index }}
-            {% set ns.last_p = loop.index %}
-            {% set ns.last_ouro = time['ouro'] %}
-            {% set ns.last_prata = time['prata'] %}
-            {% set ns.last_bronze = time['bronze'] %}
-          {% endif %}
-        </td>
-        <td class="text-nowrap tp2"><img class="flag" src="../static/img/flag/{{ time['nome'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ time['nome'] }}</td>
-        <td>{{ time['ouro'] }}</td>
-        <td>{{ time['prata'] }}</td>
-        <td>{{ time['bronze'] }}</td>
-        <td>{{ time['total'] }}</td>
-      </tr>
-      {% endfor %}
-    </table></div>
-    <p class="text-center">Histórico de conquistas nas Taças Regionais <a id="histacr" href="javascript:toggle('histacrtoggle','histacr');">mostrar mais</a></p>
+        <p class="text-center">Histórico de conquistas</p>
+        <table class="tab_gokopa quadro mb-3">
+          <tr>
+            <th title="Ano">A</th>
+            <th><img class="flag" src="../static/img/ouro.png"> Campeão</th>
+            <th title="segundo"><img class="flag" src="../static/img/prata.png"></th>
+            <th title="terceiro"><img class="flag" src="../static/img/bronze.png"></th>
+            <th title="quarto">4º</th>
+            <th>sede</th>
+          </tr>
+          {% for ano in list_and_medal[competicao]["comp_list"] %}
+          <tr>
+            <td>{{ ano['Ano'] }}</td>
+            <td class="tp2"><img class="flag" src="../static/img/flag/{{ ano['ouro'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ ano['ouro'] }}</td>
+            <td><img class="flag" src="../static/img/flag/{{ ano['prata'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['prata'] }}"></td>
+            <td><img class="flag" src="../static/img/flag/{{ ano['bronze'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['bronze'] }}"></td>
+            <td><img class="flag" src="../static/img/flag/{{ ano['quarto'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['quarto'] }}"></td>
+            <td><img class="flag" src="../static/img/flag/{{ ano['sedes'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['sedes'] }}"></td>
+          </tr>
+          {% endfor %}
+        </table>
+    
+      </div>
+    {% endfor %}
 
-    <div id="histacrtoggle" style="display: none" class=".container-fluid">
-    <table class="tab_gokopa quadro mb-3">
-      <tr>
-        <th title="Ano">A</th>
-        <th><img class="flag" src="../static/img/ouro.png"> Campeão</th>
-        <th title="segundo"><img class="flag" src="../static/img/prata.png"></th>
-        <th title="semifinal"><img class="flag" src="../static/img/bronze.png"></th>
-        <th title="semifinal"><img class="flag" src="../static/img/bronze.png"></th>
-        <th>sede</th>
-      </tr>
-      {% for ano in tacas_his %}
-      <tr>
-        <td>{{ ano['Ano'] }}</td>
-        <td class="tp2"><img class="flag" src="../static/img/flag/{{ ano['ouro'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ ano['ouro'] }}</td>
-        <td><img class="flag" src="../static/img/flag/{{ ano['prata'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['prata'] }}"></td>
-        <td><img class="flag" src="../static/img/flag/{{ ano['bronze'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['bronze'] }}"></td>
-        <td><img class="flag" src="../static/img/flag/{{ ano['quarto'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['quarto'] }}"></td>
-        <td><img class="flag" src="../static/img/flag/{{ ano['sedes'] }}.png" onerror="this.src='../static/img/flag/default.png'" title="{{ ano['sedes'] }}"></td>
-      </tr>
-      {% endfor %}
-    </table>
-    </div>
+
   </div>
 
   <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xxl-3 mt-3">

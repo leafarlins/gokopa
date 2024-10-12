@@ -1272,12 +1272,13 @@ def processa_cards():
         pool = d["pool"]
         pool.append(new_card)
         moedas = mongo.db.moedas.find_one({"nome": usuario})
-        # pool.append({
-        #     "id": 4,
-        #     "freq": 7,
-        #     "card": "All-in",
-        #     "desc": "Adicione a carta a um dos jogos apoiados ou patrocinados para dobrar ganhos, mas perder todo o valor em jogo caso haja derrota."
-        # })
+        # if usuario == "ze4":
+        #     pool.append({
+        #         "id": 7,
+        #         "freq": 1,
+        #         "card": "Compra time",
+        #         "desc": "Remove patrocinador e compra o time. Pague o time em 3x nos próximos dias."
+        #     })
         if len(pool) > 5:
             card_descartado = pool.pop(0)
             id_card = card_descartado['id']
@@ -1354,11 +1355,13 @@ def processa_cards():
                         # Troca patrocinador
                         if patrocinador != "-":
                             if apoiadores:
-                                if usuario in apoiadores:
-                                    # Devolve apoio do usuario
-                                    mongo.db.moedas.find_one_and_update({'nome': usuario},{'$inc':{'saldo': valor, 'investido': -valor}})
-                                    moedas_log(usuario,"x "+str(valor),time_alvo,0,"Devolução de apoio")
-                                    apoiadores.remove(usuario)
+                                for u in apoiadores:
+                                    if u["nome"] == usuario:
+                                        # Devolve apoio do usuario
+                                        valor_apoio = u["valor"]
+                                        mongo.db.moedas.find_one_and_update({'nome': usuario},{'$inc':{'saldo': valor_apoio, 'investido': -valor_apoio}})
+                                        moedas_log(usuario,"x "+str(valor_apoio),time_alvo,0,"Devolução de apoio")
+                                        apoiadores.remove(u)
                             mongo.db.patrocinio.find_one_and_update({"Time": time_alvo},{'$set': {"Patrocinador": usuario,"Apoiadores": apoiadores}})
                             mongo.db.moedas.find_one_and_update({'nome': patrocinador},{'$inc':{'investido': -valor, 'saldo': valor}})
                             moedas_log(patrocinador,"x "+str(valor),time_alvo,0,f"Card de {usuario} destitui patrocinio")

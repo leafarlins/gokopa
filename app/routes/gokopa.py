@@ -625,12 +625,20 @@ def ranking():
     #rank_ed = read_config_ranking()
     #ranking = [u for u in mongo.db.ranking.find({"ed": rank_ed}).sort('pos',pymongo.ASCENDING)]
     ranking = get_ranking()
-    copas_list,copas_medal = get_historic_copa("Copa do Mundo")
-    taca_list,taca_medal = get_historic_copa("Taça Mundial")
+    #copas_list,copas_medal = get_historic_copa("Copa do Mundo")
+    #taca_list,taca_medal = get_historic_copa("Taça Mundial")
     bet_list,bet_medals = get_historic_copa("bet")
-    tacas_list,tacas_medals = get_historic_copa("tacas")
+    #tacas_list,tacas_medals = get_historic_copa("tacas")
     #moedas_list,moedas_med = get_historic_copa("moedas")
-    return render_template("ranking.html",menu="Gokopa",ranking=ranking,copa_his=copas_list,copa_med=copas_medal,bet_his=bet_list,bet_med=bet_medals,taca_his=taca_list,taca_med=taca_medal,tacas_his=tacas_list,tacas_med=tacas_medals)
+    list_and_medal = dict()
+    for comp in ["Taça América", "Taça Europa", "Taça Ásia-Oceania", "Taça África", "Copa do Mundo", "Taça Mundial"]:
+        comp_list, comp_medal = get_historic_copa(comp)
+        list_and_medal[comp] = {
+            "comp_list": comp_list,
+            "comp_medal": comp_medal
+        }
+    return render_template("ranking.html",menu="Gokopa",ranking=ranking,bet_his=bet_list,bet_med=bet_medals,list_and_medal=list_and_medal)
+    #copa_his=copas_list,copa_med=copas_medal,taca_his=taca_list,taca_med=taca_medal,tacas_his=tacas_list,tacas_med=tacas_medals)
 
 @cache.memoize(3600*24)
 def get_team_list():
