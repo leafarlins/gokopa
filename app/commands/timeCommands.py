@@ -971,58 +971,62 @@ def processa_pat(jogos='0'):
         # Devolve apoios de jogos impedidos de apoiar
         #for j in (verify_jogos + past_jogos):
         for j in  past_jogos:
-            pat1 = patrocinios.find_one({'Time': j['time1']})
-            pat2 = patrocinios.find_one({'Time': j['time2']})
-            if pat1 and pat2:
-                if pat1['Patrocinador'] != '-' and pat2['Patrocinador'] != '-':
-                    lista_apoios_1 = pat1.get('Apoiadores')
-                    lista_apoios_2 = pat2.get('Apoiadores')
-                    if lista_apoios_1 and lista_apoios_2:
-                        # Uma lista para remocao da lista 1 e outra para remocao da lista 2
-                        remover_a = []
-                        remover_b = []
-                        for a1 in lista_apoios_1:
-                            apoiador = a1['nome']
-                            for a2 in lista_apoios_2:
-                                if a2['nome'] == apoiador:
-                                    if a2['valor'] > a1['valor']:
-                                        remover_a.append(apoiador)
-                                    elif a2['valor'] < a1['valor']:
-                                        remover_b.append(apoiador)
-                                    else:
-                                        remover_a.append(apoiador)
-                                        remover_b.append(apoiador)
+            if j.get('processado'):
+                print(f"Jogo {j['jid']} processado")
+                break
+            else:
+                pat1 = patrocinios.find_one({'Time': j['time1']})
+                pat2 = patrocinios.find_one({'Time': j['time2']})
+                if pat1 and pat2:
+                    if pat1['Patrocinador'] != '-' and pat2['Patrocinador'] != '-':
+                        lista_apoios_1 = pat1.get('Apoiadores')
+                        lista_apoios_2 = pat2.get('Apoiadores')
+                        if lista_apoios_1 and lista_apoios_2:
+                            # Uma lista para remocao da lista 1 e outra para remocao da lista 2
+                            remover_a = []
+                            remover_b = []
+                            for a1 in lista_apoios_1:
+                                apoiador = a1['nome']
+                                for a2 in lista_apoios_2:
+                                    if a2['nome'] == apoiador:
+                                        if a2['valor'] > a1['valor']:
+                                            remover_a.append(apoiador)
+                                        elif a2['valor'] < a1['valor']:
+                                            remover_b.append(apoiador)
+                                        else:
+                                            remover_a.append(apoiador)
+                                            remover_b.append(apoiador)
 
-                        if remover_a:
-                            print(f"Jogo {j['jid']} possui apoiadores a remover: {remover_a}")
-                            current_app.logger.info(f"Jogo {j['jid']} possui apoiadores a remover: {remover_a}")
-                            for apoiador in remover_a:
-                                for a in lista_apoios_1:
-                                    if a['nome'] == apoiador:
-                                        moedas.find_one_and_update({'nome': apoiador},{'$inc':{'saldo': a['valor'],'investido': -a['valor']}})
-                                        moedas_log(a['nome'],"x "+str(a['valor']),j['time1'],j['jid'],"Apoio duplicado impedido")
-                                        lista_apoios_1.remove(a)
-                                        break
-                            outdb1 = patrocinios.find_one_and_update({'Time': j['time1']},{'$set': {"Apoiadores": lista_apoios_1}})
-                            if outdb1:
-                                current_app.logger.info(f"Apoios duplicados a {j['time1']} removidos")
-                            else:
-                                current_app.logger.error(f"Erro na remoção de apoios duplicados em {j['time1']}")
-                        if remover_b:
-                            print(f"Jogo {j['jid']} possui apoiadores a remover: {remover_b}")
-                            current_app.logger.info(f"Jogo {j['jid']} possui apoiadores a remover: {remover_b}")
-                            for apoiador in remover_b:
-                                for a in lista_apoios_2:
-                                    if a['nome'] == apoiador:
-                                        moedas.find_one_and_update({'nome': apoiador},{'$inc':{'saldo': a['valor'],'investido': -a['valor']}})
-                                        moedas_log(a['nome'],"x "+str(a['valor']),j['time2'],j['jid'],"Apoio duplicado impedido")
-                                        lista_apoios_2.remove(a)
-                                        break
-                            outdb2 = patrocinios.find_one_and_update({'Time': j['time2']},{'$set': {"Apoiadores": lista_apoios_2}})
-                            if outdb2:
-                                current_app.logger.info(f"Apoios duplicados a {j['time2']} removidos")
-                            else:
-                                current_app.logger.error(f"Erro na remoção de apoios duplicados em {j['time2']}")
+                            if remover_a:
+                                #print(f"Jogo {j['jid']} possui apoiadores a remover: {remover_a}")
+                                current_app.logger.info(f"Jogo {j['jid']} possui apoiadores a remover: {remover_a}")
+                                for apoiador in remover_a:
+                                    for a in lista_apoios_1:
+                                        if a['nome'] == apoiador:
+                                            moedas.find_one_and_update({'nome': apoiador},{'$inc':{'saldo': a['valor'],'investido': -a['valor']}})
+                                            moedas_log(a['nome'],"x "+str(a['valor']),j['time1'],j['jid'],"Apoio duplicado impedido")
+                                            lista_apoios_1.remove(a)
+                                            break
+                                outdb1 = patrocinios.find_one_and_update({'Time': j['time1']},{'$set': {"Apoiadores": lista_apoios_1}})
+                                if outdb1:
+                                    current_app.logger.info(f"Apoios duplicados a {j['time1']} removidos")
+                                else:
+                                    current_app.logger.error(f"Erro na remoção de apoios duplicados em {j['time1']}")
+                            if remover_b:
+                                #print(f"Jogo {j['jid']} possui apoiadores a remover: {remover_b}")
+                                current_app.logger.info(f"Jogo {j['jid']} possui apoiadores a remover: {remover_b}")
+                                for apoiador in remover_b:
+                                    for a in lista_apoios_2:
+                                        if a['nome'] == apoiador:
+                                            moedas.find_one_and_update({'nome': apoiador},{'$inc':{'saldo': a['valor'],'investido': -a['valor']}})
+                                            moedas_log(a['nome'],"x "+str(a['valor']),j['time2'],j['jid'],"Apoio duplicado impedido")
+                                            lista_apoios_2.remove(a)
+                                            break
+                                outdb2 = patrocinios.find_one_and_update({'Time': j['time2']},{'$set': {"Apoiadores": lista_apoios_2}})
+                                if outdb2:
+                                    current_app.logger.info(f"Apoios duplicados a {j['time2']} removidos")
+                                else:
+                                    current_app.logger.error(f"Erro na remoção de apoios duplicados em {j['time2']}")
 
         # Processamento dos jogos
         for jogo in past_jogos:
