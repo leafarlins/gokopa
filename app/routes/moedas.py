@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, session, request, url_for, flash, current_app
-from app.routes.backend import get_free_teams, get_moedas_board, get_next_jogos, get_pat_teams, moedas_log, progress_data,get_users,get_games,make_score_board,get_user_name,get_bet_results,get_rank
+from app.routes.backend import get_free_teams, get_moedas_board, get_next_jogos, get_pat_teams, get_recorde_moedas, moedas_log, progress_data,get_users,get_games,make_score_board,get_user_name,get_bet_results,get_rank
 import pymongo
 from werkzeug.utils import redirect
 from ..extentions.database import mongo
@@ -29,8 +29,9 @@ def unlock_user(apostador):
 def get_moedas_info():
     jogos = get_next_jogos()
     board = get_moedas_board()
+    recordes = get_recorde_moedas()
     logs = [u for u in mongo.db.moedaslog.find().sort('lid',pymongo.DESCENDING)]
-    return {'moedas_board': board['moedas_board'], 'jogos': jogos['next_jogos'][:16], 'ultimos_jogos': jogos['past_jogos'][:16],'logs': logs,'logsindex': 0,'logspages': int(len(logs)/MAX_LOG_PAGE)+1}
+    return {'moedas_board': board['moedas_board'], 'jogos': jogos['next_jogos'][:16], 'ultimos_jogos': jogos['past_jogos'][:16],'logs': logs,'logsindex': 0,'logspages': int(len(logs)/MAX_LOG_PAGE)+1,"recordes":recordes}
 
 @moedas.route('/regrasmoedas',methods=['GET'])
 def regrasmoedas():

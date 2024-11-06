@@ -266,7 +266,7 @@ def gerar_tabela(ano):
                     times = []
                     for i in range(len(competicao[torneio]['grupos'][g]['tabela']['times'])):
                         time = competicao[torneio]['grupos'][g]['tabela']['times'][i]
-                        if time == dono_casa:
+                        if time == dono_casa and last_game < 109:
                             cor_time = 'copa'
                         else:
                             cor_time = 'des'

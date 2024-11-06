@@ -956,6 +956,12 @@ def processa_pat(jogos='0'):
         prop_derrota = 0.4
         #verify_jogos = get_next_jogos()['next_jogos'][:12]
 
+        # Salva recordes de moedas
+        recorde_moedas_db = mongo.db.settings.find_one({"config": "recordemoeda", "ano": ANO})
+        recorde_moedas = recorde_moedas_db.get("recorde")
+        lista_jogos_recorde = recorde_moedas_db.get("jogos")
+        novo_recorde = 0
+
         # Equivale aos 19 ultimos processamentos
         # if past_jogos[0]['jid'] > 205:
         #     moedas.update_many({},{'$inc': {'saldo': -debito}})
@@ -1131,6 +1137,15 @@ def processa_pat(jogos='0'):
                             patrocinios.find_one_and_update({'Time': t},{'$set': {'Apoiadores': lista_apoios}})
                 # Escreve jogo como processado
                 mongo.db.jogos.find_one_and_update({'Ano': ANO, 'Jogo': jogo['jid']},{'$set': {'moedas_em_jogo': jogo['moedas_em_jogo'],'processado': True}})
+                # Checa se bateu recorde
+                if jogo['moedas_em_jogo'] > recorde_moedas:
+                    novo_recorde = jogo['moedas_em_jogo']
+                    novo_jogo_recorde = jogo['jid']
+
+    # Jogo recorde
+    if novo_recorde > 0:
+        lista_jogos_recorde.insert(0,novo_jogo_recorde)
+        mongo.db.settings.find_one_and_update({"config": "recordemoeda", "ano": ANO},{'$set': {"recorde": novo_recorde, "jogos": lista_jogos_recorde}})
 
     # Processamento da lista de patrocinios no leilao
     # impedidos = []
@@ -1277,12 +1292,12 @@ def processa_cards():
         pool.append(new_card)
         moedas = mongo.db.moedas.find_one({"nome": usuario})
         # if usuario == "ze4":
-        #     pool.append({
-        #         "id": 7,
-        #         "freq": 1,
-        #         "card": "Compra time",
-        #         "desc": "Remove patrocinador e compra o time. Pague o time em 3x nos próximos dias."
-        #     })
+        # pool.append({
+        #     "id": 4,
+        #     "freq": 7,
+        #     "card": "All-in",
+        #     "desc": "Adicione a carta a um dos jogos apoiados ou patrocinados para dobrar ganhos, mas dobrar perdas caso haja derrota."
+        # })
         if len(pool) > 5:
             card_descartado = pool.pop(0)
             id_card = card_descartado['id']
@@ -1441,10 +1456,10 @@ def processa_cards():
 
 #@timeCommands.cli.command("rankingMoedas")
 def ranking_moedas():
-    ranking_moedas = get_moedas_board()['moedas_board']
-    mensagem = "== Ranking de moedas ==\n"
+    ranking_moedas = get_moedas_board()['moedas_board'][:5]
+    mensagem = "🔝 Ranking de moedas\n"
     for j in ranking_moedas:
-        mensagem+=f"{j['pos']}  {j['total']}🪙 - {j['nome']}\n"
+        mensagem+=f"▪️ {j['total']}🪙 {j['nome']} "
     print(mensagem)
     if TELEGRAM:
         print("Enviando mensagem via telegram")

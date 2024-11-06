@@ -335,6 +335,30 @@
             {% if j['processado'] %}{{ j['moedas_em_jogo'] }}🪙 em jogo{% else %}a processar{% endif %}</li>
           {% endfor %}
         </ul>
+        <h3>Recordistas de moedas</h3>
+        <p>Recorde atual: {{ info['recordes']['recorde'] }}🪙</p>
+        {% for j in info['recordes']['list_jogos'] %}
+        <p class="m-0 text-center smallt">{{ j['Competição'] }} - {{ j['Fase'] }}</p>
+        <table class="tab_gokopa tab_jogos mb-3">
+            <tr>
+                <td title="{{ j['Jogo'] }}">{{ j['Data'] }}</td>
+                <td>{{ j['Estadio'] }} 
+                    <img class="miniflag" src="../static/img/flag/{{ j['Pais'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                        {{ j['Time1'] }} <img class="flag" src="../static/img/flag/{{ j['Time1'] }}.png" onerror="this.src='../static/img/flag/default.png'">
+                    {{ j['p1'] }}x{{ j['p2'] }}
+                        <img class="flag" src="../static/img/flag/{{ j['Time2'] }}.png" onerror="this.src='../static/img/flag/default.png'"> {{ j['Time2'] }}
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">{{ j['moedas_em_jogo'] }}🪙 em jogo</td>
+            </tr>
+        </table>
+        {% endfor %}
+        
         {% else %}
         <p>Sem jogos para exibir.</p>
         {% endif %}

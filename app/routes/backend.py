@@ -551,6 +551,27 @@ def get_moedas_board():
 
     return {'moedas_board': lista_users}
 
+@backend.route('/api/get_recorde_moedas')
+def get_recorde_moedas():
+    outrecord = mongo.db.settings.find_one({"config": "recordemoeda", "ano": ANO})
+    if outrecord:
+        recorde = outrecord['recorde']
+        jogos = outrecord['jogos']
+    else:
+        recorde = 0
+        mongo.db.settings.insert_one({"config": "recordemoeda", "ano": ANO, "jogos": [], "recorde": recorde})
+        jogos = []
+    list_jogos = []
+    for j in jogos:
+        jogorec = mongo.db.jogos.find_one({"Ano": ANO, "Jogo": j})
+        jogorec.pop("_id")
+        list_jogos.append(jogorec)
+    return {
+        "recorde": recorde,
+        "jogos": jogos,
+        "list_jogos": list_jogos[:5]
+    }
+
 def moedas_log(nome,moedas,time,jid,msg):
     data = datetime.strftime(datetime.now(),"%d/%m")
     log_id = mongo.db.settings.find_one_and_update({'config':'logid'},{'$inc': {'lid': 1}})

@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
+## [1.6.6] - 2024-11-05
+### Added
+- Recorde de moedas
+
 ## [1.6.5] - 2024-10-12
 
 ### Fixes
@@ -274,12 +278,13 @@ All notable changes to this project will be documented in this file. Based on [K
 - Table from games from first season year 20
 
 
-[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.6.5...HEAD
+[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.6.6...HEAD
+[1.6.6]: https://github.com/leafarlins/gokopa/compare/v1.6.5..1.6.6/
 [1.6.5]: https://github.com/leafarlins/gokopa/compare/v1.6.4..1.6.5/
 [1.6.4]: https://github.com/leafarlins/gokopa/compare/v1.6.3..1.6.4/
-[1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.5..1.6.3/
-[1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.5..1.6.3/
-[1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.5..1.6.3/
+[1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.6..1.6.3/
+[1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.6..1.6.3/
+[1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.6..1.6.3/
 [1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.2..1.6.3/
 [1.6.2]: https://github.com/leafarlins/gokopa/compare/v1.6.1..1.6.2/
 [1.6.1]: https://github.com/leafarlins/gokopa/compare/v1.6.0..1.6.1/
