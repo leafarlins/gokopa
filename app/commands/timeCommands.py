@@ -1138,7 +1138,7 @@ def processa_pat(jogos='0'):
                 # Escreve jogo como processado
                 mongo.db.jogos.find_one_and_update({'Ano': ANO, 'Jogo': jogo['jid']},{'$set': {'moedas_em_jogo': jogo['moedas_em_jogo'],'processado': True}})
                 # Checa se bateu recorde
-                if jogo['moedas_em_jogo'] > recorde_moedas:
+                if jogo['moedas_em_jogo'] > recorde_moedas and jogo['moedas_em_jogo'] > novo_recorde:
                     novo_recorde = jogo['moedas_em_jogo']
                     novo_jogo_recorde = jogo['jid']
 
