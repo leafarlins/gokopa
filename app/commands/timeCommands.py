@@ -950,6 +950,9 @@ def processa_pat(jogos='0'):
     #     moedas.update_many({},{'$inc': {'saldo': emprestimo_ini}})
     #     moedas_log('all',"+"+str(emprestimo_ini),"",0,"Empréstimo inicial")
 
+    # Encarecimento de times nao patrocinados
+    patrocinios.update_many({"Patrocinador": "-"},{'$inc': {"Valor": 3}})
+
     # Processamento dos últimos jogos
     if jogos > 0:
         past_jogos = get_next_jogos()['past_jogos'][:jogos]
