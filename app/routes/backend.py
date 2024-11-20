@@ -1,6 +1,6 @@
 #import re
 #from array import array
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 #from typing import Collection
 from flask import Blueprint, app, render_template, session, request, url_for, flash, jsonify, current_app
 import pymongo
@@ -209,7 +209,7 @@ def get_score_results(users,resultados,ano):
 #@cache.memoize(120)
 def make_score_board(ano_score=ANO):
     db_apostas = 'apostas' + str(ano_score)
-    now = datetime.now()
+    now = datetime.now() + timedelta(minutes=20)
     ano_jogos = get_games(ano_score)
     allUsers = getBolaoUsers(ano_score)
     resultados = []
@@ -262,7 +262,7 @@ def make_score_board(ano_score=ANO):
 def progress_data():
     ano_jogos = [u for u in mongo.db.jogos.find({'Ano': ANO}).sort("Jogo",pymongo.ASCENDING)]
     progress = dict()
-    now = datetime.now()
+    now = datetime.now() + timedelta(minutes=20) 
     progress["last_game"]=0
     progress["current_game"]=0
     progress["total_games"]=ano_jogos[-1]['Jogo']
@@ -600,7 +600,7 @@ def get_next_jogos():
     next_jogos = []
     past_jogos = []
     lista_pat = mongo.db.patrocinio
-    now = datetime.now()
+    now = datetime.now() + timedelta(minutes=20) 
     for n in ano_jogos:
         if n["Time1"] and n["Time2"]:
             time1 = n['Time1']

@@ -185,7 +185,7 @@ def edit_aposta():
                         return redirect(url_for('bolao.edit_aposta',jogoid=nextjogo,nextbet=json.dumps(list_next_bet)))
                     else:
                         flash(f'Apostas finalizadas','success')
-                        return redirect(url_for('bolao.apostas',ano='22'))
+                        return redirect(url_for('bolao.apostas',ano=str(ANO)))
                 else:
                     flash(f'Erro ao escrever na base placar do jogo {jogoid}','danger')
                     current_app.logger.error(f"Erro ao escrever na base: aposta de {apostador} do jogo {jogoid}")
