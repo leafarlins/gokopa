@@ -1290,9 +1290,11 @@ def processa_cards():
     for d in lista_deck:
         usuario = d["user"]
         deck = d["deck"]
-        new_card = deck.pop()
         pool = d["pool"]
-        pool.append(new_card)
+        processar = d["processa"]
+        if len(deck) > 0:
+            new_card = deck.pop()
+            pool.append(new_card)
         moedas = mongo.db.moedas.find_one({"nome": usuario})
         # if usuario == "ze4":
         # pool.append({
@@ -1306,7 +1308,6 @@ def processa_cards():
             id_card = card_descartado['id']
             if id_card > 0:
                 moedas_log(usuario,"x","card"+str(id_card),0,"Card descartado")
-        processar = d["processa"]
         divida_add = 0
         remix =  False
         for c in processar:
@@ -1433,7 +1434,11 @@ def processa_cards():
         if remix:
             deck = deck + pool
             random.shuffle(deck)
-            pool = [deck.pop(),deck.pop()]
+            comprar = 2
+            pool = []
+            for i in range(comprar):
+                if len(deck) > 0:
+                    pool.append(deck.pop())
         # atualiza debito
         if meu_debito != moedas['divida']:
             mongo.db.moedas.find_one_and_update({"nome": usuario},{'$set': {'divida': meu_debito}})

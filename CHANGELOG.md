@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file. Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), with added/changed/deprecated/removed/fixed/security.
 
 ## [unreleased]
+## [1.6.8] - 2024-11-30
+### Fixes
+- Fix deck draw
+
 ## [1.6.7] - 2024-11-19
 ### Fixes
 - Small fix in bolao
@@ -283,14 +287,15 @@ All notable changes to this project will be documented in this file. Based on [K
 - Table from games from first season year 20
 
 
-[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.6.7...HEAD
+[unreleased]: https://github.com/leafarlins/gokopa/compare/v1.6.8...HEAD
+[1.6.8]: https://github.com/leafarlins/gokopa/compare/v1.6.7..1.6.8/
 [1.6.7]: https://github.com/leafarlins/gokopa/compare/v1.6.6..1.6.7/
 [1.6.6]: https://github.com/leafarlins/gokopa/compare/v1.6.5..1.6.6/
 [1.6.5]: https://github.com/leafarlins/gokopa/compare/v1.6.4..1.6.5/
 [1.6.4]: https://github.com/leafarlins/gokopa/compare/v1.6.3..1.6.4/
-[1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.7..1.6.3/
-[1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.7..1.6.3/
-[1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.7..1.6.3/
+[1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.8..1.6.3/
+[1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.8..1.6.3/
+[1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.8..1.6.3/
 [1.6.3]: https://github.com/leafarlins/gokopa/compare/v1.6.2..1.6.3/
 [1.6.2]: https://github.com/leafarlins/gokopa/compare/v1.6.1..1.6.2/
 [1.6.1]: https://github.com/leafarlins/gokopa/compare/v1.6.0..1.6.1/
